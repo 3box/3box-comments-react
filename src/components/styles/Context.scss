@@ -1,0 +1,14 @@
+@import '../../variables.scss';
+
+.context {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 68px;
+}
+
+.context_text {
+  color: $lightestFont;
+  font-size: 14px;
+  font-weight: 600;
+}

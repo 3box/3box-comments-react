@@ -1,0 +1,60 @@
+@import '../../variables.scss';
+
+.input {
+  position: relative;
+}
+
+.input_form {
+  font-size: 15px;
+  min-height: 74px;
+  height: 74px;
+  box-sizing: border-box;
+  min-width: calc(100% + 16px);
+  border-radius: 37px;
+  border: 1px solid $lightestFont;
+  margin-left: -8px;
+  padding: 26px 12px 16px 80px;
+  resize: none;
+
+  &:focus {
+    outline-width: 0;
+  }
+}
+
+::placeholder {
+  font-size: 15px;
+}
+
+.input_form.hidePlaceholder::placeholder {
+  color: transparent !important;
+}
+
+.input_user {
+  position: absolute;
+  left: 0;
+  top: 7px;
+  min-width: $commentPictureDimension;
+  min-height: $commentPictureDimension;
+  max-width: $commentPictureDimension;
+  max-height: $commentPictureDimension;
+  border-radius: 50%;
+  background-color: grey;
+}
+
+.input_postLoading {
+  position: absolute;
+  left: calc(50% - 26px);
+  top: 10px;
+  min-height: 52px;
+  min-width: 52px;
+  max-height: 52px;
+  max-width: 52px;
+}
+
+.input_commentAs {
+  position: absolute;
+  left: 72px;
+  top: -34px;
+  color: $lighterFont;
+  font-size: 12px;
+}

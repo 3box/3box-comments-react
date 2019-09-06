@@ -1,3 +1,5 @@
+Spaces with threads must be first opened by the admin ethereum address before others can join.
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

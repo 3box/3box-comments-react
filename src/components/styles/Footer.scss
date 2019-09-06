@@ -1,0 +1,22 @@
+@import '../../variables.scss';
+
+footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 80px;
+}
+
+.footer_text {
+  color: $lighterFont;
+  font-size: 13px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.footer_text_image {
+  height: 18px;
+  margin-left: 8px;
+  opacity: .5;
+}
