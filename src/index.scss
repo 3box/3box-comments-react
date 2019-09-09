@@ -14,6 +14,10 @@ code {
     monospace;
 }
 
+a {
+  text-decoration: none;
+}
+
 .appcontainerreplace {
   width: 100vw;
   display: flex;
@@ -22,8 +26,11 @@ code {
   margin-top: 100px;
 }
 
-.ThreeBoxComments_container {
-  max-width: $commentWidth;
-  min-width: $commentWidth;
+.userscontainer {
+  width: 50%;
 }
 
+.ThreeBoxComments_container {
+  max-width: $maxCommentWidth;
+  min-width: $minCommentWidth;
+}

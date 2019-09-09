@@ -12,6 +12,7 @@ ReactDOM.render(
   members={false}
   opts={{}}
   currentUserAddr={"0x2a0D29C819609Df18D8eAefb429AEC067269BBb6"}
+  isUseHovers={true}
 />
 , document.getElementById('root'));
 

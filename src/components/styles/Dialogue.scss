@@ -2,7 +2,15 @@
 
 .dialogue {
   width: 100%;
+  
   margin-bottom: 20px;
+}
+
+.dialogue_loading {
+  min-width: 40px;
+  min-height: 40px;
+  max-width: 40px;
+  max-height: 40px;
 }
 
 .dialogue_grid {
@@ -22,14 +30,15 @@
 }
 
 .dialogue_button {
-  height: 30px;
-  width: 100px;
+  height: 36px;
+  width: 120px;
   background-color: $lightestFont;
   border-radius: 20px;
   border: none;
   color: white;
   cursor: pointer;
   transition: .2s ease-in-out all;
+  font-size: 14px;
 
   &:hover {
     background-color: $lighterFont;

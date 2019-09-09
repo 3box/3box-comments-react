@@ -59,7 +59,7 @@ class Input extends Component {
 
   searchEnter = (event) => {
     const { comment } = this.state;
-    if (event.keyCode === 13 && comment) this.savePost();
+    if (event.keyCode === 13 && comment) this.saveComment();
   }
 
   handleLoggedInAs = () => {
@@ -67,15 +67,21 @@ class Input extends Component {
     this.setState({ showLoggedInAs: !showLoggedInAs });
   }
 
-  savePost = async () => {
+  saveComment = async () => {
     const { joinThread, thread } = this.props;
     const { comment, disableComment } = this.state;
     if (disableComment) return;
     this.inputRef.current.blur();
+    this.inputRef.current.style.height = '74px';
     this.setState({ postLoading: true, comment: '' });
     if (!Object.keys(thread).length) await joinThread();
-    const res = await this.props.thread.post(comment);
-    this.setState({ postLoading: false });
+
+    try {
+      await this.props.thread.post(comment);
+      this.setState({ postLoading: false });
+    } catch (error) {
+      console.error('There was an error saving your comment', error);
+    }
   }
 
   render() {
@@ -99,11 +105,9 @@ class Input extends Component {
           />
         )}
 
-        {showLoggedInAs && (
-          <p className="input_commentAs">
-            {`Comment as ${currentUserProfile.name || shortenEthAddr(currentUserAddr)}`}
-          </p>
-        )}
+        <p className={`input_commentAs ${showLoggedInAs ? 'showLoggedInAs' : ''}`}>
+          {`Commenting as ${currentUserProfile.name || shortenEthAddr(currentUserAddr)}`}
+        </p>
 
         <textarea
           type="text"
