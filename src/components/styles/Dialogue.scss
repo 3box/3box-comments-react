@@ -2,15 +2,7 @@
 
 .dialogue {
   width: 100%;
-  
   margin-bottom: 20px;
-}
-
-.dialogue_loading {
-  min-width: 40px;
-  min-height: 40px;
-  max-width: 40px;
-  max-height: 40px;
 }
 
 .dialogue_grid {
@@ -26,7 +18,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 120px;
+  height: 70px;
 }
 
 .dialogue_button {

@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import Box from '3box';
-import './App.scss';
+import resolve from 'did-resolver';
+import registerResolver from '3id-resolver';
+
 import Input from './components/Input';
 import Context from './components/Context';
 import Dialogue from './components/Dialogue';
 import Footer from './components/Footer';
+import './App.scss';
 
 class App extends Component {
   constructor(props) {
@@ -20,22 +23,25 @@ class App extends Component {
       showCommentCount: 30,
       showLoadButton: false,
       isLoading: false,
-      // userProfileURL: this.props.userProfileURL || `https://3box.io/${}`
     }
   }
 
   async componentDidMount() {
     this.setState({ isLoading: true });
+
+    const IPFS = await Box.getIPFS();
+    registerResolver(IPFS);
+
     this.fetchMe();
     await this.fetchThread();
-    // await this.fetchCommenters();
+    await this.fetchCommenters();
     this.setState({ isLoading: false });
   }
 
   fetchThread = async () => {
     const { showCommentCount } = this.state;
-    const { spaceName, threadName, owner, members, opts } = this.props;
-    const dialogue = await Box.getThread(spaceName, threadName, owner, members, opts);
+    const { spaceName, threadName, ownerEthAddr, members, opts } = this.props;
+    const dialogue = await Box.getThread(spaceName, threadName, ownerEthAddr, members, opts);
     const uniqueUsers = [...new Set(dialogue.map(x => x.author))];
 
     let showLoadButton;
@@ -50,31 +56,35 @@ class App extends Component {
   }
 
   fetchMe = async () => {
-    const { currentUserAddr } = this.props;
-    const currentUserProfile = await Box.getProfile(currentUserAddr);
+    const { currentUserAddr, currentUser3BoxProfile } = this.props;
+    const currentUserProfile = currentUser3BoxProfile.user || await Box.getProfile(currentUserAddr); // needs update
     this.setState({ currentUserProfile });
   }
 
   fetchCommenters = async () => {
     const { uniqueUsers } = this.state;
     const profiles = {};
-    // const fetchProfile = async (user) => await Box.getProfile(user);
-    // const fetchAllProfiles = async () => await Promise.all(uniqueUsers.map(user => fetchProfile(user)));
-    // const profilesArray = fetchAllProfiles();
-    // profilesArray.forEach(user => profiles[user.did] = user);
-    const user = await Box.getProfile('0x2a0D29C819609Df18D8eAefb429AEC067269BBb6');
-    
+    const fetchProfile = async (did) => await Box.getProfile(did);
+    const fetchAllProfiles = async () => await Promise.all(uniqueUsers.map(did => fetchProfile(did)));
+    const profilesArray = await fetchAllProfiles();
+
+    const getEthAddr = async (did) => await resolve(did);
+    const getAllEthAddr = async () => await Promise.all(uniqueUsers.map(did => getEthAddr(did)));
+    const ethAddrArray = await getAllEthAddr();
+
+    profilesArray.forEach((user, i) => {
+      user.ethAddr = ethAddrArray[i].publicKey[2].ethereumAddress;
+      profiles[uniqueUsers[i]] = user;
+    });
     this.setState({ profiles });
   }
 
   joinThread = async () => {
-    console.log('joinThread');
-    const { spaceName, threadName, owner } = this.props;
-    const box = await Box.openBox('0x2a0D29C819609Df18D8eAefb429AEC067269BBb6', window.ethereum);
+    const { spaceName, threadName, ownerEthAddr, currentUserAddr } = this.props;
+    const box = await Box.openBox(currentUserAddr, window.ethereum); // needs update
     const space = await box.openSpace(spaceName);
-    const opts = { firstModerator: owner };
+    const opts = { firstModerator: ownerEthAddr };
     const thread = await space.joinThread(threadName, opts);
-    console.log('thread', thread);
     thread.onUpdate(() => this.updateComments());
     this.setState({ thread });
   }
@@ -105,7 +115,15 @@ class App extends Component {
       isLoading
     } = this.state;
 
-    const { currentUserAddr, spaceName, threadName, owner, isUseHovers } = this.props;
+    const {
+      currentUserAddr,
+      spaceName,
+      threadName,
+      ownerEthAddr,
+      isUseHovers,
+      box,
+      userProfileURL
+    } = this.props;
 
     return (
       <div className="appcontainerreplace">
@@ -117,23 +135,28 @@ class App extends Component {
               spaceName={spaceName}
               threadName={threadName}
               thread={thread}
-              owner={owner}
+              ownerEthAddr={ownerEthAddr}
+              box={box}
               joinThread={this.joinThread}
+              updateComments={this.updateComments}
             />
 
-            <Context dialogueLength={dialogueLength} />
+            <Context
+              dialogueLength={dialogueLength}
+              isLoading={isLoading}
+            />
 
             <Dialogue
               dialogue={dialogue}
               currentUserAddr={currentUserAddr}
+              ownerEthAddr={ownerEthAddr}
               threadName={threadName}
               profiles={profiles}
               showCommentCount={showCommentCount}
               showLoadButton={showLoadButton}
-              isLoading={isLoading}
-              currentUserProfile={currentUserProfile}
               thread={thread}
               isUseHovers={isUseHovers}
+              userProfileURL={userProfileURL}
               handleLoadMore={this.handleLoadMore}
               joinThread={this.joinThread}
             />

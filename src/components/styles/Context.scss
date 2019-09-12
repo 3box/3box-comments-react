@@ -8,7 +8,18 @@
 }
 
 .context_text {
+  position: relative;
   color: $lightestFont;
   font-size: 14px;
   font-weight: 600;
+}
+
+.context_loading {
+  position: absolute;
+  min-width: 40px;
+  min-height: 40px;
+  max-width: 40px;
+  max-height: 40px;
+  right: -44px;
+  top: -11px;
 }

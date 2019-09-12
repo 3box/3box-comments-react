@@ -8,11 +8,14 @@ ReactDOM.render(
 <App 
   spaceName='3boxtestcomments'
   threadName='comments' 
-  owner="0x2a0D29C819609Df18D8eAefb429AEC067269BBb6" 
+  ownerEthAddr="0x2a0D29C819609Df18D8eAefb429AEC067269BBb6" 
   members={false}
   opts={{}}
   currentUserAddr={"0x2a0D29C819609Df18D8eAefb429AEC067269BBb6"}
-  isUseHovers={true}
+  isUseHovers={false}
+  currentUser3BoxProfile={{}}
+  box={null}
+  // userProfileURL={`https://subdex.co/`}
 />
 , document.getElementById('root'));
 

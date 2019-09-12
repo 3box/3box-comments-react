@@ -32,14 +32,9 @@ class Input extends Component {
   }
 
   autoExpand = (field) => {
-    // Reset field height
-    field.style.height = 'inherit';
-
-    // Get the computed styles for the element
-    var computed = window.getComputedStyle(field);
-
-    // Calculate the height
-    var height = parseInt(computed.getPropertyValue('border-top-width'), 10)
+    field.style.height = 'inherit'; // Reset field height
+    var computed = window.getComputedStyle(field); // Get the computed styles for the element
+    var height = parseInt(computed.getPropertyValue('border-top-width'), 10) // Calculate the height
       + field.scrollHeight
       - 20
       + parseInt(computed.getPropertyValue('padding-bottom'), 10)
@@ -54,6 +49,8 @@ class Input extends Component {
   }
 
   handleCommentText = (event) => {
+    const { box } = this.props;
+    if (!box) return;
     this.setState({ comment: event.target.value });
   }
 
@@ -63,14 +60,14 @@ class Input extends Component {
   }
 
   handleLoggedInAs = () => {
-    const { showLoggedInAs } = this.state
+    const { showLoggedInAs } = this.state;
     this.setState({ showLoggedInAs: !showLoggedInAs });
   }
 
   saveComment = async () => {
-    const { joinThread, thread } = this.props;
+    const { joinThread, thread, updateComments, box } = this.props;
     const { comment, disableComment } = this.state;
-    if (disableComment) return;
+    if (disableComment || !box) return;
     this.inputRef.current.blur();
     this.inputRef.current.style.height = '74px';
     this.setState({ postLoading: true, comment: '' });
@@ -78,6 +75,7 @@ class Input extends Component {
 
     try {
       await this.props.thread.post(comment);
+      await updateComments();
       this.setState({ postLoading: false });
     } catch (error) {
       console.error('There was an error saving your comment', error);
@@ -86,7 +84,7 @@ class Input extends Component {
 
   render() {
     const { profilePicture, comment, postLoading, showLoggedInAs } = this.state;
-    const { currentUserProfile, currentUserAddr } = this.props;
+    const { currentUserProfile, currentUserAddr, box } = this.props;
     const updatedProfilePicture = currentUserProfile.image && `https://ipfs.infura.io/ipfs/${currentUserProfile.image[0].contentUrl['/']}`;
 
     return (
@@ -106,7 +104,7 @@ class Input extends Component {
         )}
 
         <p className={`input_commentAs ${showLoggedInAs ? 'showLoggedInAs' : ''}`}>
-          {`Commenting as ${currentUserProfile.name || shortenEthAddr(currentUserAddr)}`}
+          {box ? `Commenting as ${currentUserProfile.name || shortenEthAddr(currentUserAddr)}` : 'You must be logged in to comment'}
         </p>
 
         <textarea

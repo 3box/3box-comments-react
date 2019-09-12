@@ -1,7 +1,6 @@
 import React from 'react';
 
 import Comment from './Comment';
-import Loading from '../assets/3BoxCommentsSpinner.svg';
 import './styles/Dialogue.scss';
 
 const Dialogue = ({
@@ -10,26 +9,36 @@ const Dialogue = ({
   handleLoadMore,
   showCommentCount,
   showLoadButton,
-  isLoading,
-  currentUserProfile,
   joinThread,
   thread,
-  isUseHovers
+  isUseHovers,
+  currentUserAddr,
+  ownerEthAddr,
+  userProfileURL
 }) => (
     <div className="dialogue">
-      {isLoading && <img className="dialogue_loading" src={Loading} alt="Loading" />}
       <div className="dialogue_grid">
-        {dialogue.slice(0, showCommentCount).map(comment => (
-          <Comment
-            comment={comment}
-            user={profiles[comment.author]}
-            isMyComment={comment.author === currentUserProfile}
-            key={comment.postId}
-            thread={thread}
-            joinThread={joinThread}
-            isUseHovers={isUseHovers}
-          />
-        ))}
+        {dialogue.slice(0, showCommentCount).map(comment => {
+          const profile = profiles[comment.author];
+          const ethAddr = profile && profile.ethAddr.toLowerCase();
+          const currentUserAddrNormalized = currentUserAddr.toLowerCase();
+          const ownerEthAddrNormalized = ownerEthAddr.toLowerCase();
+
+          return (
+            <Comment
+              comment={comment}
+              user={profile || {}}
+              isMyComment={ethAddr === currentUserAddrNormalized}
+              isOwner={ownerEthAddrNormalized === currentUserAddrNormalized}
+              isAdmin={ownerEthAddrNormalized === ethAddr}
+              key={comment.postId}
+              thread={thread}
+              joinThread={joinThread}
+              userProfileURL={userProfileURL}
+              isUseHovers={isUseHovers}
+            />
+          )
+        })}
       </div>
 
       <div className="dialogue_button_container">
