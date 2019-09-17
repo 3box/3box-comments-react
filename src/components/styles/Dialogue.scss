@@ -1,0 +1,38 @@
+@import '../../variables.scss';
+
+.dialogue {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.dialogue_grid {
+  width: 100%;
+  display: inline-grid;
+  row-gap: 30px;
+  grid-template-columns: repeat(1, 100% [col-start]);
+  margin-bottom: 10px;
+}
+
+.dialogue_button_container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70px;
+}
+
+.dialogue_button {
+  height: 36px;
+  width: 120px;
+  background-color: $lightestFont;
+  border-radius: 20px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: .2s ease-in-out all;
+  font-size: 14px;
+
+  &:hover {
+    background-color: $lighterFont;
+  }
+}

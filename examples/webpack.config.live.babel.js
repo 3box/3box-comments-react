@@ -42,28 +42,28 @@ export default () => ({
   },
 
   module: {
-    rules: [
-      {
+    rules: [{
         test: /.jsx?$/,
         exclude: /node_modules/,
-        use: [
-          {
-            loader: 'babel-loader',
-            options: {
-              presets: ['@babel/preset-env', '@babel/preset-react']
-            }
+        use: [{
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env', '@babel/preset-react']
           }
-        ]
+        }]
       },
       {
         test: /\.(scss)$/,
         loader: 'style-loader!css-loader!sass-loader'
+      }, {
+        test: /\.svg$/,
+        loader: 'svg-inline-loader?classPrefix'
       }
     ]
   },
 
   resolve: {
-    extensions: ['.js', '.jsx', '.scss']
+    extensions: ['.js', '.jsx', '.scss', '.svg']
   },
 
   plugins: [new webpack.HotModuleReplacementPlugin()],

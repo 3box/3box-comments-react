@@ -1,8 +1,19 @@
 {
-  "name": "react-npm-package-boilerplate",
+  "name": "3box-comments-react",
   "version": "1.0.0",
-  "description": "Boilerplate to quickstart React component development",
+  "description": "Comments component for decentralized applications by 3Box",
   "main": "./dist/index.js",
+  "author": "3box.io",
+  "license": "MIT",
+  "contributors": [
+    "Kenzo Nakamura <kenzo@nyu.edu>"
+  ],
+  "keywords": [
+    "comments",
+    "3Box",
+    "decentralized",
+    "ethereum"
+  ],
   "scripts": {
     "build": "webpack --config webpack.config.babel.js",
     "build-examples": "webpack --config examples/webpack.config.babel.js --progress",
@@ -14,7 +25,9 @@
     "test": "npm run lint && npm run coverage"
   },
   "devDependencies": {
+    "3box": "^1.10.10",
     "@babel/core": "^7.1.2",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-react": "^7.0.0",
     "@babel/register": "^7.0.0",
@@ -24,6 +37,7 @@
     "chai": "^4.1.2",
     "clean-webpack-plugin": "^0.1.16",
     "css-loader": "^1.0.1",
+    "did-resolver": "0.0.7",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "eslint": "^5.8.0",
@@ -31,10 +45,11 @@
     "jest-cli": "^23.6.0",
     "node-sass": "^4.7.2",
     "prop-types": "^15.6.0",
-    "react-addons-test-utils": "^15.5.1",
     "react": "^16.6.0",
+    "react-addons-test-utils": "^15.5.1",
     "react-dom": "^16.6.0",
     "react-hot-loader": "next",
+    "react-inlinesvg": "^1.1.6",
     "react-test-renderer": "^16.0.0",
     "regenerator-runtime": "^0.12.1",
     "sass-loader": "^7.0.1",
@@ -44,10 +59,19 @@
     "webpack-dev-server": "^3.1.4"
   },
   "peerDependencies": {
+    "3box": "^1.10.10",
     "react": ">= 16.3.0",
     "react-dom": ">= 16.3.0"
   },
   "resolutions": {
     "babel-core": "7.0.0-bridge.0"
+  },
+  "dependencies": {
+    "3id-resolver": "0.0.6",
+    "@babel/runtime": "^7.6.0",
+    "ethereum-blockies-base64": "^1.0.2",
+    "profile-hover": "^1.1.0",
+    "react-linkify": "^1.0.0-alpha",
+    "svg-inline-loader": "^0.8.0"
   }
 }
