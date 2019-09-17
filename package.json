@@ -1,6 +1,6 @@
 {
   "name": "3box-comments-react",
-  "version": "1.0.0",
+  "version": "0.0.1-beta.1",
   "description": "Comments component for decentralized applications by 3Box",
   "main": "./dist/index.js",
   "author": "3box.io",
@@ -25,7 +25,6 @@
     "test": "npm run lint && npm run coverage"
   },
   "devDependencies": {
-    "3box": "^1.10.10",
     "@babel/core": "^7.1.2",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/preset-env": "^7.1.0",
@@ -59,7 +58,6 @@
     "webpack-dev-server": "^3.1.4"
   },
   "peerDependencies": {
-    "3box": "^1.10.10",
     "react": ">= 16.3.0",
     "react-dom": ">= 16.3.0"
   },
@@ -67,6 +65,7 @@
     "babel-core": "7.0.0-bridge.0"
   },
   "dependencies": {
+    "3box": "^1.10.10",
     "3id-resolver": "0.0.6",
     "@babel/runtime": "^7.6.0",
     "ethereum-blockies-base64": "^1.0.2",
