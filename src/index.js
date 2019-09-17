@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Box from '3box';
+import PropTypes from 'prop-types';
 import resolve from 'did-resolver';
 import registerResolver from '3id-resolver';
 
@@ -96,7 +97,6 @@ class App extends Component {
 
   fetchCommenters = async () => {
     const { uniqueUsers } = this.state;
-    const { userProfileURL } = this.props;
 
     const profiles = {};
     const fetchProfile = async (did) => await Box.getProfile(did);
@@ -213,3 +213,30 @@ class App extends Component {
 
 export default App;
 
+App.propTypes = {
+  showCommentCount: PropTypes.number,
+  currentUserAddr: PropTypes.string,
+  userProfileURL: PropTypes.string,
+  members: PropTypes.bool, 
+  box: PropTypes.object,
+  ethereum: PropTypes.object,
+  threadOpts: PropTypes.object,
+  currentUser3BoxProfile: PropTypes.object,
+  loginFunction: PropTypes.func,
+  spaceName: PropTypes.string.isRequired,
+  threadName: PropTypes.object.isRequired,
+  ownerEthAddr: PropTypes.object.isRequired,
+  useHovers: PropTypes.bool.isRequired,
+};
+
+App.defaultProps = {
+  showCommentCount: 30,
+  currentUserAddr: '',
+  userProfileURL: '',
+  box: {},
+  ethereum: {},
+  threadOpts: {},
+  currentUser3BoxProfile: {},
+  members: false, 
+  loginFunction: null,
+};

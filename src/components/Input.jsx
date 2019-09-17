@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import makeBlockie from 'ethereum-blockies-base64';
 import SVG from 'react-inlinesvg';
+import PropTypes from 'prop-types';
 
 import Loading from '../assets/3BoxCommentsSpinner.svg';
 import Send from '../assets/Send.svg';
@@ -64,7 +65,14 @@ class Input extends Component {
   }
 
   saveComment = async () => {
-    const { joinThread, thread, updateComments, openBox, box, loginFunction } = this.props;
+    const {
+      joinThread,
+      thread,
+      updateComments,
+      openBox,
+      box,
+      loginFunction
+    } = this.props;
     const { comment, disableComment, isMobile } = this.state;
     const updatedComment = comment.replace(/(\r\n|\n|\r)/gm, "");
 
@@ -118,7 +126,7 @@ class Input extends Component {
         ) : <div />}
 
         <p className={`input_commentAs ${showLoggedInAs ? 'showLoggedInAs' : ''}`}>
-          {box ? `Commenting as ${currentUserProfile.name || shortenEthAddr(currentUserAddr)}` : 'You will log in upon commenting'}
+          {(!box || !Object.keys(box).length) ? 'You will log in upon commenting' : `Commenting as ${currentUserProfile.name || shortenEthAddr(currentUserAddr)}`}
         </p>
 
         <textarea
@@ -145,3 +153,22 @@ class Input extends Component {
 }
 
 export default Input;
+
+Input.propTypes = {
+  box: PropTypes.object,
+  thread: PropTypes.object,
+  currentUserProfile: PropTypes.object,
+  currentUserAddr: PropTypes.string,
+  loginFunction: PropTypes.func,
+
+  updateComments: PropTypes.func.isRequired,
+  openBox: PropTypes.func.isRequired,
+  joinThread: PropTypes.func.isRequired,
+};
+
+Input.defaultProps = {
+  box: {},
+  thread: {},
+  currentUserProfile: {},
+  currentUserAddr: null,
+};

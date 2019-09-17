@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ProfileHover from 'profile-hover';
+import PropTypes from 'prop-types';
 import Linkify from 'react-linkify';
 import makeBlockie from 'ethereum-blockies-base64';
 import SVG from 'react-inlinesvg';
@@ -46,6 +47,7 @@ class Comment extends Component {
       isAdmin,
       userProfileURL
     } = this.props;
+
     const profilePicture = profile.ethAddr &&
       (profile.image ? `https://ipfs.infura.io/ipfs/${profile.image[0].contentUrl['/']}`
         : makeBlockie(profile.ethAddr));
@@ -134,3 +136,20 @@ class Comment extends Component {
 }
 
 export default Comment;
+
+Comment.propTypes = {
+  thread: PropTypes.object,
+  userProfileURL: PropTypes.string,
+  isOwner: PropTypes.bool.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
+  useHovers: PropTypes.bool.isRequired,
+  isMyComment: PropTypes.bool.isRequired,
+  joinThread: PropTypes.func.isRequired,
+  comment: PropTypes.object.isRequired,
+  profile: PropTypes.object.isRequired,
+};
+
+Comment.defaultProps = {
+  thread: {},
+  userProfileURL: null,
+};

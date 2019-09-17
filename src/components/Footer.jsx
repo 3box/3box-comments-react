@@ -2,7 +2,6 @@ import React from 'react';
 import SVG from 'react-inlinesvg';
 
 import Logo from '../assets/3BoxLogo.svg';
-// var Logo = require('svg-inline-loader?classPrefix!../assets/3BoxLogo.svg');
 import './styles/Footer.scss';
 
 const Footer = () => (

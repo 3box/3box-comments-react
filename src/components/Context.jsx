@@ -1,5 +1,6 @@
 import React from 'react';
 import SVG from 'react-inlinesvg';
+import PropTypes from 'prop-types';
 
 import Loading from '../assets/3BoxCommentsSpinner.svg';
 import './styles/Context.scss';
@@ -14,3 +15,13 @@ const Context = ({ dialogueLength, isLoading }) => (
 )
 
 export default Context;
+
+Context.propTypes = {
+  dialogueLength: PropTypes.number,
+  isLoading: PropTypes.bool,
+};
+
+Context.defaultProps = {
+  dialogueLength: null,
+  isLoading: false,
+};

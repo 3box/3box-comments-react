@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import Comment from './Comment';
 import './styles/Dialogue.scss';
@@ -53,3 +54,26 @@ const Dialogue = ({
 );
 
 export default Dialogue;
+
+Dialogue.propTypes = {
+  dialogue: PropTypes.array,
+  profiles: PropTypes.object,
+  thread: PropTypes.object,
+  currentUserAddr: PropTypes.string,
+  showLoadButton: PropTypes.bool,
+  useHovers: PropTypes.bool,
+
+  handleLoadMore: PropTypes.func.isRequired,
+  joinThread: PropTypes.func.isRequired,
+  showCommentCount: PropTypes.number.isRequired,
+  ownerEthAddr: PropTypes.string.isRequired,
+};
+
+Dialogue.defaultProps = {
+  dialogue: [],
+  profiles: {},
+  thread: {},
+  currentUserAddr: null,
+  showLoadButton: false,
+  useHovers: false,
+};
