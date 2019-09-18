@@ -45,7 +45,6 @@ class Comment extends Component {
       useHovers,
       isMyAdmin,
       isCommenterAdmin,
-      userProfileURL
     } = this.props;
 
     const profilePicture = profile.ethAddr &&
@@ -139,7 +138,6 @@ export default Comment;
 
 Comment.propTypes = {
   thread: PropTypes.object,
-  userProfileURL: PropTypes.string,
   isMyAdmin: PropTypes.bool.isRequired,
   isCommenterAdmin: PropTypes.bool.isRequired,
   useHovers: PropTypes.bool.isRequired,
@@ -151,5 +149,4 @@ Comment.propTypes = {
 
 Comment.defaultProps = {
   thread: {},
-  userProfileURL: null,
 };

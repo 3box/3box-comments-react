@@ -23,7 +23,7 @@ class App extends Component {
     this.state = {
       dialogue: [],
       uniqueUsers: [],
-      dialogueLength: '',
+      dialogueLength: null,
       box,
       thread: {},
       profiles: {},
@@ -31,9 +31,8 @@ class App extends Component {
       showCommentCount: showCommentCount || 30,
       showLoadButton: false,
       isLoading: false,
-      userProfileURL: false,
       currentUserAddr,
-      ethereum,
+      ethereum: ethereum || window.ethereum,
     }
   }
 
@@ -75,7 +74,7 @@ class App extends Component {
       members, 
       threadOpts
     } = this.props;
-    const dialogue = await Box.getThread(spaceName, threadName, adminEthAddr, members, threadOpts);
+    const dialogue = await Box.getThread(spaceName, threadName, adminEthAddr, members, threadOpts || {});
     const uniqueUsers = [...new Set(dialogue.map(x => x.author))];
 
     let showLoadButton;
@@ -111,7 +110,7 @@ class App extends Component {
       const { userProfileURL } = this.props;
       const ethAddr = ethAddrArray[i].publicKey[2].ethereumAddress;
       user.ethAddr = ethAddr;
-      user.profileURL = userProfileURL(ethAddr);
+      user.profileURL = userProfileURL ? userProfileURL(ethAddr) : `https://3box.io/${ethAddr}`;
       profiles[uniqueUsers[i]] = user;
     });
     this.setState({ profiles });
@@ -128,7 +127,7 @@ class App extends Component {
     const propBox = (this.props.box && Object.keys(this.props.box).length) && this.props.box;
     const box = stateBox || propBox;
 
-    const space = await box.openSpace(spaceName, spaceOpts);
+    const space = await box.openSpace(spaceName, spaceOpts || {});
     const opts = { firstModerator: adminEthAddr };
     const thread = await space.joinThread(threadName, opts);
     thread.onUpdate(() => this.updateComments());
@@ -217,25 +216,26 @@ export default App;
 App.propTypes = {
   showCommentCount: PropTypes.number,
   currentUserAddr: PropTypes.string,
-  userProfileURL: PropTypes.string,
+  userProfileURL: PropTypes.func,
   members: PropTypes.bool, 
   box: PropTypes.object,
   spaceOpts: PropTypes.object,
   ethereum: PropTypes.object,
   threadOpts: PropTypes.object,
+  useHovers: PropTypes.bool,
   currentUser3BoxProfile: PropTypes.object,
   loginFunction: PropTypes.func,
   spaceName: PropTypes.string.isRequired,
-  threadName: PropTypes.object.isRequired,
-  adminEthAddr: PropTypes.object.isRequired,
-  useHovers: PropTypes.bool.isRequired,
+  threadName: PropTypes.string.isRequired,
+  adminEthAddr: PropTypes.string.isRequired,
 };
 
 App.defaultProps = {
   showCommentCount: 30,
   currentUserAddr: '',
-  userProfileURL: '',
   members: false, 
+  useHovers: false, 
+  userProfileURL: null,
   box: null,
   ethereum: null,
   currentUser3BoxProfile: null,

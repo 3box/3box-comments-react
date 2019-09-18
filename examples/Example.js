@@ -42,22 +42,22 @@ class Example extends React.Component {
               spaceName='3boxtestcomments'
               threadName='comments'
               adminEthAddr="0x2a0D29C819609Df18D8eAefb429AEC067269BBb6"
-              box={box}
+              // box={box}
 
               // currentUserAddr={myAddress}
-              loginFunction={this.handleLogin}
+              // loginFunction={this.handleLogin}
               
               // case C
               ethereum={window.ethereum}
 
               // optional
-              members={false}
-              showCommentCount={10}
-              threadOpts={{}}
-              spaceOpts={{}}
-              useHovers={false}
+              // members={false}
+              // showCommentCount={10}
+              // threadOpts={{}}
+              // spaceOpts={{}}
+              // useHovers={false}
               // currentUser3BoxProfile={myProfile}
-              userProfileURL={address => `https://userprofiles.co/user/${address}`}
+              // userProfileURL={address => `https://userprofiles.co/user/${address}`}
             />
           </div>
         </div>

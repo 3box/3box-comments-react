@@ -8,7 +8,7 @@ import './styles/Context.scss';
 const Context = ({ dialogueLength, isLoading }) => (
   <div className="context">
     <span className="context_text">
-      {`${dialogueLength} comments`}
+      {`${dialogueLength || ''} comments`}
       {isLoading && <SVG className="context_loading" src={Loading} alt="Loading" />}
     </span>
   </div>
