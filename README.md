@@ -4,7 +4,7 @@
 
 # 3Box Comments Plugin
 
-`3box-comments-react` is a drop-in React component that gives Web3 developers a commenting system built on 3Box with one line of code.
+`3box-comments-react` is a drop-in React component that gives Web3 developers a commenting system built on 3Box with one line of code.  The Comments component handles all 3Box logic for creating a messaging thread. After a user logs in to web3 and 3Box (handled within or outside of the component itself depending on context), a user can post a comment, delete their comment, and receive comments from other users in real-time.
 
 ## Getting Started
 
@@ -51,17 +51,15 @@ const MyComponent = ({
 ```
 
 ## 3Box Comments options depending on use-case
-There are three general use-cases in which the Comments component can be utilized: <br/>
-A) The dApp that implements the Comments component has already handled web3 and 3Box logins before Comments is mounted.<br/>
-B) The dApp handles web3 and 3Box login logic but the user has not yet signed in to either upon Comments mounting.<br/>
-C) The dApp has no web3 and 3Box login logic.<br/>
-
-After handling web3 and 3Box logins in cases A - C, the Comments component will `openSpace`, `joinThread`, `post` a user's comment, and `getPosts` from other users in the thread in real-time thereafter.
+There are three general use-cases in which the Comments component can be utilized: <br/><br/>
+A) The dApp already handles web3 and 3Box logins before Comments component is mounted, and passes the `box` instance to the component.<br/>
+B) The dApp has logic that handles web3 and 3Box logins, but they haven't run before Comments component is mounted.  The preexisting login logic is passed to the Comments component as a function to be run when a user attempts to post a comment.<br/>
+C) The dApp has no web3 and 3Box login logic.  All web3 and 3Box login logic will be handled within the Comments component.<br/>
 
 ### Best practice
 
 For a better user experience within your dApp, you should expect to implement use-cases A, B, or B with A. <br/> 
-By having the `box` object available in the global application state, to be used by all instances of the Comments component, the user avoids having to go through a login process for each Comments thread they want to interact with, as would be the case in C.
+By having the `box` object available in the global application state, to be used by all instances of the Comments component, the user avoids having to go through a login process for each Comments thread they want to interact with, as would be the case in C.  Reading a thread does not require any kind of login.
 
 ### Prop Types
 
