@@ -68,6 +68,7 @@
     "3box": "^1.10.10",
     "3id-resolver": "0.0.6",
     "@babel/runtime": "^7.6.0",
+    "babel-core": "^7.0.0-bridge.0",
     "ethereum-blockies-base64": "^1.0.2",
     "profile-hover": "^1.1.0",
     "react-linkify": "^1.0.0-alpha",

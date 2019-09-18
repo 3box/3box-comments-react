@@ -71,11 +71,11 @@ class App extends Component {
     const {
       spaceName, 
       threadName,
-      ownerEthAddr, 
+      adminEthAddr, 
       members, 
       threadOpts
     } = this.props;
-    const dialogue = await Box.getThread(spaceName, threadName, ownerEthAddr, members, threadOpts);
+    const dialogue = await Box.getThread(spaceName, threadName, adminEthAddr, members, threadOpts);
     const uniqueUsers = [...new Set(dialogue.map(x => x.author))];
 
     let showLoadButton;
@@ -121,14 +121,15 @@ class App extends Component {
     const { 
       spaceName, 
       threadName, 
-      ownerEthAddr, 
+      adminEthAddr, 
+      spaceOpts
     } = this.props;
     const stateBox = (this.state.box && Object.keys(this.state.box).length) && this.state.box;
     const propBox = (this.props.box && Object.keys(this.props.box).length) && this.props.box;
     const box = stateBox || propBox;
 
-    const space = await box.openSpace(spaceName);
-    const opts = { firstModerator: ownerEthAddr };
+    const space = await box.openSpace(spaceName, spaceOpts);
+    const opts = { firstModerator: adminEthAddr };
     const thread = await space.joinThread(threadName, opts);
     thread.onUpdate(() => this.updateComments());
     this.setState({ thread });
@@ -165,7 +166,7 @@ class App extends Component {
       currentUserAddr,
       spaceName,
       threadName,
-      ownerEthAddr,
+      adminEthAddr,
       useHovers,
       loginFunction
     } = this.props;
@@ -178,7 +179,7 @@ class App extends Component {
           spaceName={spaceName}
           threadName={threadName}
           thread={thread}
-          ownerEthAddr={ownerEthAddr}
+          adminEthAddr={adminEthAddr}
           box={box}
           loginFunction={loginFunction}
           joinThread={this.joinThread}
@@ -194,7 +195,7 @@ class App extends Component {
         <Dialogue
           dialogue={dialogue}
           currentUserAddr={currentUserAddr}
-          ownerEthAddr={ownerEthAddr}
+          adminEthAddr={adminEthAddr}
           threadName={threadName}
           profiles={profiles}
           showCommentCount={showCommentCount}
@@ -219,13 +220,14 @@ App.propTypes = {
   userProfileURL: PropTypes.string,
   members: PropTypes.bool, 
   box: PropTypes.object,
+  spaceOpts: PropTypes.object,
   ethereum: PropTypes.object,
   threadOpts: PropTypes.object,
   currentUser3BoxProfile: PropTypes.object,
   loginFunction: PropTypes.func,
   spaceName: PropTypes.string.isRequired,
   threadName: PropTypes.object.isRequired,
-  ownerEthAddr: PropTypes.object.isRequired,
+  adminEthAddr: PropTypes.object.isRequired,
   useHovers: PropTypes.bool.isRequired,
 };
 
@@ -233,10 +235,11 @@ App.defaultProps = {
   showCommentCount: 30,
   currentUserAddr: '',
   userProfileURL: '',
-  box: {},
-  ethereum: {},
-  threadOpts: {},
-  currentUser3BoxProfile: {},
   members: false, 
+  box: null,
+  ethereum: null,
+  currentUser3BoxProfile: null,
+  threadOpts: null,
+  spaceOpts: null,
   loginFunction: null,
 };

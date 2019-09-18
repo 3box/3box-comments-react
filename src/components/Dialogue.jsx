@@ -14,23 +14,23 @@ const Dialogue = ({
   thread,
   useHovers,
   currentUserAddr,
-  ownerEthAddr,
+  adminEthAddr,
 }) => (
   <div className="dialogue">
     <div className="dialogue_grid">
       {dialogue.slice(0, showCommentCount).map(comment => {
         const profile = profiles[comment.author];
-        const ethAddr = profile && profile.ethAddr.toLowerCase();
+        const commentAddr = profile && profile.ethAddr.toLowerCase();
         const currentUserAddrNormalized = currentUserAddr && currentUserAddr.toLowerCase();
-        const ownerEthAddrNormalized = ownerEthAddr.toLowerCase();
+        const adminEthAddrNormalized = adminEthAddr.toLowerCase();
 
         return (
           <Comment
             comment={comment}
             profile={profile || {}}
-            isMyComment={ethAddr === currentUserAddrNormalized}
-            isOwner={ownerEthAddrNormalized === currentUserAddrNormalized}
-            isAdmin={ownerEthAddrNormalized === ethAddr}
+            isMyComment={commentAddr === currentUserAddrNormalized}
+            isMyAdmin={adminEthAddrNormalized === currentUserAddrNormalized}
+            isCommenterAdmin={adminEthAddrNormalized === commentAddr}
             key={comment.postId}
             thread={thread}
             joinThread={joinThread}
@@ -66,7 +66,7 @@ Dialogue.propTypes = {
   handleLoadMore: PropTypes.func.isRequired,
   joinThread: PropTypes.func.isRequired,
   showCommentCount: PropTypes.number.isRequired,
-  ownerEthAddr: PropTypes.string.isRequired,
+  adminEthAddr: PropTypes.string.isRequired,
 };
 
 Dialogue.defaultProps = {

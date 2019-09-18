@@ -110,11 +110,13 @@ class Input extends Component {
             className="input_user"
           />
         ) : (
+          <div className="input_emptyUser">
             <SVG
               src={Profile}
               alt="Profile"
-              className="input_user input_user-empty"
+              className="input_emptyUser_icon"
             />
+          </div>
           )}
 
         {postLoading ? (

@@ -43,15 +43,15 @@ class Comment extends Component {
       profile,
       isMyComment,
       useHovers,
-      isOwner,
-      isAdmin,
+      isMyAdmin,
+      isCommenterAdmin,
       userProfileURL
     } = this.props;
 
     const profilePicture = profile.ethAddr &&
       (profile.image ? `https://ipfs.infura.io/ipfs/${profile.image[0].contentUrl['/']}`
         : makeBlockie(profile.ethAddr));
-    const canDelete = isMyComment || isOwner;
+    const canDelete = isMyComment || isMyAdmin;
 
     return (
       <div className={`comment ${canDelete ? 'isMyComment' : ''}`}>
@@ -100,7 +100,7 @@ class Comment extends Component {
                       className="comment_content_context_main_user_info_address"
                       title={profile.ethAddr}
                     >
-                      {profile.ethAddr && `${shortenEthAddr(profile.ethAddr)} ${isAdmin ? 'ADMIN' : ''}`}
+                      {profile.ethAddr && `${shortenEthAddr(profile.ethAddr)} ${isCommenterAdmin ? 'ADMIN' : ''}`}
                     </div>
                   )}
                 </div>
@@ -140,8 +140,8 @@ export default Comment;
 Comment.propTypes = {
   thread: PropTypes.object,
   userProfileURL: PropTypes.string,
-  isOwner: PropTypes.bool.isRequired,
-  isAdmin: PropTypes.bool.isRequired,
+  isMyAdmin: PropTypes.bool.isRequired,
+  isCommenterAdmin: PropTypes.bool.isRequired,
   useHovers: PropTypes.bool.isRequired,
   isMyComment: PropTypes.bool.isRequired,
   joinThread: PropTypes.func.isRequired,

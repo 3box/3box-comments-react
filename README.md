@@ -1,44 +1,101 @@
-# React NPM Package Boilerplate
+[![Discord](https://img.shields.io/discord/484729862368526356.svg?style=for-the-badge)](https://discordapp.com/invite/Z3f3Cxy)
+[![npm](https://img.shields.io/npm/v/profile-hover.svg?style=for-the-badge)](https://www.npmjs.com/package/3box-comments-react)
+[![Twitter Follow](https://img.shields.io/twitter/follow/3boxdb.svg?style=for-the-badge&label=Twitter)](https://twitter.com/3boxdb)
 
-Boilerplate code for publishing a React NPM package.
+# 3Box Comments Plugin
 
-* Bundled with [Webpack](https://webpack.js.org/)
-* Develop with Hot Module Replacement [(HMR)](https://webpack.js.org/concepts/hot-module-replacement/)
-* Includes linting with [ESLint](http://eslint.org/)
-* Testing with [Jest](http://facebook.github.io/jest/).
+`3box-comments-react` is a drop-in React component that gives Web3 developers a commenting system built on 3Box with one line of code.
+
+## Getting Started
+
+### React Component
+Installation:
+
+```shell
+npm i -S 3box-comments-react
+```
+
+Usage:
+
+```jsx
+import ThreeBoxComments from '3box-comments-react';
+
+const MyComponent = () => (
+    <ThreeBoxComments 
+        // required
+        spaceName="mySpaceName"
+        threadName="myThreadName"
+        adminEthAddr="0x2a0C29C719609Df18D8eAefb429AEC067269BXb6"
+
+        // A) user already logged in to web3 & 3box in dApp
+        // required for use-case A)
+        box={box}
+
+        // B) user not logged in but dapp has global state logic to handle login
+        // required for use-case B)
+        loginFunction={this.handleLogin}
+
+        // C) user not logged in and there is no global state logic to handle login
+        // required for use-case C)
+        ethereum={window.ethereum}
+
+        // optional
+        currentUserAddr={myAddress}
+        members={false}
+        showCommentCount={10}
+        threadOpts={{}}
+        useHovers={false}
+        currentUser3BoxProfile={currentUserObject}
+        userProfileURL={address => `https://mywebsite.com/user/${address}`}
+    />
+);
+```
+
+## 3Box Comments options depending on use-case
+There are three general use-cases in which the Comments component can be utilized: <br/>
+A) The dApp that implements the Comments component has already handled web3 and 3Box logins before Comments is mounted.<br/>
+B) The dApp handles web3 and 3Box login logic but the user has not yet signed in to either upon Comments mounting.<br/>
+C) The dApp has no web3 and 3Box login logic.<br/>
+
+In every case, `spaceName`, `threadName`, and `adminEthAddr` are required props.
+
+In case A (recommended), the `box` instance returned from `openBox` in the 3box-js library is required as the `box` prop.  
+
+In case B (recommended), the `loginFunction` callback is a required prop.  Pass a function from your dApp that handles web3 and 3Box login at the global dApp state to this prop. This callback will run when a user attempts to save a comment but a `box` instance doesn't yet exist. Running this function should result in a new box instance (from const box = Box.openBox(address, web3)) being passed as the `box` prop to this component.  For a much better user experience, the `box` instance generated within this function should be saved to a global state that can be used later by a different Comments thread without having to go through another login process (resulting in use-case A, with the required `box` prop).
+
+In case C, the `ethereum` object from a compatible web3 provider is a required prop.  In this case, web3 consent for Ethereum address and 3Box login are both handled within the Comments component. Though a convenient implementation, this case is advised against as it results in the poor user experience of the user having to login, in order post or delete, for every new Comments thread.
+
+After handling web3 and 3Box logins in cases A - C, the Comments component will `openSpace`, `joinThread`, `post` a user's comment, and `getPosts` from other users in the thread in real-time.
+
+### Prop Types
+
+| Property | Type          | Default  | Required Case          | Description |
+| :-------------------------------- | :-------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `spaceName`    | String        |    |  Always   | The `spaceName` prop is **required** to work.  Provide a custom name to this property, probably something that includes your dApp name and comment category.  A single `spaceName` with multiple, more specific `threadName` is common practice. |
+| `threadName`    | String       |   | Always    | The `threadName` prop is **required** to work.  Provide a custom and topical name to this props. |
+| `adminEthAddr`    | String (Ethereum Address)       |   | Always    | Pass the Ethereum address you wish to give admin rights to for the comments thread.  This user will be able to delete all comments and accept members in a members-only thread. A thread with a new admin address, regardless of identical `spaceName` and `threadName`, will result in an entirely new thread.|
+| `box`    | Object         |   | A (and likely B)    | The `box` instance returned from running `await Box.openBox(address, web3)`.|
+| `loginFunction`    | Function       |    | B    | Pass a function that handles web3 and 3Box login at the global dApp state to this props.  This callback will run when a user attempts to save a comment but a `box` instance doesn't yet exist.  Running this function should result in a new `box` instance (from `const box = Box.openBox(address, web3)`) being passed as a prop to this component.|
+| `ethereum`    | Object        |    | C    | Pass the `ethereum` object from whichever web3 provider your dApp uses.  The `enable` method on this object will be used to get the current user's Ethereum address. |
+| `currentUserAddr`    | String (Ethereum Address)          |    | Optional    | The current user's Ethereum address. Passing this will let the component fetch that user's 3Box profile on component mount and render that data in the Comment input UI. |
+| `members`    | Boolean       |  False   | Optional    | Pass true to make the thread a members-only thread. Passing false will allow all users to post to the thread.  Changing this setting after creating will result in an entirely separate thread (see Docs.3box.io for more info). |
+| `showCommentCount`    | Integer       |  30   | Optional    | The number of comments rendered by default on component mount and number of additional comments revealed after clicking `Load more` in component. |
+| `spaceOpts`    | Object       | | Optional    | Optional parameters for threads (see Docs.3box.io for more info)|
+| `threadOpts`    | Object       | | Optional    | Optional parameters for threads (see Docs.3box.io for more info)|
+| `useHovers`    | Boolean       |  False  | Optional    | Pass true to enable a 3Box profile pop up when hovering over a commenter's name |
+| `currentUser3BoxProfile`    | Object       |   | Optional    | If the current user has already had their 3Box data fetched in at the global dApp state, pass the object returned from `Box.getProfile(profileAddress)` to avoid an extra request.  This data will be rendered in the comment input interface.|
+| `userProfileURL`    | Function       |  Defaults to returning user's 3Box profile URL  | Optional    | A function that returns the URL of a user's profile on the current platform.  The function will be passed an Ethereum address within the component, if needed.  A user will be redirected to the URL returned from this function when clicking on the name or Ethereum addressed associated with the comment in the thread.|
 
 ## Usage
 
-1. Install modules - `yarn`
+Start example - `npm run start`
 
-2. Start example and start coding - `yarn start`
+Run tests - `npm run test`
 
-3. Run tests - `yarn test`
+Bundle with - `npm run build`
 
-4. Bundle with - `yarn build`
-
-5. To test if it works correctly in another project you can use npm `npm install -S ../react-npm-component-boilerplate` Note the relative path
-
-E.g. this folder structure
-
-```
-    ./workspace/
-        MyProject
-        react-npm-boilerplate
-```
-
-## Extra
-
-Adjust your `.eslintrc` config file to your own preference.
-
-## NPM equivalent
-
-yarn | npm
----- | ---
-`yarn` | `npm install`
-`yarn test` | `npm run test`
-`yarn build` | `npm run build`
+Require locally `npm install -S ../react-npm-component-boilerplate` Note the relative path
 
 ## License
 
-MIT © Dinesh Pandiyan
+MIT

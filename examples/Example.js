@@ -32,24 +32,29 @@ class Example extends React.Component {
 
   render() {
     const { box, myAddress, myProfile, isReady } = this.state;
+    console.log('window', window)
     return (
       <div className="App">
         <div className="appcontainerreplace">
           <div className="userscontainer">
             <Comments
               // required
-              box={box}
               spaceName='3boxtestcomments'
               threadName='comments'
-              ownerEthAddr="0x2a0D29C819609Df18D8eAefb429AEC067269BBb6"
+              adminEthAddr="0x2a0D29C819609Df18D8eAefb429AEC067269BBb6"
+              box={box}
+
               // currentUserAddr={myAddress}
               loginFunction={this.handleLogin}
+              
+              // case C
+              ethereum={window.ethereum}
 
               // optional
               members={false}
               showCommentCount={10}
-              ethereum={window.ethereum}
-              // threadOpts={{}}
+              threadOpts={{}}
+              spaceOpts={{}}
               useHovers={false}
               // currentUser3BoxProfile={myProfile}
               userProfileURL={address => `https://userprofiles.co/user/${address}`}

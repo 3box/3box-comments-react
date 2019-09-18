@@ -39,18 +39,32 @@
   max-height: $commentPictureDimension;
   border-radius: 50%;
   background-color: #1168df;
+  object-fit: cover;
 }
 
-.input_user-empty {
+.input_emptyUser {
+  position: absolute;
+  left: -1px;
+  top: 6px;
+  min-width: $commentPictureDimension;
+  min-height: $commentPictureDimension;
+  max-width: $commentPictureDimension;
+  max-height: $commentPictureDimension;
+  border-radius: 50%;
   background-color: transparent;
-  left: 14px;
-  top: 19px;
-  min-width: 36px;
-  min-height: 36px;
-  max-width: 36px;
-  max-height: 36px;
-  border-radius: 0;
-  opacity: .7;
+  border: 1px solid $borderColor;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.input_emptyUser_icon {
+  min-width: 30px;
+  min-height: 30px;
+  max-width: 30px;
+  max-height: 30px;
+  opacity: .6;
 }
 
 .input_send {
@@ -85,12 +99,29 @@
 
 @media only screen and (max-width: 768px) {
   .input_user {
-    left: 0;
-    top: 7px;
+    top: 6px;
+    left: -1px;
     min-width: $commentPictureDimension-mobile;
     min-height: $commentPictureDimension-mobile;
     max-width: $commentPictureDimension-mobile;
     max-height: $commentPictureDimension-mobile;
+  }
+
+  .input_emptyUser {
+    top: 6px;
+    left: -1px;
+    min-width: $commentPictureDimension-mobile;
+    min-height: $commentPictureDimension-mobile;
+    max-width: $commentPictureDimension-mobile;
+    max-height: $commentPictureDimension-mobile;
+  }
+
+  .input_emptyUser_icon {
+    min-width: 30px;
+    min-height: 30px;
+    max-width: 30px;
+    max-height: 30px;
+    opacity: .6;
   }
 
   .input_form {
@@ -120,6 +151,7 @@
     visibility: visible;
     opacity: .6;
   }
+
 
   .input_send_icon {
     width: 32px;
