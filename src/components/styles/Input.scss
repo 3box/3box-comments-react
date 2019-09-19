@@ -10,6 +10,7 @@
   height: 74px;
   box-sizing: border-box;
   min-width: calc(100% + 16px);
+  width: 100%;
   border-radius: 37px;
   border: 1px solid $borderColor;
   margin-left: -8px;
@@ -23,6 +24,7 @@
 
 ::placeholder {
   font-size: 15px;
+  white-space: nowrap;
 }
 
 .input_form.hidePlaceholder::placeholder {
@@ -148,10 +150,12 @@
     min-height: $commentPictureDimension-mobile;
     max-width: $commentPictureDimension-mobile;
     max-height: $commentPictureDimension-mobile;
-    visibility: visible;
     opacity: .6;
   }
 
+  .input_send-visible {
+    visibility: visible;
+  }
 
   .input_send_icon {
     width: 32px;

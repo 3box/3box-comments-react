@@ -110,6 +110,7 @@
   color: $lighterFont;
   margin-left: 8px;
   padding-bottom: 2px;
+  white-space: nowrap;
 }
 
 .comment_content_text {
@@ -129,31 +130,35 @@
 }
 
 @media only screen and (max-width: 768px) {
-  .comment_picture {
-    min-width: $commentPictureDimension-mobile;
-    min-height: $commentPictureDimension-mobile;
-    max-width: $commentPictureDimension-mobile;
-    max-height: $commentPictureDimension-mobile;
-  }
+  .comment-mobile {
+    .comment_picture {
+      min-width: $commentPictureDimension-mobile;
+      min-height: $commentPictureDimension-mobile;
+      max-width: $commentPictureDimension-mobile;
+      max-height: $commentPictureDimension-mobile;
+    }
 
-  .comment_content_context_main_user_info {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+    .comment_content_context_main_user_info {
+      flex-direction: column;
+      align-items: flex-start;
+    }
 
-  .comment_content_context_main_user_info_address {
-    margin-left: 0;
-  }
+    .comment_content_context_main_user_info_address {
+      margin-left: 0;
+    }
 
-  .comment_content_context_main_user_info_username {
-    font-size: 18px;
-  }
+    .comment_content_context_main_user_info_username {
+      font-size: 18px;
+    }
 
-  .comment_content_text {
-    font-size: 15px;
-  }
+    .comment_content_text {
+      font-size: 15px;
+    }
 
-  .comment_content_context_main_user_delete {
-    visibility: visible !important;
+    .comment.isMyComment {
+      .comment_content_context_main_user_delete {
+        visibility: visible !important;
+      }
+    }
   }
 }

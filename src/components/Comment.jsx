@@ -5,7 +5,7 @@ import Linkify from 'react-linkify';
 import makeBlockie from 'ethereum-blockies-base64';
 import SVG from 'react-inlinesvg';
 
-import { timeSince, shortenEthAddr } from '../utils';
+import { timeSince, shortenEthAddr, checkIsMobileDevice } from '../utils';
 import Delete from '../assets/Delete.svg';
 import Loading from '../assets/3BoxCommentsSpinner.svg';
 import './styles/Comment.scss';
@@ -14,7 +14,8 @@ class Comment extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loadingDelete: false
+      loadingDelete: false,
+      isMobile: checkIsMobileDevice()
     };
   }
 
@@ -37,7 +38,7 @@ class Comment extends Component {
   }
 
   render() {
-    const { loadingDelete } = this.state;
+    const { loadingDelete, isMobile } = this.state;
     const {
       comment,
       profile,
@@ -45,15 +46,20 @@ class Comment extends Component {
       useHovers,
       isMyAdmin,
       isCommenterAdmin,
+      thread
     } = this.props;
+
+    // console.log('isMyComment', isMyComment)
+    // console.log('isMyAdmin', isMyAdmin)
 
     const profilePicture = profile.ethAddr &&
       (profile.image ? `https://ipfs.infura.io/ipfs/${profile.image[0].contentUrl['/']}`
         : makeBlockie(profile.ethAddr));
     const canDelete = isMyComment || isMyAdmin;
+    const hasThread = !!Object.keys(thread).length;
 
     return (
-      <div className={`comment ${canDelete ? 'isMyComment' : ''}`}>
+      <div className={`comment ${canDelete ? 'isMyComment' : ''} ${isMobile ? 'comment-mobile' : 'comment-desktop'}`}>
         <a
           href={profile.profileURL ? `${profile.profileURL}` : `https://3box.io/${profile.ethAddr}`}
           target={profile.profileURL ? '_self' : '_blank'}
@@ -105,7 +111,8 @@ class Comment extends Component {
                 </div>
 
                 {loadingDelete && <SVG className="comment_loading" src={Loading} alt="Loading" />}
-                {(!loadingDelete && profile.ethAddr) && (
+
+                {(!loadingDelete && profile.ethAddr && hasThread) && (
                   <div className="comment_content_context_main_user_delete">
                     <button
                       onClick={(e) => this.deleteComment(comment.postId, e)}

@@ -13,65 +13,70 @@ import './index.scss';
 class App extends Component {
   constructor(props) {
     super(props);
-    const { 
-      showCommentCount, 
+    const {
+      showCommentCount,
       currentUserAddr,
       box,
       ethereum,
     } = this.props;
 
     this.state = {
-      dialogue: [],
-      uniqueUsers: [],
       dialogueLength: null,
-      box,
-      thread: {},
-      profiles: {},
-      currentUserProfile: {},
-      showCommentCount: showCommentCount || 30,
       showLoadButton: false,
       isLoading: false,
+      dialogue: [],
+      uniqueUsers: [],
+      thread: {},
+      profiles: {},
+      currentUser3BoxProfile: {},
+      box,
       currentUserAddr,
+      showCommentCount: showCommentCount || 30,
       ethereum: ethereum || window.ethereum,
     }
   }
 
   async componentDidMount() {
     const { currentUserAddr } = this.state;
+    const { currentUser3BoxProfile } = this.props;
     this.setState({ isLoading: true });
 
+    // get ipfs instance for did-resolver
     const IPFS = await Box.getIPFS();
     registerResolver(IPFS);
 
-    if (currentUserAddr) this.fetchMe();
+    // if we have eth and don't have 3box profile, fetch it
+    if (currentUserAddr &&
+      (!currentUser3BoxProfile || !Object.entries(currentUser3BoxProfile).length)) {
+      this.fetchMe();
+    }
+
+    // fetch thread to render on mount
     await this.fetchThread();
     await this.fetchCommenters();
     this.setState({ isLoading: false });
   }
 
   componentDidUpdate(prevProps) {
-    const { currentUserAddr } = this.props;
-    if (currentUserAddr !== prevProps.currentUserAddr) this.fetchMe();
+    const { currentUserAddr, currentUser3BoxProfile } = this.props;
+    // if current user's eth addr or profile is updated in parent component, fetch profile
+    if (currentUserAddr !== prevProps.currentUserAddr) {
+      this.setState({ currentUserAddr: prevProps.currentUserAddr });
+      this.fetchMe();
+    }
+    if (currentUser3BoxProfile !== prevProps.currentUser3BoxProfile) {
+      this.setState({ currentUser3BoxProfile });
+    }
   }
 
-  openBox = async () => {
-    const { ethereum } = this.props;
-    const addresses = await ethereum.enable();
-    const currentUserAddr = addresses[0];
-
-    const box = await Box.openBox(currentUserAddr, ethereum, {});
-    
-    box.onSyncDone(this.setState({ box }));
-    this.setState({ box, currentUserAddr });
-  }
-
+  // get thread from public api only on component mount
   fetchThread = async () => {
     const { showCommentCount } = this.state;
     const {
-      spaceName, 
+      spaceName,
       threadName,
-      adminEthAddr, 
-      members, 
+      adminEthAddr,
+      members,
       threadOpts
     } = this.props;
     const dialogue = await Box.getThread(spaceName, threadName, adminEthAddr, members, threadOpts || {});
@@ -89,11 +94,15 @@ class App extends Component {
   }
 
   fetchMe = async () => {
-    const { currentUserAddr, currentUser3BoxProfile } = this.props;
-    const currentUserProfile = currentUser3BoxProfile || await Box.getProfile(currentUserAddr);
-    this.setState({ currentUserProfile });
+    const { currentUserAddr } = this.props;
+    const stateCurrentUserAddr = this.state.currentUserAddr;
+    const myAddress = currentUserAddr || stateCurrentUserAddr;
+
+    const currentUser3BoxProfile = await Box.getProfile(myAddress);
+    this.setState({ currentUser3BoxProfile });
   }
 
+  // get profiles of commenters from public api only on component mount
   fetchCommenters = async () => {
     const { uniqueUsers } = this.state;
 
@@ -116,11 +125,23 @@ class App extends Component {
     this.setState({ profiles });
   }
 
+  openBox = async () => {
+    const { ethereum } = this.props;
+    const addresses = await ethereum.enable();
+    const currentUserAddr = addresses[0];
+    this.setState({ currentUserAddr }, () => this.fetchMe());
+
+    const box = await Box.openBox(currentUserAddr, ethereum, {});
+
+    box.onSyncDone(this.setState({ box }));
+    this.setState({ box });
+  }
+
   joinThread = async () => {
-    const { 
-      spaceName, 
-      threadName, 
-      adminEthAddr, 
+    const {
+      spaceName,
+      threadName,
+      adminEthAddr,
       spaceOpts
     } = this.props;
     const stateBox = (this.state.box && Object.keys(this.state.box).length) && this.state.box;
@@ -130,8 +151,9 @@ class App extends Component {
     const space = await box.openSpace(spaceName, spaceOpts || {});
     const opts = { firstModerator: adminEthAddr };
     const thread = await space.joinThread(threadName, opts);
+    const dialogue = await thread.getPosts();
     thread.onUpdate(() => this.updateComments());
-    this.setState({ thread });
+    this.setState({ thread, dialogue: dialogue.reverse() });
   }
 
   updateComments = async () => {
@@ -153,7 +175,7 @@ class App extends Component {
       dialogue,
       dialogueLength,
       profiles,
-      currentUserProfile,
+      currentUser3BoxProfile,
       thread,
       showCommentCount,
       showLoadButton,
@@ -170,11 +192,13 @@ class App extends Component {
       loginFunction
     } = this.props;
 
+    const updatedUserAddr = currentUserAddr || this.state.currentUserAddr;
+
     return (
       <div className="threebox-comments-react">
         <Input
-          currentUserAddr={currentUserAddr}
-          currentUserProfile={currentUserProfile}
+          currentUserAddr={updatedUserAddr}
+          currentUser3BoxProfile={currentUser3BoxProfile}
           spaceName={spaceName}
           threadName={threadName}
           thread={thread}
@@ -193,7 +217,7 @@ class App extends Component {
 
         <Dialogue
           dialogue={dialogue}
-          currentUserAddr={currentUserAddr}
+          currentUserAddr={updatedUserAddr}
           adminEthAddr={adminEthAddr}
           threadName={threadName}
           profiles={profiles}
@@ -217,13 +241,13 @@ App.propTypes = {
   showCommentCount: PropTypes.number,
   currentUserAddr: PropTypes.string,
   userProfileURL: PropTypes.func,
-  members: PropTypes.bool, 
+  members: PropTypes.bool,
   box: PropTypes.object,
   spaceOpts: PropTypes.object,
   ethereum: PropTypes.object,
   threadOpts: PropTypes.object,
-  useHovers: PropTypes.bool,
   currentUser3BoxProfile: PropTypes.object,
+  useHovers: PropTypes.bool,
   loginFunction: PropTypes.func,
   spaceName: PropTypes.string.isRequired,
   threadName: PropTypes.string.isRequired,
@@ -233,8 +257,8 @@ App.propTypes = {
 App.defaultProps = {
   showCommentCount: 30,
   currentUserAddr: '',
-  members: false, 
-  useHovers: false, 
+  members: false,
+  useHovers: false,
   userProfileURL: null,
   box: null,
   ethereum: null,

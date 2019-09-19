@@ -1,5 +1,5 @@
 [![Discord](https://img.shields.io/discord/484729862368526356.svg?style=for-the-badge)](https://discordapp.com/invite/Z3f3Cxy)
-[![npm](https://img.shields.io/npm/v/profile-hover.svg?style=for-the-badge)](https://www.npmjs.com/package/3box-comments-react)
+[![npm](https://img.shields.io/npm/v/3box-comments-react.svg?style=for-the-badge)](https://www.npmjs.com/package/3box-comments-react)
 [![Twitter Follow](https://img.shields.io/twitter/follow/3boxdb.svg?style=for-the-badge&label=Twitter)](https://twitter.com/3boxdb)
 
 # 3Box Comments Plugin

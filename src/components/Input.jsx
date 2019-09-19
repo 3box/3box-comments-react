@@ -18,7 +18,7 @@ class Input extends Component {
       time: '',
       disableComment: true,
       postLoading: false,
-      isMobile: false
+      isMobile: checkIsMobileDevice()
     }
     this.inputRef = React.createRef();
   }
@@ -27,8 +27,7 @@ class Input extends Component {
     const el = document.getElementsByClassName('input_form')[0];
     el.addEventListener("keydown", this.searchEnter, false);
 
-    const isMobile = checkIsMobileDevice();
-    this.setState({ disableComment: false, isMobile });
+    this.setState({ disableComment: false });
 
     document.addEventListener('input', (event) => {
       if (event.target.tagName.toLowerCase() !== 'textarea') return;
@@ -79,7 +78,7 @@ class Input extends Component {
     if (disableComment || !updatedComment) return;
 
     this.inputRef.current.blur();
-    this.inputRef.current.style.height = isMobile ? '64px' : '74px';
+    this.inputRef.current.style.height = (isMobile ) ? '64px' : '74px';
     this.setState({ postLoading: true, comment: '' });
 
     if (!box || !Object.keys(box).length) loginFunction ? await loginFunction() : await openBox();
@@ -96,9 +95,9 @@ class Input extends Component {
   }
 
   render() {
-    const { comment, postLoading, showLoggedInAs } = this.state;
-    const { currentUserProfile, currentUserAddr, box } = this.props;
-    const updatedProfilePicture = currentUserProfile.image ? `https://ipfs.infura.io/ipfs/${currentUserProfile.image[0].contentUrl['/']}`
+    const { comment, postLoading, showLoggedInAs, isMobile } = this.state;
+    const { currentUser3BoxProfile, currentUserAddr, box } = this.props;
+    const updatedProfilePicture = currentUser3BoxProfile.image ? `https://ipfs.infura.io/ipfs/${currentUser3BoxProfile.image[0].contentUrl['/']}`
       : currentUserAddr && makeBlockie(currentUserAddr);
 
     return (
@@ -128,7 +127,7 @@ class Input extends Component {
         ) : <div />}
 
         <p className={`input_commentAs ${showLoggedInAs ? 'showLoggedInAs' : ''}`}>
-          {(!box || !Object.keys(box).length) ? 'You will log in upon commenting' : `Commenting as ${currentUserProfile.name || shortenEthAddr(currentUserAddr)}`}
+          {(!box || !Object.keys(box).length) ? 'You will log in upon commenting' : `Commenting as ${currentUser3BoxProfile.name || shortenEthAddr(currentUserAddr)}`}
         </p>
 
         <textarea
@@ -142,7 +141,7 @@ class Input extends Component {
           ref={this.inputRef}
         />
 
-        <button className="input_send" onClick={this.saveComment}>
+        <button className={`input_send ${isMobile ? 'input_send-visible' : ''}`} onClick={this.saveComment}>
           <SVG
             src={Send}
             alt="Send"
@@ -159,7 +158,7 @@ export default Input;
 Input.propTypes = {
   box: PropTypes.object,
   thread: PropTypes.object,
-  currentUserProfile: PropTypes.object,
+  currentUser3BoxProfile: PropTypes.object,
   currentUserAddr: PropTypes.string,
   loginFunction: PropTypes.func,
 
@@ -171,6 +170,6 @@ Input.propTypes = {
 Input.defaultProps = {
   box: {},
   thread: {},
-  currentUserProfile: {},
+  currentUser3BoxProfile: {},
   currentUserAddr: null,
 };
