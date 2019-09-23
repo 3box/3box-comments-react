@@ -58,7 +58,7 @@ class App extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { currentUserAddr, currentUser3BoxProfile } = this.props;
+    const { currentUserAddr, currentUser3BoxProfile, box } = this.props;
     // if current user's eth addr or profile is updated in parent component, fetch profile
     if (currentUserAddr !== prevProps.currentUserAddr) {
       this.setState({ currentUserAddr: prevProps.currentUserAddr });
@@ -66,6 +66,9 @@ class App extends Component {
     }
     if (currentUser3BoxProfile !== prevProps.currentUser3BoxProfile) {
       this.setState({ currentUser3BoxProfile });
+    }
+    if (box !== prevProps.box) {
+      this.setState({ box: prevProps.box });
     }
   }
 

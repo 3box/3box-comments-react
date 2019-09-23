@@ -16,7 +16,7 @@ class Example extends React.Component {
   }
 
   componentDidMount() {
-    // this.handleLogin();
+    this.handleLogin();
   }
 
   handleLogin = async () => {
@@ -32,7 +32,8 @@ class Example extends React.Component {
 
   render() {
     const { box, myAddress, myProfile, isReady } = this.state;
-    console.log('window', window)
+    console.log('box', box);
+    
     return (
       <div className="App">
         <div className="appcontainerreplace">
@@ -42,22 +43,22 @@ class Example extends React.Component {
               spaceName='3boxtestcomments'
               threadName='comments'
               adminEthAddr="0x2a0D29C819609Df18D8eAefb429AEC067269BBb6"
-              // box={box}
+              box={box}
 
-              // currentUserAddr={myAddress}
-              // loginFunction={this.handleLogin}
-              
-              // case C
-              ethereum={window.ethereum}
+            // currentUserAddr={myAddress}
+            // loginFunction={this.handleLogin}
 
-              // optional
-              // members={false}
-              // showCommentCount={10}
-              // threadOpts={{}}
-              // spaceOpts={{}}
-              // useHovers={false}
-              // currentUser3BoxProfile={myProfile}
-              // userProfileURL={address => `https://userprofiles.co/user/${address}`}
+            // case C
+            // ethereum={window.ethereum}
+
+            // optional
+            // members={false}
+            // showCommentCount={10}
+            // threadOpts={{}}
+            // spaceOpts={{}}
+            // useHovers={false}
+            // currentUser3BoxProfile={myProfile}
+            // userProfileURL={address => `https://userprofiles.co/user/${address}`}
             />
           </div>
         </div>
