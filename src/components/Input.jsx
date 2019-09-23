@@ -4,6 +4,7 @@ import SVG from 'react-inlinesvg';
 import PropTypes from 'prop-types';
 
 import Loading from '../assets/3BoxCommentsSpinner.svg';
+import Logo from '../assets/3BoxLogo.svg';
 import Send from '../assets/Send.svg';
 import Profile from '../assets/Profile.svg';
 import './styles/Input.scss';
@@ -78,7 +79,7 @@ class Input extends Component {
     if (disableComment || !updatedComment) return;
 
     this.inputRef.current.blur();
-    this.inputRef.current.style.height = (isMobile ) ? '64px' : '74px';
+    this.inputRef.current.style.height = (isMobile) ? '64px' : '74px';
     this.setState({ postLoading: true, comment: '' });
 
     if (!box || !Object.keys(box).length) loginFunction ? await loginFunction() : await openBox();
@@ -109,21 +110,26 @@ class Input extends Component {
             className="input_user"
           />
         ) : (
-          <div className="input_emptyUser">
-            <SVG
-              src={Profile}
-              alt="Profile"
-              className="input_emptyUser_icon"
-            />
-          </div>
+            <div className="input_emptyUser">
+              <SVG
+                src={Profile}
+                alt="Profile"
+                className="input_emptyUser_icon"
+              />
+            </div>
           )}
 
         {postLoading ? (
-          <SVG
-            src={Loading}
-            alt="Loading"
-            className="input_postLoading"
-          />
+          <div className="input_postLoading">
+            <SVG
+              src={Loading}
+              alt="Loading"
+              className="input_postLoading_spinner"
+            />
+            <span className="input_postLoading_text">
+              <SVG src={Logo} alt="Logo" className="footer_text_image" />
+            </span>
+          </div>
         ) : <div />}
 
         <p className={`input_commentAs ${showLoggedInAs ? 'showLoggedInAs' : ''}`}>

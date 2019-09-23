@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { sortChronologically } from '../utils';
 import Comment from './Comment';
 import './styles/Dialogue.scss';
 
@@ -15,43 +16,48 @@ const Dialogue = ({
   useHovers,
   currentUserAddr,
   adminEthAddr,
-}) => (
-  <div className="dialogue">
-    <div className="dialogue_grid">
-      {dialogue.slice(0, showCommentCount).map(comment => {
-        const profile = profiles[comment.author];
-        const commentAddr = profile && profile.ethAddr.toLowerCase();
-        const currentUserAddrNormalized = currentUserAddr && currentUserAddr.toLowerCase();
-        const adminEthAddrNormalized = adminEthAddr.toLowerCase();
+}) => {
 
-        return (
-          <Comment
-            comment={comment}
-            profile={profile || {}}
-            isMyComment={commentAddr === currentUserAddrNormalized}
-            isMyAdmin={adminEthAddrNormalized === currentUserAddrNormalized}
-            isCommenterAdmin={adminEthAddrNormalized === commentAddr}
-            key={comment.postId}
-            thread={thread}
-            joinThread={joinThread}
-            useHovers={useHovers}
-          />
-        )
-      })}
-    </div>
+  const updatedDialogue = sortChronologically(dialogue);
 
-    <div className="dialogue_button_container">
-      {showLoadButton && (
-        <button
-          className="dialogue_button"
-          onClick={handleLoadMore}
-        >
-          Load more
+  return (
+    <div className="dialogue">
+      <div className="dialogue_grid">
+        {updatedDialogue.slice(0, showCommentCount).map(comment => {
+          const profile = profiles[comment.author];
+          const commentAddr = profile && profile.ethAddr.toLowerCase();
+          const currentUserAddrNormalized = currentUserAddr && currentUserAddr.toLowerCase();
+          const adminEthAddrNormalized = adminEthAddr.toLowerCase();
+
+          return (
+            <Comment
+              comment={comment}
+              profile={profile || {}}
+              isMyComment={commentAddr === currentUserAddrNormalized}
+              isMyAdmin={adminEthAddrNormalized === currentUserAddrNormalized}
+              isCommenterAdmin={adminEthAddrNormalized === commentAddr}
+              key={comment.postId}
+              thread={thread}
+              joinThread={joinThread}
+              useHovers={useHovers}
+            />
+          )
+        })}
+      </div>
+
+      <div className="dialogue_button_container">
+        {showLoadButton && (
+          <button
+            className="dialogue_button"
+            onClick={handleLoadMore}
+          >
+            Load more
         </button>
-      )}
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
+}
 
 export default Dialogue;
 

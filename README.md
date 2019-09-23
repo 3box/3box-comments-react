@@ -32,17 +32,18 @@ const MyComponent = ({ handleLogin, box, ethereum, myAddress, currentUser3BoxPro
         threadName="myThreadName"
         adminEthAddr={adminEthAddr}
 
-        // Required prop for context A) user already logged in to web3 & 3box in dApp state
-        box={box}
 
-        // Required prop for context B) user not logged in but dapp has global state logic to handle login
+        // Required props for context A) & B)
+        box={box}
+        currentUserAddr={myAddress}
+
+        // Required prop for context B)
         loginFunction={handleLogin}
 
-        // Required prop for context C) user not logged in and there is no global state logic to handle login
+        // Required prop for context C)
         ethereum={ethereum}
 
         // optional
-        currentUserAddr={myAddress}
         members={false}
         showCommentCount={10}
         threadOpts={{}}
@@ -56,13 +57,13 @@ const MyComponent = ({ handleLogin, box, ethereum, myAddress, currentUser3BoxPro
 ## 3Box Comments authorization contexts
 There are three general authorization contexts in which the Comments component can be utilized: <br/><br/>
 A) The dApp already handles web3 and 3Box logins *before* Comments component is mounted.<br/>
-    • In this case, the `box` instance, returned from `Box.openBox(ethAddr)` should be passed to the `box` prop
+    • In this case, the `box` instance, returned from `Box.openBox(ethAddr)` should be passed to the `box` prop. The user's current Ethereum address should be passed to the `currentUserAddr` prop to determine `deletePost` access on each comment
 
 B) The dApp has logic that handles web3 and 3Box logins, but they haven't run before Comments component is mounted.  
-    • Login logic already implemented in the dApp should be passed to the Comments component as the `loginFunction` prop, to be run when a user attempts to post a comment<br/>
+    • Login logic already implemented in the dApp should be passed to the Comments component as the `loginFunction` prop, to be run when a user attempts to post a comment.  `currentUserAddr` prop is required as well for the same reason as in A.<br/>
 
 C) The dApp has no web3 and 3Box login logic.  
-    • All web3 and 3Box login logic will be handled within the Comments component, though it's necessary for the `ethereum` object from your dApp's preferred web3 provider be passed to the `ethereum` prop in the component.<br/>
+    • All web3 and 3Box login logic will be handled within the Comments component, though it's required for the `ethereum` object from your dApp's preferred web3 provider be passed to the `ethereum` prop in the component.<br/>
 
 ### Best practice
 
@@ -77,9 +78,9 @@ By having the `box` object available in the global application state, to be used
 | `threadName`    | String       |   | Always    | A name specific to this Comments thread. |
 | `adminEthAddr`    | String (Ethereum Address)       |   | Always    | The Ethereum address you wish to give admin rights to for the Comments thread.  This user will be able to delete all comments and accept members in a members-only thread. **A thread with a new admin address, despite identical `spaceName` and `threadName`, will create an entirely new thread.**|
 | `box`    | Object         |   | A (and likely B)    | The `box` instance returned from running `await Box.openBox(address, web3)` somewhere in your dApp.|
+| `currentUserAddr`    | String (Ethereum Address)          |    | A & B | The current user's Ethereum address. Passing this will help determine whether a user has delete access on each comment.  This prop will also let the component fetch that user's 3Box profile on component mount and render that data (profile picture) in the Comment input UI. |
 | `loginFunction`    | Function       |    | B    | A function from your dApp that handles web3 and 3Box login at the global dApp state. This callback will run when a user attempts to save a comment but a `box` instance doesn't yet exist. Running this function should result in a box instance (from `const box = Box.openBox(address, web3)`) being passed as the `box` prop to this component.  |
 | `ethereum`    | Object        |  window.ethereum  | C    | The `ethereum` object from whichever web3 provider your dApp uses.  The `enable` method on this object will be used to get the current user's Ethereum address and that address will be used to `openBox` within the current Component context.|
-| `currentUserAddr`    | String (Ethereum Address)          |    | Optional    | The current user's Ethereum address. Passing this will let the component fetch that user's 3Box profile on component mount and render that data (profile picture) in the Comment input UI. |
 | `members`    | Boolean       |  False   | Optional    | A boolean - `true` - to make the thread a members-only thread. Passing `false` will allow all users to post to the thread.  **Changing this setting after creating it will result in an entirely different thread** (see [Docs.3box.io](https://Docs.3box.io) for more info). |
 | `showCommentCount`    | Integer       |  30   | Optional    | The number of comments rendered in the UI by default on component mount and the number of additional comments revealed after clicking `Load more` in component. |
 | `spaceOpts`    | Object       | | Optional    | Optional parameters for threads (see [Docs.3box.io](https://Docs.3box.io) for more info)|

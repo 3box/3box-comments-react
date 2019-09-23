@@ -5,7 +5,7 @@ import Linkify from 'react-linkify';
 import makeBlockie from 'ethereum-blockies-base64';
 import SVG from 'react-inlinesvg';
 
-import { timeSince, shortenEthAddr, checkIsMobileDevice } from '../utils';
+import { timeSince, shortenEthAddr } from '../utils';
 import Delete from '../assets/Delete.svg';
 import Loading from '../assets/3BoxCommentsSpinner.svg';
 import './styles/Comment.scss';
@@ -15,7 +15,6 @@ class Comment extends Component {
     super(props);
     this.state = {
       loadingDelete: false,
-      isMobile: checkIsMobileDevice()
     };
   }
 
@@ -59,7 +58,7 @@ class Comment extends Component {
     const hasThread = !!Object.keys(thread).length;
 
     return (
-      <div className={`comment ${canDelete ? 'isMyComment' : ''} ${isMobile ? 'comment-mobile' : 'comment-desktop'}`}>
+      <div className={`comment ${canDelete ? 'isMyComment' : ''}`}>
         <a
           href={profile.profileURL ? `${profile.profileURL}` : `https://3box.io/${profile.ethAddr}`}
           target={profile.profileURL ? '_self' : '_blank'}

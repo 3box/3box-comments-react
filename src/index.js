@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import resolve from 'did-resolver';
 import registerResolver from '3id-resolver';
 
+import { checkIsMobileDevice } from './utils';
+
 import Input from './components/Input';
 import Context from './components/Context';
 import Dialogue from './components/Dialogue';
@@ -33,6 +35,7 @@ class App extends Component {
       currentUserAddr,
       showCommentCount: showCommentCount || 30,
       ethereum: ethereum || window.ethereum,
+      isMobile: checkIsMobileDevice(),
     }
   }
 
@@ -59,16 +62,23 @@ class App extends Component {
 
   componentDidUpdate(prevProps) {
     const { currentUserAddr, currentUser3BoxProfile, box } = this.props;
-    // if current user's eth addr or profile is updated in parent component, fetch profile
+
+    // if current user's eth addr is updated in parent, fetch profile
     if (currentUserAddr !== prevProps.currentUserAddr) {
-      this.setState({ currentUserAddr: prevProps.currentUserAddr });
-      this.fetchMe();
+      const hasNoUserProfile = (!currentUser3BoxProfile || !Object.entries(currentUser3BoxProfile).length);
+      this.setState({ currentUserAddr }, () => {
+        hasNoUserProfile && this.fetchMe();
+      });
     }
+
+    // if current user's profile is updated in parent, update UI
     if (currentUser3BoxProfile !== prevProps.currentUser3BoxProfile) {
       this.setState({ currentUser3BoxProfile });
     }
-    if (box !== prevProps.box) {
-      this.setState({ box: prevProps.box });
+
+    // if box is updated in parent, update component state
+    if ((!prevProps.box || !Object.entries(prevProps.box).length) && box && Object.entries(box).length) {
+      this.setState({ box });
     }
   }
 
@@ -82,6 +92,7 @@ class App extends Component {
       members,
       threadOpts
     } = this.props;
+
     const dialogue = await Box.getThread(spaceName, threadName, adminEthAddr, members, threadOpts || {});
     const uniqueUsers = [...new Set(dialogue.map(x => x.author))];
 
@@ -90,7 +101,7 @@ class App extends Component {
 
     this.setState({
       uniqueUsers,
-      dialogue: dialogue.reverse(),
+      dialogue,
       dialogueLength: dialogue.length,
       showLoadButton,
     });
@@ -136,7 +147,7 @@ class App extends Component {
 
     const box = await Box.openBox(currentUserAddr, ethereum, {});
 
-    box.onSyncDone(this.setState({ box }));
+    box.onSyncDone(() => this.setState({ box }));
     this.setState({ box });
   }
 
@@ -156,13 +167,13 @@ class App extends Component {
     const thread = await space.joinThread(threadName, opts);
     const dialogue = await thread.getPosts();
     thread.onUpdate(() => this.updateComments());
-    this.setState({ thread, dialogue: dialogue.reverse() });
+    this.setState({ thread, dialogue });
   }
 
   updateComments = async () => {
     const { thread } = this.state;
     const dialogue = await thread.getPosts();
-    this.setState({ dialogue: dialogue.reverse(), dialogueLength: dialogue.length });
+    this.setState({ dialogue, dialogueLength: dialogue.length });
   }
 
   handleLoadMore = async () => {
@@ -184,10 +195,11 @@ class App extends Component {
       showLoadButton,
       isLoading,
       box,
+      currentUserAddr,
+      isMobile
     } = this.state;
 
     const {
-      currentUserAddr,
       spaceName,
       threadName,
       adminEthAddr,
@@ -195,12 +207,10 @@ class App extends Component {
       loginFunction
     } = this.props;
 
-    const updatedUserAddr = currentUserAddr || this.state.currentUserAddr;
-
     return (
-      <div className="threebox-comments-react">
+      <div className={`threebox-comments-react ${isMobile ? 'comment-mobile' : 'comment-desktop'}`}>
         <Input
-          currentUserAddr={updatedUserAddr}
+          currentUserAddr={currentUserAddr}
           currentUser3BoxProfile={currentUser3BoxProfile}
           spaceName={spaceName}
           threadName={threadName}
@@ -220,7 +230,7 @@ class App extends Component {
 
         <Dialogue
           dialogue={dialogue}
-          currentUserAddr={updatedUserAddr}
+          currentUserAddr={currentUserAddr}
           adminEthAddr={adminEthAddr}
           threadName={threadName}
           profiles={profiles}
