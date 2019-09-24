@@ -77,7 +77,8 @@ class App extends Component {
     }
 
     // if box is updated in parent, update component state
-    if ((!prevProps.box || !Object.entries(prevProps.box).length) && box && Object.entries(box).length) {
+    const prevBoxEmpty = !prevProps.box || !Object.entries(prevProps.box).length;
+    if (prevBoxEmpty && box && Object.entries(box).length > 0) {
       this.setState({ box });
     }
   }
@@ -92,6 +93,12 @@ class App extends Component {
       members,
       threadOpts
     } = this.props;
+
+    if (!spaceName || !threadName) console.log('You must pass both spaceName and threadName props');
+
+    // check if admin has that space first, if not, thread is empty
+    const spaces = await Box.listSpaces(adminEthAddr);
+    if (!spaces.includes(spaceName)) return;
 
     const dialogue = await Box.getThread(spaceName, threadName, adminEthAddr, members, threadOpts || {});
     const uniqueUsers = [...new Set(dialogue.map(x => x.author))];
@@ -113,6 +120,7 @@ class App extends Component {
     const myAddress = currentUserAddr || stateCurrentUserAddr;
 
     const currentUser3BoxProfile = await Box.getProfile(myAddress);
+
     this.setState({ currentUser3BoxProfile });
   }
 
@@ -140,10 +148,12 @@ class App extends Component {
   }
 
   openBox = async () => {
-    const { ethereum } = this.props;
+    const { ethereum } = this.state;
+    if (!ethereum) console.error('You must provide an ethereum object to the comments component.');
+
     const addresses = await ethereum.enable();
     const currentUserAddr = addresses[0];
-    this.setState({ currentUserAddr }, () => this.fetchMe());
+    this.setState({ currentUserAddr }, async () => await this.fetchMe());
 
     const box = await Box.openBox(currentUserAddr, ethereum, {});
 
@@ -165,9 +175,33 @@ class App extends Component {
     const space = await box.openSpace(spaceName, spaceOpts || {});
     const opts = { firstModerator: adminEthAddr };
     const thread = await space.joinThread(threadName, opts);
+
+    // fetch current user's space did to match herself against comment auth
+    await this.fetch3ID();
+
     const dialogue = await thread.getPosts();
     thread.onUpdate(() => this.updateComments());
     this.setState({ thread, dialogue });
+  }
+
+  fetch3ID = async () => {
+    const { currentUserAddr, spaceName, userProfileURL } = this.props;
+    const { profiles } = this.state;
+    const stateCurrentUserAddr = this.state.currentUserAddr;
+    const myAddress = currentUserAddr || stateCurrentUserAddr;
+
+    const config = await Box.getConfig(myAddress);
+    const threeID = config.spaces && config.spaces[spaceName] && config.spaces[spaceName].DID;
+
+    // if profile already exists in uniqueUsers object, return
+    if (profiles[threeID]) return;
+
+    const currentUser3BoxProfile = await Box.getProfile(myAddress);
+    currentUser3BoxProfile.ethAddr = myAddress;
+    currentUser3BoxProfile.profileURL = userProfileURL ? userProfileURL(myAddress) : `https://3box.io/${myAddress}`;
+    profiles[threeID] = currentUser3BoxProfile;
+
+    this.setState({ currentUser3BoxProfile, profiles });
   }
 
   updateComments = async () => {
@@ -196,7 +230,8 @@ class App extends Component {
       isLoading,
       box,
       currentUserAddr,
-      isMobile
+      isMobile,
+      ethereum
     } = this.state;
 
     const {
@@ -208,13 +243,19 @@ class App extends Component {
     } = this.props;
 
     return (
-      <div className={`threebox-comments-react ${isMobile ? 'comment-mobile' : 'comment-desktop'}`}>
+      <div
+        className={`
+        threebox-comments-react 
+        ${isMobile ? 'comment-mobile' : 'comment-desktop'}
+        `}
+      >
         <Input
           currentUserAddr={currentUserAddr}
           currentUser3BoxProfile={currentUser3BoxProfile}
           spaceName={spaceName}
           threadName={threadName}
           thread={thread}
+          ethereum={ethereum}
           adminEthAddr={adminEthAddr}
           box={box}
           loginFunction={loginFunction}

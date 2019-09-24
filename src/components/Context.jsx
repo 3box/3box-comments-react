@@ -9,7 +9,7 @@ const Context = ({ dialogueLength, isLoading }) => (
   <div className="context">
     <span className="context_text">
       {isLoading && <SVG className="context_loading" src={Loading} alt="Loading" />}
-      {`${dialogueLength || ''} comments`}
+      {`${isLoading ? '' : dialogueLength || 'No'} comments`}
     </span>
   </div>
 )

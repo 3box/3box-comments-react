@@ -1,6 +1,6 @@
 {
   "name": "3box-comments-react",
-  "version": "0.0.1-beta.3",
+  "version": "0.0.1-beta.7",
   "description": "Comments component for decentralized applications by 3Box",
   "main": "./dist/index.js",
   "author": "3box.io",
@@ -70,7 +70,7 @@
     "@babel/runtime": "^7.6.0",
     "babel-core": "^7.0.0-bridge.0",
     "ethereum-blockies-base64": "^1.0.2",
-    "profile-hover": "^1.1.0",
+    "profile-hover": "^1.1.1",
     "react-linkify": "^1.0.0-alpha",
     "svg-inline-loader": "^0.8.0"
   }

@@ -46,7 +46,11 @@ class Input extends Component {
     el.removeEventListener("keydown", this.searchEnter, false);
   }
 
-  handleCommentText = (event) => this.setState({ comment: event.target.value });
+  handleCommentText = (event) => {
+    const { ethereum, loginFunction } = this.props
+    const noWeb3 = (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
+    if (!noWeb3) this.setState({ comment: event.target.value });
+  }
 
   searchEnter = (event) => {
     const { comment, isMobile } = this.state;
@@ -71,11 +75,14 @@ class Input extends Component {
       updateComments,
       openBox,
       box,
-      loginFunction
+      loginFunction,
+      ethereum
     } = this.props;
     const { comment, disableComment, isMobile } = this.state;
     const updatedComment = comment.replace(/(\r\n|\n|\r)/gm, "");
+    const noWeb3 = (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
 
+    if (noWeb3) return;
     if (disableComment || !updatedComment) return;
 
     this.inputRef.current.blur();
@@ -97,7 +104,8 @@ class Input extends Component {
 
   render() {
     const { comment, postLoading, showLoggedInAs, isMobile } = this.state;
-    const { currentUser3BoxProfile, currentUserAddr, box } = this.props;
+    const { currentUser3BoxProfile, currentUserAddr, box, ethereum, loginFunction } = this.props;
+    const noWeb3 = (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
     const updatedProfilePicture = currentUser3BoxProfile.image ? `https://ipfs.infura.io/ipfs/${currentUser3BoxProfile.image[0].contentUrl['/']}`
       : currentUserAddr && makeBlockie(currentUserAddr);
 
@@ -133,7 +141,9 @@ class Input extends Component {
         ) : <div />}
 
         <p className={`input_commentAs ${showLoggedInAs ? 'showLoggedInAs' : ''}`}>
-          {(!box || !Object.keys(box).length) ? 'You will log in upon commenting' : `Commenting as ${currentUser3BoxProfile.name || shortenEthAddr(currentUserAddr)}`}
+          {((!box || !Object.keys(box).length) && !noWeb3) ? 'You will log in upon commenting' : ''}
+          {(box && Object.keys(box).length > 0 && !noWeb3) ? `Commenting as ${currentUser3BoxProfile.name || shortenEthAddr(currentUserAddr)}` : ''}
+          {noWeb3 ? 'Cannot comment without Web3' : ''}
         </p>
 
         <textarea
@@ -164,6 +174,7 @@ export default Input;
 Input.propTypes = {
   box: PropTypes.object,
   thread: PropTypes.object,
+  ethereum: PropTypes.object,
   currentUser3BoxProfile: PropTypes.object,
   currentUserAddr: PropTypes.string,
   loginFunction: PropTypes.func,
@@ -178,4 +189,5 @@ Input.defaultProps = {
   thread: {},
   currentUser3BoxProfile: {},
   currentUserAddr: null,
+  ethereum: null,
 };

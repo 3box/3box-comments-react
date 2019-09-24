@@ -16,7 +16,7 @@ class Example extends React.Component {
   }
 
   componentDidMount() {
-    // this.handleLogin();
+    this.handleLogin();
   }
 
   handleLogin = async () => {
@@ -40,23 +40,26 @@ class Example extends React.Component {
             <Comments
               // required
               spaceName='3boxtestcomments'
-              threadName='comments'
+              threadName='comments3'
               adminEthAddr="0x2a0D29C819609Df18D8eAefb429AEC067269BBb6"
-              // box={box}
 
-              // currentUserAddr={myAddress}
+              // case A & B
+              // box={box}
+              currentUserAddr={myAddress}
+
+              // case B
               // loginFunction={this.handleLogin}
 
               // case C
-              ethereum={window.ethereum}
+              // ethereum={window.ethereum}
 
               // optional
               // members={false}
               // showCommentCount={10}
               // threadOpts={{}}
               // spaceOpts={{}}
-              // useHovers={false}
-              currentUser3BoxProfile={myProfile}
+              useHovers={true}
+              // currentUser3BoxProfile={myProfile}
             // userProfileURL={address => `https://userprofiles.co/user/${address}`}
             />
           </div>

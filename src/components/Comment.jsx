@@ -37,7 +37,7 @@ class Comment extends Component {
   }
 
   render() {
-    const { loadingDelete, isMobile } = this.state;
+    const { loadingDelete } = this.state;
     const {
       comment,
       profile,
@@ -47,9 +47,6 @@ class Comment extends Component {
       isCommenterAdmin,
       thread
     } = this.props;
-
-    // console.log('isMyComment', isMyComment)
-    // console.log('isMyAdmin', isMyAdmin)
 
     const profilePicture = profile.ethAddr &&
       (profile.image ? `https://ipfs.infura.io/ipfs/${profile.image[0].contentUrl['/']}`
