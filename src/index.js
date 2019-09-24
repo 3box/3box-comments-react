@@ -94,7 +94,7 @@ class App extends Component {
       threadOpts
     } = this.props;
 
-    if (!spaceName || !threadName) console.log('You must pass both spaceName and threadName props');
+    if (!spaceName || !threadName) console.error('You must pass both spaceName and threadName props');
 
     // check if admin has that space first, if not, thread is empty
     const spaces = await Box.listSpaces(adminEthAddr);
