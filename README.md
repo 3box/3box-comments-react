@@ -50,7 +50,7 @@ Dapp only integrates with the `3box-comments-react` component, but not `3Box.js 
 
 For the best UX, we recommend implementing one of the following authentication patterns: A; B; or B with A.
 
-Each of these patterns allow your application to make the `box` object available in global application state where it can be used by all instances of the Comments component. This removes the need for users to authenticate on each page they wish to comment on, which would be the case in C.
+Each of these patterns allow your application to make the `box` object available in global application state where it can be used by all instances of the Comments component regardless of which page the user is on. This global pattern removes the need for users to authenticate on each individual page they wish to comment on, which would be the case in C.
 </br>
 </br>
 
