@@ -2,25 +2,77 @@
 [![npm](https://img.shields.io/npm/v/3box-comments-react.svg?style=for-the-badge)](https://www.npmjs.com/package/3box-comments-react)
 [![Twitter Follow](https://img.shields.io/twitter/follow/3boxdb.svg?style=for-the-badge&label=Twitter)](https://twitter.com/3boxdb)
 
-# 3Box Comments Plugin
+# 3Box Comments Plugin 💬
 
-The `3box-comments-react` node package is a drop-in React component that gives Web3 developers a plug-in commenting system built on 3Box infrastructure.  The Comments component handles all 3Box logic for creating a messaging thread, quickly injecting rich, decentralized social interactions in your dApp with one line of code.
+`3box-comments-react` node package is a drop-in react component that provides Web3 developers with a readymade commenting system for their Ethereum application. Easily add rich, decentralized social discourse to your dApp with one line of code. The 3Box Comments plugin is built using 3Box infrastructure, and handles all logic for creating a comments thread. 
 
-## Functionality
-The Comments component is a standard implementation of [Threads](https://docs.3box.io/api/messaging) available in the [3Box-js library](https://github.com/3box/3box-js), with UI for comments and comment input, profile fetching logic, and pagination.  The component is set up to handle both Web3/3Box logged in & logged out authentication contexts.  Once authentication is handled, a user can post a comment, delete their comment, and receive comments from other users in real-time.  Reading a thread, however, requires no authentication.
+**Read the docs on [docs.3box.io](https://docs.3box.io/build/plugins/comments)**
+</br>
+</br>
+
+## How it Works
+#### Architecture
+The Comments plugin is built using a standard implementation of [Open Threads](https://docs.3box.io/build/web-apps/messaging/choose#open-threads) which are defined in the [3Box Threads API](https://docs.3box.io/api/messaging) and made available via the [`3Box.js SDK`](https://github.com/3box/3box-js). The Comments plugin also includes UI for inputting and displaying user comments, logic for fetching user profiles, and pagination. The component is configurable to various authentication patterns, and can handle both Web3/3Box logged-in & logged-out states. 
+
+#### Authentication
+Without authenticating, users can read messages in the comment thread. However authentication is required to perform more interactive functionality. After the user is authenticated, a user can post a comment, delete their comment, and receive comments from other users in *real-time*.
+</br>
+</br>
 
 ## Getting Started
+1. Install the component
+2. Choose your authentication pattern
+3. Configure application settings
+4. Usage
 
-Installation:
+### 1. Install the component
 
 ```shell
 npm i -S 3box-comments-react
 ```
 
-Authentication context: <br/>
-Depending on how your dApp handles Web3 & 3Box authentication and *when*, you will need to provide a different set of props to the Comments component.  The three general authorization contexts and their respective props are discussed below in contexts A-C.
+### 2. Choose your authentication pattern
+Depending on *when and how* your dApp handles authentication for web3 and 3Box, you will need to provide a different set of props to the component. Three acceptable authentication patterns and their respective props are discussed below in A-C:
 
-Usage:
+**A) Dapp handles web3 and 3Box logins, and they run *before* component is mounted. (recommended)**
+
+Dapp integrates with `3Box.js SDK` and the `3box-comments-react` component. In this case, the `box` instance returned from `Box.openBox(ethAddr)` via 3Box.js should be passed to the `box` prop in the comments component. The user's current Ethereum address should be passed to the `currentUserAddr` prop to determine `deletePost` access on each comment.
+
+**B) Dapp handles web3 and 3Box logins, but they haven't run before component is mounted. (recommended)**
+
+Dapp integrates with `3Box.js SDK` and the `3box-comments-react` component. In this case, the login logic implemented in the dapp should be passed to the Comments component as the `loginFunction` prop, which is run when a user attempts to post a comment. The user's current Ethereum address should be passed to the `currentUserAddr` prop to determine `deletePost` access on each comment.
+
+**C) Dapp has no web3 and 3Box login logic.**
+
+Dapp only integrates with the `3box-comments-react` component, but not `3Box.js SDK`. All web3 and 3Box login logic will be handled within the Comments component, though it's required for the `ethereum` object from your dapp's preferred web3 provider be passed to the `ethereum` prop in the component.
+
+#### Best practice
+
+For the best UX, we recommend implementing one of the following authentication patterns: A; B; or B with A.
+
+Each of these patterns allow your application to make the `box` object available in global application state where it can be used by all instances of the Comments component. This removes the need for users to authenticate on each page they wish to comment on, which would be the case in C.
+</br>
+</br>
+
+### 3. Configure application settings
+
+**First, choose a name for your application's 3Box space.**
+
+Comment threads are stored inside of 3Box spaces, so you must create one for your application's threads. Below, this is referred to as `spaceName`. Although you are free to choose whichever name you'd like for your app's space, we simple recommend using the name of your app. If your application already has a 3Box space, you are welcome to use that same one for comments.
+
+**Then, choose a naming convention for your application's threads.**
+
+Comment threads need a name, and we recommend that your application creates `threadNames` according to a simple rule. We generally like using a natural identifier, such as community name, page URL, token ID, or other similar means.
+
+**Lastly, create an admin 3Box account for your application.**
+
+Each thread is required to have an admin (`adminEthAddr`), which possesses the rights to moderate the thread. We recommend you create an admin Ethereum account for your application so you can perform these actions. While technically you can use any Ethereum address as an admin account, we recommend [creating a 3Box profile](https://3box.io/hub) for that address so if you need to take action in the thread, others will know and trust you as the admin.
+</br>
+</br>
+
+### 4. Usage
+
+#### Example
 
 ```jsx
 import ThreeBoxComments from '3box-comments-react';
@@ -54,23 +106,8 @@ const MyComponent = ({ handleLogin, box, ethereum, myAddress, currentUser3BoxPro
 );
 ```
 
-## 3Box Comments authorization contexts
-There are three general authorization contexts in which the Comments component can be utilized: <br/><br/>
-A) The dApp already handles web3 and 3Box logins *before* Comments component is mounted.<br/>
-    • In this case, the `box` instance, returned from `Box.openBox(ethAddr)` should be passed to the `box` prop. The user's current Ethereum address should be passed to the `currentUserAddr` prop to determine `deletePost` access on each comment
 
-B) The dApp has logic that handles web3 and 3Box logins, but they haven't run before Comments component is mounted.  
-    • Login logic already implemented in the dApp should be passed to the Comments component as the `loginFunction` prop, to be run when a user attempts to post a comment.  `currentUserAddr` prop is required as well for the same reason as in A.<br/>
-
-C) The dApp has no web3 and 3Box login logic.  
-    • All web3 and 3Box login logic will be handled within the Comments component, though it's required for the `ethereum` object from your dApp's preferred web3 provider be passed to the `ethereum` prop in the component.<br/>
-
-### Best practice
-
-For a better user experience within your dApp, you should expect to implement authorization contexts A, B, or B with A. <br/> 
-By having the `box` object available in the global application state, to be used by all instances of the Comments component, the user avoids having to go through a login process for each Comments thread they want to interact with, as would be the case in C.
-
-### Prop Types
+#### Prop Types
 
 | Property | Type          | Default  | Required Case          | Description |
 | :-------------------------------- | :-------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
