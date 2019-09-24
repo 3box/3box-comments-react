@@ -37,7 +37,6 @@ class Input extends Component {
   }
 
   autoExpand = (field) => {
-    console.log('field.scrollHeight', field.scrollHeight)
     var height = field.scrollHeight;
     field.style.height = height + 'px';
   };

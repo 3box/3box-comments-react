@@ -51,7 +51,6 @@ class App extends Component {
     // if we have eth and don't have 3box profile, fetch it
     if (currentUserAddr &&
       (!currentUser3BoxProfile || !Object.entries(currentUser3BoxProfile).length)) {
-        console.log('currentUserAddr', currentUserAddr)
       this.fetchMe();
     }
 
