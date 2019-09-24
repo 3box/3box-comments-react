@@ -6,8 +6,8 @@
 
 `3box-comments-react` node package is a drop-in react component that provides Web3 developers with a readymade commenting system for their Ethereum application. Easily add rich, decentralized social discourse to your dApp with one line of code. The 3Box Comments plugin is built using 3Box infrastructure, and handles all logic for creating a comments thread. *Read the docs on [docs.3box.io](https://docs.3box.io/build/plugins/comments)*.
 
-### Try the demo [here]().
-</br>
+### Try the demo [here]()
+![Example Screenshot](comments-example-screenshot.png)
 </br>
 
 ## How it Works
