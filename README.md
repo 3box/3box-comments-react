@@ -4,7 +4,7 @@
 
 # 3Box Comments Plugin 💬
 
-`3box-comments-react` node package is a drop-in react component that provides Web3 developers with a readymade commenting system for their Ethereum application. Easily add rich, decentralized social discourse to your dApp with one line of code. The 3Box Comments plugin is built using 3Box infrastructure, and handles all logic for creating a comments thread. **Read the docs on [docs.3box.io](https://docs.3box.io/build/plugins/comments)**.
+`3box-comments-react` node package is a drop-in react component that provides Web3 developers with a readymade commenting system for their Ethereum application. Easily add rich, decentralized social discourse to your dApp with one line of code. The 3Box Comments plugin is built using 3Box infrastructure, and handles all logic for creating a comments thread. *Read the docs on [docs.3box.io](https://docs.3box.io/build/plugins/comments)*.
 
 ### Try the demo [here]().
 </br>
@@ -51,8 +51,6 @@ Dapp only integrates with the `3box-comments-react` component, but not `3Box.js 
 For the best UX, we recommend implementing one of the following authentication patterns: A; B; or B with A.
 
 Each of these patterns allow your application to make the `box` object available in global application state where it can be used by all instances of the Comments component regardless of which page the user is on. This global pattern removes the need for users to authenticate on each individual page they wish to comment on, which would be the case in C.
-</br>
-</br>
 
 ### 3. Configure application settings
 
@@ -67,8 +65,6 @@ Comment threads need a name, and we recommend that your application creates `thr
 **Lastly, create an admin 3Box account for your application.**
 
 Each thread is required to have an admin (`adminEthAddr`), which possesses the rights to moderate the thread. We recommend you create an admin Ethereum account for your application so you can perform these actions. While technically you can use any Ethereum address as an admin account, we recommend [creating a 3Box profile](https://3box.io/hub) for that address so if you need to take action in the thread, others will know and trust you as the admin.
-</br>
-</br>
 
 ### 4. Usage
 
