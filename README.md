@@ -58,23 +58,24 @@ Each of these patterns allow your application to make the `box` object available
 
 Although you are free to choose whichever name you'd like for your app's space, we recommend using the name of your app. If your application already has a 3Box space, you are welcome to use that same one for comments.
 
-**Then, choose a naming convention for your application's threads.**
+**Next, choose a naming convention for your application's threads.**
 
 Comment threads need a name, and we recommend that your application creates `threadNames` according to a simple rule. We generally like using a natural identifier, such as community name, page URL, token ID, or other similar means.
 
-**Lastly, create an admin 3Box account for your application.**
+**Then, create an admin 3Box account for your application.**
 
 Each thread is required to have an admin (`adminEthAddr`), which possesses the rights to moderate the thread. We recommend you create an admin Ethereum account for your application so you can perform these actions. While technically you can use any Ethereum address as an admin account, we recommend [creating a 3Box profile](https://3box.io/hub) for that address so if you need to take action in the thread, others will know and trust you as the admin.
 
-**Important Note**
+**Lastly, initialize your application's space.**
 
-Before a thread, built atop a space, can be deployed in your dApp, the admin user, whose Ethereum address is passed to the `adminEthAddr` prop, must first open the same `spaceName` that will be used to create a thread before it can be used by others.  Simply open a space by running 
+Before threads can be deployed in your dapp, your application's admin account (`adminEthAddr` created in the previous step) must first open the space (`spaceName`) that will be used to store your application's threads. This step *must* be completed before your comment threads can be used by others. This process would likely be done outside the context of your dapp, probably in a test environment.
+
+Simply open a space by running (via `3Box.js SDK`): 
 ```
 const box = await Box.openBox(adminEthAddr, ethereum);
 const space = await box.openSpace(spaceName, spaceOpts);
 ```
-and sign the prompt to create and open that space in order to instantiate it for future use by threads.
-This would likely be done outside the context of your dApp, probably in a test environment.
+Sign the web3 prompts to complete the space initialization process.
 </br>
 </br>
 
