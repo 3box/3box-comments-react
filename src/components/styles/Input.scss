@@ -117,12 +117,6 @@
 }
 
 @media only screen and (max-width: 768px) {
-  .comment-desktop {
-    .input_form {
-      min-width: 300px;
-    }
-  }
-
   .comment-mobile {
     ::placeholder {
       font-size: 16px;
