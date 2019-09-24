@@ -29,8 +29,8 @@ class Comment extends Component {
     }
 
     try {
-      await this.props.thread.deletePost(commentId);
       this.setState({ loadingDelete: false });
+      await this.props.thread.deletePost(commentId);
     } catch (error) {
       console.error('There was an error deleting your comment', error);
     }
