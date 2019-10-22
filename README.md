@@ -15,7 +15,7 @@
 The Comments plugin is built using a standard implementation of [Open Threads](https://docs.3box.io/build/web-apps/messaging/choose#open-threads) which are defined in the [3Box Threads API](https://docs.3box.io/api/messaging) and made available via the [`3Box.js SDK`](https://github.com/3box/3box-js). The Comments plugin also includes UI for inputting and displaying user comments, logic for fetching user profiles, and pagination. The component is configurable to various authentication patterns, and can handle both Web3/3Box logged-in & logged-out states. 
 
 #### Authentication
-Without authenticating, users can read messages in the comment thread. However authentication is required to perform more interactive functionality. After the user is authenticated, a user can post a comment, delete their comment, and receive comments from other users in *real-time*.
+Without authenticating, users can read messages in the comment thread. However authentication is required to perform more interactive functionality. After the user is authenticated, a user can post a comment, delete their comment, and receive comments from other users in *real-time*.  Note: if you are not logged in and the component has not been passed your ethereum address, the component cannot know which comment belongs to you in order to delete.  The ability to sign in without leaving a comment so that you can delete will be implemented soon.
 </br>
 </br>
 
