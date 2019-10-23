@@ -27,11 +27,11 @@ class App extends Component {
   }
 
   async componentDidMount() {
+    console.log('cdm')
     this.setState({ isLoading: true });
 
     const IPFS = await Box.getIPFS();
     registerResolver(IPFS);
-
     this.fetchMe();
     await this.fetchThread();
     await this.fetchCommenters();
@@ -40,7 +40,14 @@ class App extends Component {
 
   fetchThread = async () => {
     const { showCommentCount } = this.state;
-    const { spaceName, threadName, ownerEthAddr, members, opts } = this.props;
+    const {
+      spaceName,
+      threadName,
+      ownerEthAddr,
+      members,
+      opts
+    } = this.props;
+
     const dialogue = await Box.getThread(spaceName, threadName, ownerEthAddr, members, opts);
     const uniqueUsers = [...new Set(dialogue.map(x => x.author))];
 
@@ -57,11 +64,14 @@ class App extends Component {
 
   fetchMe = async () => {
     const { currentUserAddr, currentUser3BoxProfile } = this.props;
+    console.log('inrumme', currentUserAddr)
     const currentUserProfile = currentUser3BoxProfile.user || await Box.getProfile(currentUserAddr); // needs update
+    console.log('currentUserProfile', currentUserProfile)
     this.setState({ currentUserProfile });
   }
 
   fetchCommenters = async () => {
+    console.log('infetchommenteerse')
     const { uniqueUsers } = this.state;
     const profiles = {};
     const fetchProfile = async (did) => await Box.getProfile(did);
@@ -80,6 +90,7 @@ class App extends Component {
   }
 
   joinThread = async () => {
+    console.log('injoin')
     const { spaceName, threadName, ownerEthAddr, currentUserAddr } = this.props;
     const box = await Box.openBox(currentUserAddr, window.ethereum); // needs update
     const space = await box.openSpace(spaceName);
@@ -90,6 +101,7 @@ class App extends Component {
   }
 
   updateComments = async () => {
+    console.log('inupdate')
     const { thread } = this.state;
     const dialogue = await thread.getPosts();
     this.setState({ dialogue: dialogue.reverse() });
