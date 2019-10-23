@@ -8,7 +8,7 @@ class Example extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      // box: {},
+      box: {},
       myProfile: {},
       myAddress: '',
       isReady: false,
@@ -51,18 +51,18 @@ class Example extends React.Component {
             <Comments
               // required
               spaceName='3boxtestcomments'
-              threadName='ghostChatTest'
+              threadName='freshcomments'
               adminEthAddr="0x2a0D29C819609Df18D8eAefb429AEC067269BBb6"
 
               // case A & B
-              // box={box}
-              // currentUserAddr={myAddress}
+              box={box}
+              currentUserAddr={myAddress}
 
               // case B
               // loginFunction={this.handleLogin}
 
               // case C
-              ethereum={window.ethereum}
+              // ethereum={window.ethereum}
 
             // optional
             // members={false}
