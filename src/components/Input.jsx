@@ -3,12 +3,17 @@ import makeBlockie from 'ethereum-blockies-base64';
 import SVG from 'react-inlinesvg';
 import PropTypes from 'prop-types';
 
+import { shortenEthAddr, checkIsMobileDevice } from '../utils';
+
+import EmojiIcon from './Emoji/EmojiIcon';
+import PopupWindow from './Emoji/PopupWindow';
+import EmojiPicker from './Emoji/EmojiPicker';
 import Loading from '../assets/3BoxCommentsSpinner.svg';
 import Logo from '../assets/3BoxLogo.svg';
 import Send from '../assets/Send.svg';
 import Profile from '../assets/Profile.svg';
 import './styles/Input.scss';
-import { shortenEthAddr, checkIsMobileDevice } from '../utils';
+import './styles/PopupWindow.scss';
 
 class Input extends Component {
   constructor(props) {
@@ -17,8 +22,10 @@ class Input extends Component {
       user: '',
       comment: '',
       time: '',
+      emojiFilter: '',
       disableComment: true,
       postLoading: false,
+      emojiPickerIsOpen: false,
       isMobile: checkIsMobileDevice()
     }
     this.inputRef = React.createRef();
@@ -27,6 +34,7 @@ class Input extends Component {
   async componentDidMount() {
     const el = document.getElementsByClassName('input_form')[0];
     el.addEventListener("keydown", this.searchEnter, false);
+    this.emojiPickerButton = document.querySelector('#sc-emoji-picker-button');
 
     this.setState({ disableComment: false });
 
@@ -68,6 +76,46 @@ class Input extends Component {
     this.setState({ showLoggedInAs: !showLoggedInAs });
   }
 
+  toggleEmojiPicker = (e) => {
+    e.preventDefault();
+    if (!this.state.emojiPickerIsOpen) {
+      this.setState({ emojiPickerIsOpen: true });
+    }
+  }
+
+  closeEmojiPicker = (e) => {
+    if (this.emojiPickerButton.contains(e.target)) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    this.setState({ emojiPickerIsOpen: false });
+  }
+
+  _handleEmojiPicked = (emoji) => {
+    const { comment } = this.state;
+    let newComment = comment;
+    const updatedComment = newComment += emoji;
+    this.setState({ emojiPickerIsOpen: false, comment: updatedComment });
+  }
+
+  handleEmojiFilterChange = (event) => {
+    const emojiFilter = event.target.value;
+    this.setState({ emojiFilter });
+  }
+
+  _renderEmojiPopup = () => (
+    <PopupWindow
+      isOpen={this.state.emojiPickerIsOpen}
+      onClickedOutside={this.closeEmojiPicker}
+      onInputChange={this.handleEmojiFilterChange}
+    >
+      <EmojiPicker
+        onEmojiPicked={this._handleEmojiPicked}
+        filter={this.state.emojiFilter}
+      />
+    </PopupWindow>
+  )
+
   saveComment = async () => {
     const {
       joinThread,
@@ -103,7 +151,7 @@ class Input extends Component {
   }
 
   render() {
-    const { comment, postLoading, showLoggedInAs, isMobile } = this.state;
+    const { comment, postLoading, showLoggedInAs, isMobile, emojiPickerIsOpen } = this.state;
     const { currentUser3BoxProfile, currentUserAddr, box, ethereum, loginFunction } = this.props;
     const noWeb3 = (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
     const updatedProfilePicture = currentUser3BoxProfile.image ? `https://ipfs.infura.io/ipfs/${currentUser3BoxProfile.image[0].contentUrl['/']}`
@@ -164,6 +212,13 @@ class Input extends Component {
             className="input_send_icon"
           />
         </button>
+
+        <EmojiIcon
+          onClick={this.toggleEmojiPicker}
+          isActive={emojiPickerIsOpen}
+          tooltip={this._renderEmojiPopup()}
+          className="input_emoji"
+        />
       </div>
     );
   }

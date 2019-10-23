@@ -1,4 +1,4 @@
-.appcontainerreplace {
+.App {
   width: 100vw;
   height: 100vh;
 
@@ -8,9 +8,41 @@
   flex-direction: column;
 }
 
+.page {
+  width: 80vw;
+  padding: 40px 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+
+  .page_description {
+    margin-bottom: 30px;
+  }
+}
+
 .userscontainer {
-  margin-top: 100px;
-  width: 70vw;
+  margin-top: 60px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.page_content {
+  border: 1px solid #dadada;
+  border-radius: 25px;
+  height: 25vh;
+  width: 100%;
+  max-width: 600px;
+  background-color: #fcfcfc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  p {
+    color: #adadad;
+  }
 }
 
 @media only screen and (max-width: 768px) {

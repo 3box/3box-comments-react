@@ -40,7 +40,13 @@ class Example extends React.Component {
 
     return (
       <div className="App">
-        <div className="appcontainerreplace">
+        <div className="page">
+          <h2 className="page_description">3Box Comments Demo</h2>
+          <div className="page_content">
+            <p>
+              Your super cool dApp
+            </p>
+          </div>
           <div className="userscontainer">
             <Comments
               // required

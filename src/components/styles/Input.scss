@@ -17,6 +17,7 @@
   padding: 25px 12px 25px 80px;
   resize: none;
   overflow-y: hidden;
+  line-height: 22px;
 
   &:focus {
     outline-width: 0;
@@ -43,6 +44,20 @@
   border-radius: 50%;
   background-color: #1168df;
   object-fit: cover;
+}
+
+.sc-user-input--picker-wrapper {
+  position: absolute;
+  right: 0;
+  top: 7px;
+  min-width: $commentPictureDimension;
+  min-height: $commentPictureDimension;
+  max-width: $commentPictureDimension;
+  max-height: $commentPictureDimension;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .input_emptyUser {
