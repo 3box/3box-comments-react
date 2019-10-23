@@ -26,6 +26,7 @@ class App extends Component {
       dialogueLength: null,
       showLoadButton: false,
       isLoading: false,
+      isLoading3Box: false,
       dialogue: [],
       uniqueUsers: [],
       thread: {},
@@ -40,8 +41,7 @@ class App extends Component {
   }
 
   async componentDidMount() {
-    const { currentUserAddr } = this.state;
-    const { currentUser3BoxProfile } = this.props;
+    const { currentUser3BoxProfile, currentUserAddr } = this.props;
     this.setState({ isLoading: true });
 
     // get ipfs instance for did-resolver
@@ -118,7 +118,6 @@ class App extends Component {
     const { currentUserAddr } = this.props;
     const stateCurrentUserAddr = this.state.currentUserAddr;
     const myAddress = currentUserAddr || stateCurrentUserAddr;
-
     const currentUser3BoxProfile = await Box.getProfile(myAddress);
 
     this.setState({ currentUser3BoxProfile });
@@ -151,6 +150,8 @@ class App extends Component {
     const { ethereum } = this.state;
     if (!ethereum) console.error('You must provide an ethereum object to the comments component.');
 
+    this.setState({ isLoading3Box: true });
+
     const addresses = await ethereum.enable();
     const currentUserAddr = addresses[0];
     this.setState({ currentUserAddr }, async () => await this.fetchMe());
@@ -158,7 +159,7 @@ class App extends Component {
     const box = await Box.openBox(currentUserAddr, ethereum, {});
 
     box.onSyncDone(() => this.setState({ box }));
-    this.setState({ box });
+    this.setState({ box, isLoading3Box: false });
   }
 
   joinThread = async () => {
@@ -231,7 +232,8 @@ class App extends Component {
       box,
       currentUserAddr,
       isMobile,
-      ethereum
+      ethereum,
+      isLoading3Box
     } = this.state;
 
     const {
@@ -259,6 +261,7 @@ class App extends Component {
           adminEthAddr={adminEthAddr}
           box={box}
           loginFunction={loginFunction}
+          isLoading3Box={isLoading3Box}
           joinThread={this.joinThread}
           updateComments={this.updateComments}
           openBox={this.openBox}
@@ -277,10 +280,13 @@ class App extends Component {
           profiles={profiles}
           showCommentCount={showCommentCount}
           showLoadButton={showLoadButton}
+          loginFunction={loginFunction}
           thread={thread}
+          box={box}
           useHovers={useHovers}
           handleLoadMore={this.handleLoadMore}
           joinThread={this.joinThread}
+          openBox={this.openBox}
         />
 
         <Footer />

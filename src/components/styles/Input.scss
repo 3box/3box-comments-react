@@ -2,6 +2,10 @@
 
 .input {
   position: relative;
+  // display: flex;
+  // flex-direction: column;
+  // justify-content: flex-start;
+  // align-items: center;
 }
 
 .input_form {
@@ -44,6 +48,18 @@
   border-radius: 50%;
   background-color: #1168df;
   object-fit: cover;
+}
+
+.input_login {
+  position: absolute;
+  left: 72px;
+  bottom: -6px;
+  color: $lighterFont;
+  border: none;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
 }
 
 .sc-user-input--picker-wrapper {
@@ -131,10 +147,21 @@
   opacity: 1;
 }
 
+.comment_loading {
+  min-width: 30px;
+  min-height: 30px;
+  max-width: 30px;
+  max-height: 30px;
+}
+
 @media only screen and (max-width: 768px) {
   .comment-mobile {
     ::placeholder {
       font-size: 16px;
+    }
+
+    .sc-user-input--picker-wrapper {
+      display: none;
     }
 
     .input_user {
@@ -198,11 +225,18 @@
     }
 
     .input_send_icon {
-      width: 34px;
+      width: 26px;
+      opacity: .5;
     }
 
     .input_commentAs {
       left: 62px;
+    }
+
+    .input_login {
+      left: 62px;
+      bottom: -20px;
+      background-color: transparent;
     }
 
     .input_user-empty {

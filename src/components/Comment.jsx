@@ -20,13 +20,21 @@ class Comment extends Component {
 
   deleteComment = async (commentId, e) => {
     e.preventDefault();
-    const { thread, joinThread } = this.props;
+    const {
+      thread,
+      joinThread,
+      box,
+      loginFunction,
+      openBox
+    } = this.props;
+
+    if (!box || !Object.keys(box).length) {
+      this.setState({ loadingDelete: true });
+      loginFunction ? await loginFunction() : await openBox();
+    }
 
     // if user hasn't joined thread yet
-    if (!Object.keys(thread).length) {
-      this.setState({ loadingDelete: true });
-      await joinThread();
-    }
+    if (!Object.keys(thread).length) await joinThread();
 
     try {
       this.setState({ loadingDelete: false });
@@ -149,6 +157,9 @@ Comment.propTypes = {
   joinThread: PropTypes.func.isRequired,
   comment: PropTypes.object.isRequired,
   profile: PropTypes.object.isRequired,
+  box: PropTypes.object,
+  loginFunction: PropTypes.func,
+  openBox: PropTypes.func.isRequired,
 };
 
 Comment.defaultProps = {

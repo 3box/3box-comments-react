@@ -16,6 +16,9 @@ const Dialogue = ({
   useHovers,
   currentUserAddr,
   adminEthAddr,
+  box,
+  loginFunction,
+  openBox
 }) => {
 
   const updatedDialogue = sortChronologically(dialogue);
@@ -40,6 +43,9 @@ const Dialogue = ({
               thread={thread}
               joinThread={joinThread}
               useHovers={useHovers}
+              box={box}
+              loginFunction={loginFunction}
+              openBox={openBox}
             />
           )
         })}
@@ -65,10 +71,13 @@ Dialogue.propTypes = {
   dialogue: PropTypes.array,
   profiles: PropTypes.object,
   thread: PropTypes.object,
+  box: PropTypes.object,
   currentUserAddr: PropTypes.string,
   showLoadButton: PropTypes.bool,
   useHovers: PropTypes.bool,
+  loginFunction: PropTypes.func,
 
+  openBox: PropTypes.func.isRequired,
   handleLoadMore: PropTypes.func.isRequired,
   joinThread: PropTypes.func.isRequired,
   showCommentCount: PropTypes.number.isRequired,
@@ -79,6 +88,7 @@ Dialogue.defaultProps = {
   dialogue: [],
   profiles: {},
   thread: {},
+  box: {},
   currentUserAddr: null,
   showLoadButton: false,
   useHovers: false,
