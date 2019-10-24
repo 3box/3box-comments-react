@@ -223,11 +223,6 @@ class Input extends Component {
         />
 
         <button className={`input_send ${isMobile ? 'input_send-visible' : ''}`} onClick={this.saveComment}>
-          {/* <SVG
-            src={Send}
-            alt="Send"
-            className="input_send_icon"
-          /> */}
           <svg
           version='1.1'
           xmlns='http://www.w3.org/2000/svg'

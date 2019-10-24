@@ -35,6 +35,16 @@ const EmojiIcon = ({ tooltip, onClick, isActive }) => (
         </g>
       </svg>
     </button>
+
+    {isActive && (
+      <div
+        className="onClickOutside"
+        onClick={() => onClick()}
+        onKeyPress={() => onClick()}
+        role="button"
+        tabIndex={0}
+      />
+    )}
   </div>
 );
 
