@@ -1,6 +1,6 @@
 {
   "name": "3box-comments-react",
-  "version": "0.0.1-beta.15",
+  "version": "0.0.1-beta.16",
   "description": "Comments component for decentralized applications by 3Box",
   "main": "./dist/index.js",
   "author": "3box.io",
