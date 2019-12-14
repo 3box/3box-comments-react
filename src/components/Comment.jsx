@@ -172,31 +172,33 @@ class Comment extends Component {
       ethereum,
       comment
     } = this.props;
-    const noWeb3 =
-      (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
+    this.setState({ firstTimeLoaded2: false, isUpdating: true }, async () => {
+      const noWeb3 =
+        (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
 
-    if (noWeb3) return;
+      if (noWeb3) return;
 
-    if (!box || !Object.keys(box).length)
-      loginFunction ? await loginFunction() : await openBox();
+      if (!box || !Object.keys(box).length)
+        loginFunction ? await loginFunction() : await openBox();
 
-    if (!Object.keys(thread).length) await joinThread();
+      if (!Object.keys(thread).length) await joinThread();
 
-    try {
-      const reaction = JSON.stringify({
-        reaction: emoji,
-        type: "reaction",
-        postId: comment.postId
-      });
-      console.log(reaction);
-      if (this.state.hasMyReaction)
-        await this.props.thread.deletePost(this.state.myReaction.postId);
-      await this.props.thread.post(reaction);
-      await updateComments();
-      this.setState({ emojiPickerIsOpen: false });
-    } catch (error) {
-      console.error("There was an error saving your vote", error);
-    }
+      try {
+        const reaction = JSON.stringify({
+          reaction: emoji,
+          type: "reaction",
+          postId: comment.postId
+        });
+        console.log(reaction);
+        if (this.state.hasMyReaction)
+          await this.props.thread.deletePost(this.state.myReaction.postId);
+        await this.props.thread.post(reaction);
+        await updateComments();
+        this.setState({ emojiPickerIsOpen: false, isUpdating: false });
+      } catch (error) {
+        console.error("There was an error saving your vote", error);
+      }
+    });
   };
 
   closeEmojiPicker = e => {
