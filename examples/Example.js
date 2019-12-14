@@ -1,8 +1,8 @@
-import React from 'react';
-import Box from '3box';
+import React from "react";
+import Box from "3box";
 
-import Comments from '../src/index';
-import './index.scss';
+import Comments from "../src/index";
+import "./index.scss";
 
 class Example extends React.Component {
   constructor(props) {
@@ -10,9 +10,9 @@ class Example extends React.Component {
     this.state = {
       box: {},
       myProfile: {},
-      myAddress: '',
-      isReady: false,
-    }
+      myAddress: "",
+      isReady: false
+    };
   }
 
   componentDidMount() {
@@ -28,32 +28,24 @@ class Example extends React.Component {
 
     box.onSyncDone(() => this.setState({ box }));
     this.setState({ box, myProfile, myAddress, isReady: true });
-  }
+  };
 
   render() {
-    const {
-      box,
-      myAddress,
-      myProfile,
-      isReady
-    } = this.state;
+    const { box, myAddress, myProfile, isReady } = this.state;
 
     return (
       <div className="App">
         <div className="page">
           <h2 className="page_description">3Box Comments Demo</h2>
           <div className="page_content">
-            <p>
-              Your super cool dApp
-            </p>
+            <p>Your super cool dApp</p>
           </div>
           <div className="userscontainer">
             <Comments
               // required
-              spaceName='3boxtestcomments'
-              threadName='freshcomments'
-              adminEthAddr="0x2a0D29C819609Df18D8eAefb429AEC067269BBb6"
-
+              spaceName="3boxtestbountycomments"
+              threadName="freshbountycomments"
+              adminEthAddr="0xa7B5B93BF8B322023BDa57e2C86B57f4DDb4F4a1"
               // case A & B
               box={box}
               currentUserAddr={myAddress}
@@ -64,14 +56,14 @@ class Example extends React.Component {
               // case C
               // ethereum={window.ethereum}
 
-            // optional
-            // members={false}
-            // showCommentCount={10}
-            // threadOpts={{}}
-            // spaceOpts={{}}
-            // useHovers={true}
-            // currentUser3BoxProfile={myProfile}
-            // userProfileURL={address => `https://userprofiles.co/user/${address}`}
+              // optional
+              // members={false}
+              // showCommentCount={10}
+              // threadOpts={{}}
+              // spaceOpts={{}}
+              // useHovers={true}
+              // currentUser3BoxProfile={myProfile}
+              // userProfileURL={address => `https://userprofiles.co/user/${address}`}
             />
           </div>
         </div>

@@ -1,26 +1,21 @@
-import React, { Component } from 'react';
-import Box from '3box';
-import PropTypes from 'prop-types';
-import resolve from 'did-resolver';
-import registerResolver from '3id-resolver';
+import React, { Component } from "react";
+import Box from "3box";
+import PropTypes from "prop-types";
+import resolve from "did-resolver";
+import registerResolver from "3id-resolver";
 
-import { checkIsMobileDevice } from './utils';
+import { checkIsMobileDevice } from "./utils";
 
-import Input from './components/Input';
-import Context from './components/Context';
-import Dialogue from './components/Dialogue';
-import Footer from './components/Footer';
-import './index.scss';
+import Input from "./components/Input";
+import Context from "./components/Context";
+import Dialogue from "./components/Dialogue";
+import Footer from "./components/Footer";
+import "./index.scss";
 
 class App extends Component {
   constructor(props) {
     super(props);
-    const {
-      showCommentCount,
-      currentUserAddr,
-      box,
-      ethereum,
-    } = this.props;
+    const { showCommentCount, currentUserAddr, box, ethereum } = this.props;
 
     this.state = {
       dialogueLength: null,
@@ -36,8 +31,8 @@ class App extends Component {
       currentUserAddr,
       showCommentCount: showCommentCount || 30,
       ethereum: ethereum || window.ethereum,
-      isMobile: checkIsMobileDevice(),
-    }
+      isMobile: checkIsMobileDevice()
+    };
   }
 
   async componentDidMount() {
@@ -49,8 +44,11 @@ class App extends Component {
     registerResolver(IPFS);
 
     // if we have eth and don't have 3box profile, fetch it
-    if (currentUserAddr &&
-      (!currentUser3BoxProfile || !Object.entries(currentUser3BoxProfile).length)) {
+    if (
+      currentUserAddr &&
+      (!currentUser3BoxProfile ||
+        !Object.entries(currentUser3BoxProfile).length)
+    ) {
       this.fetchMe();
     }
 
@@ -65,7 +63,9 @@ class App extends Component {
 
     // if current user's eth addr is updated in parent, fetch profile
     if (currentUserAddr !== prevProps.currentUserAddr) {
-      const hasNoUserProfile = (!currentUser3BoxProfile || !Object.entries(currentUser3BoxProfile).length);
+      const hasNoUserProfile =
+        !currentUser3BoxProfile ||
+        !Object.entries(currentUser3BoxProfile).length;
       this.setState({ currentUserAddr }, () => {
         hasNoUserProfile && this.fetchMe();
       });
@@ -77,7 +77,8 @@ class App extends Component {
     }
 
     // if box is updated in parent, update component state
-    const prevBoxEmpty = !prevProps.box || !Object.entries(prevProps.box).length;
+    const prevBoxEmpty =
+      !prevProps.box || !Object.entries(prevProps.box).length;
     if (prevBoxEmpty && box && Object.entries(box).length > 0) {
       this.setState({ box });
     }
@@ -94,25 +95,128 @@ class App extends Component {
       threadOpts
     } = this.props;
 
-    if (!spaceName || !threadName) console.error('You must pass both spaceName and threadName props');
+    if (!spaceName || !threadName)
+      console.error("You must pass both spaceName and threadName props");
 
     // check if admin has that space first, if not, thread is empty
     const spaces = await Box.listSpaces(adminEthAddr);
     if (!spaces.includes(spaceName)) return;
 
-    const dialogue = await Box.getThread(spaceName, threadName, adminEthAddr, members, threadOpts || {});
+    const dialogue = await Box.getThread(
+      spaceName,
+      threadName,
+      adminEthAddr,
+      members,
+      threadOpts || {}
+    );
+
+    const commentDialogue = dialogue.filter(
+      dai => JSON.parse(dai.message).type === "comment"
+    );
+    const replyDialogue = dialogue.filter(
+      dai => JSON.parse(dai.message).type === "reply"
+    );
+    const replyToReplyDialogue = dialogue.filter(
+      dai => JSON.parse(dai.message).type === "replyToReply"
+    );
+    const votes = dialogue.filter(
+      dai => JSON.parse(dai.message).type === "vote"
+    );
+    const reactions = dialogue.filter(
+      dai => JSON.parse(dai.message).type === "reaction"
+    );
+
     const uniqueUsers = [...new Set(dialogue.map(x => x.author))];
 
     let showLoadButton;
     if (dialogue.length > showCommentCount) showLoadButton = true;
 
+    commentDialogue.forEach(comment => {
+      Object.assign(comment, {
+        replies: replyDialogue.filter(
+          dai => JSON.parse(dai.message).postId === comment.postId
+        )
+      });
+      Object.assign(comment, {
+        votes: votes.filter(
+          dai => JSON.parse(dai.message).postId === comment.postId
+        )
+      });
+      const upvotes = comment.votes.filter(
+        vote => JSON.parse(vote.message).voteType === "up"
+      ).length;
+      const downvotes = comment.votes.filter(
+        vote => JSON.parse(vote.message).voteType === "down"
+      ).length;
+      Object.assign(comment, {
+        num_of_votes: upvotes - downvotes
+      });
+      Object.assign(comment, {
+        reactions: reactions.filter(
+          dai => JSON.parse(dai.message).postId === comment.postId
+        )
+      });
+
+      comment.replies.forEach(reply => {
+        Object.assign(reply, {
+          replies: replyToReplyDialogue.filter(
+            dai => JSON.parse(dai.message).postId === reply.postId
+          )
+        });
+      });
+      comment.replies.forEach(reply => {
+        Object.assign(reply, {
+          votes: votes.filter(
+            dai => JSON.parse(dai.message).postId === reply.postId
+          )
+        });
+        const upvotes = reply.votes.filter(
+          vote => JSON.parse(vote.message).voteType === "up"
+        ).length;
+        const downvotes = reply.votes.filter(
+          vote => JSON.parse(vote.message).voteType === "down"
+        ).length;
+        Object.assign(reply, {
+          num_of_votes: upvotes - downvotes
+        });
+        Object.assign(reply, {
+          reactions: reactions.filter(
+            dai => JSON.parse(dai.message).postId === reply.postId
+          )
+        });
+        reply.replies.forEach(reply => {
+          Object.assign(reply, {
+            votes: votes.filter(
+              dai => JSON.parse(dai.message).postId === reply.postId
+            )
+          });
+          const upvotes = reply.votes.filter(
+            vote => JSON.parse(vote.message).voteType === "up"
+          ).length;
+          const downvotes = reply.votes.filter(
+            vote => JSON.parse(vote.message).voteType === "down"
+          ).length;
+          Object.assign(reply, {
+            num_of_votes: upvotes - downvotes
+          });
+          Object.assign(reply, {
+            reactions: reactions.filter(
+              dai => JSON.parse(dai.message).postId === reply.postId
+            )
+          });
+        });
+      });
+    });
+
+    console.log(commentDialogue, replyDialogue, replyToReplyDialogue, dialogue);
+
     this.setState({
       uniqueUsers,
-      dialogue,
-      dialogueLength: dialogue.length,
-      showLoadButton,
+      dialogue: commentDialogue,
+      dialogueLength: commentDialogue.length,
+      showLoadButton
     });
-  }
+  };
 
   fetchMe = async () => {
     const { currentUserAddr } = this.props;
@@ -121,34 +225,41 @@ class App extends Component {
     const currentUser3BoxProfile = await Box.getProfile(myAddress);
 
     this.setState({ currentUser3BoxProfile });
-  }
+  };
 
   // get profiles of commenters from public api only on component mount
   fetchCommenters = async () => {
     const { uniqueUsers } = this.state;
 
     const profiles = {};
-    const fetchProfile = async (did) => await Box.getProfile(did);
-    const fetchAllProfiles = async () => await Promise.all(uniqueUsers.map(did => fetchProfile(did)));
+    const fetchProfile = async did => await Box.getProfile(did);
+    const fetchAllProfiles = async () =>
+      await Promise.all(uniqueUsers.map(did => fetchProfile(did)));
     const profilesArray = await fetchAllProfiles();
 
-    const getEthAddr = async (did) => await resolve(did);
-    const getAllEthAddr = async () => await Promise.all(uniqueUsers.map(did => getEthAddr(did)));
+    const getEthAddr = async did => await resolve(did);
+    const getAllEthAddr = async () =>
+      await Promise.all(uniqueUsers.map(did => getEthAddr(did)));
     const ethAddrArray = await getAllEthAddr();
 
     profilesArray.forEach((user, i) => {
       const { userProfileURL } = this.props;
       const ethAddr = ethAddrArray[i].publicKey[2].ethereumAddress;
       user.ethAddr = ethAddr;
-      user.profileURL = userProfileURL ? userProfileURL(ethAddr) : `https://3box.io/${ethAddr}`;
+      user.profileURL = userProfileURL
+        ? userProfileURL(ethAddr)
+        : `https://3box.io/${ethAddr}`;
       profiles[uniqueUsers[i]] = user;
     });
     this.setState({ profiles });
-  }
+  };
 
   openBox = async () => {
     const { ethereum } = this.state;
-    if (!ethereum) console.error('You must provide an ethereum object to the comments component.');
+    if (!ethereum)
+      console.error(
+        "You must provide an ethereum object to the comments component."
+      );
 
     this.setState({ isLoading3Box: true });
 
@@ -160,17 +271,14 @@ class App extends Component {
 
     box.onSyncDone(() => this.setState({ box }));
     this.setState({ box, isLoading3Box: false });
-  }
+  };
 
   joinThread = async () => {
-    const {
-      spaceName,
-      threadName,
-      adminEthAddr,
-      spaceOpts
-    } = this.props;
-    const stateBox = (this.state.box && Object.keys(this.state.box).length) && this.state.box;
-    const propBox = (this.props.box && Object.keys(this.props.box).length) && this.props.box;
+    const { spaceName, threadName, adminEthAddr, spaceOpts } = this.props;
+    const stateBox =
+      this.state.box && Object.keys(this.state.box).length && this.state.box;
+    const propBox =
+      this.props.box && Object.keys(this.props.box).length && this.props.box;
     const box = stateBox || propBox;
 
     const space = await box.openSpace(spaceName, spaceOpts || {});
@@ -182,8 +290,101 @@ class App extends Component {
 
     const dialogue = await thread.getPosts();
     thread.onUpdate(() => this.updateComments());
-    this.setState({ thread, dialogue });
-  }
+    const commentDialogue = dialogue.filter(
+      dai => JSON.parse(dai.message).type === "comment"
+    );
+    const replyDialogue = dialogue.filter(
+      dai => JSON.parse(dai.message).type === "reply"
+    );
+    const replyToReplyDialogue = dialogue.filter(
+      dai => JSON.parse(dai.message).type === "replyToReply"
+    );
+    const votes = dialogue.filter(
+      dai => JSON.parse(dai.message).type === "vote"
+    );
+    const reactions = dialogue.filter(
+      dai => JSON.parse(dai.message).type === "reaction"
+    );
+
+    commentDialogue.forEach(comment => {
+      Object.assign(comment, {
+        replies: replyDialogue.filter(
+          dai => JSON.parse(dai.message).postId === comment.postId
+        )
+      });
+      Object.assign(comment, {
+        votes: votes.filter(
+          dai => JSON.parse(dai.message).postId === comment.postId
+        )
+      });
+      const upvotes = comment.votes.filter(
+        vote => JSON.parse(vote.message).voteType === "up"
+      ).length;
+      const downvotes = comment.votes.filter(
+        vote => JSON.parse(vote.message).voteType === "down"
+      ).length;
+      Object.assign(comment, {
+        num_of_votes: upvotes - downvotes
+      });
+      Object.assign(comment, {
+        reactions: reactions.filter(
+          dai => JSON.parse(dai.message).postId === comment.postId
+        )
+      });
+
+      comment.replies.forEach(reply => {
+        Object.assign(reply, {
+          replies: replyToReplyDialogue.filter(
+            dai => JSON.parse(dai.message).postId === reply.postId
+          )
+        });
+      });
+      comment.replies.forEach(reply => {
+        Object.assign(reply, {
+          votes: votes.filter(
+            dai => JSON.parse(dai.message).postId === reply.postId
+          )
+        });
+        const upvotes = reply.votes.filter(
+          vote => JSON.parse(vote.message).voteType === "up"
+        ).length;
+        const downvotes = reply.votes.filter(
+          vote => JSON.parse(vote.message).voteType === "down"
+        ).length;
+        Object.assign(reply, {
+          num_of_votes: upvotes - downvotes
+        });
+        Object.assign(reply, {
+          reactions: reactions.filter(
+            dai => JSON.parse(dai.message).postId === reply.postId
+          )
+        });
+        reply.replies.forEach(reply => {
+          Object.assign(reply, {
+            votes: votes.filter(
+              dai => JSON.parse(dai.message).postId === reply.postId
+            )
+          });
+          const upvotes = reply.votes.filter(
+            vote => JSON.parse(vote.message).voteType === "up"
+          ).length;
+          const downvotes = reply.votes.filter(
+            vote => JSON.parse(vote.message).voteType === "down"
+          ).length;
+          Object.assign(reply, {
+            num_of_votes: upvotes - downvotes
+          });
+          Object.assign(reply, {
+            reactions: reactions.filter(
+              dai => JSON.parse(dai.message).postId === reply.postId
+            )
+          });
+        });
+      });
+    });
+
+    this.setState({ thread, dialogue: commentDialogue });
+  };
 
   fetch3ID = async () => {
     const { currentUserAddr, spaceName, userProfileURL } = this.props;
@@ -192,24 +393,125 @@ class App extends Component {
     const myAddress = currentUserAddr || stateCurrentUserAddr;
 
     const config = await Box.getConfig(myAddress);
-    const threeID = config.spaces && config.spaces[spaceName] && config.spaces[spaceName].DID;
+    const threeID =
+      config.spaces && config.spaces[spaceName] && config.spaces[spaceName].DID;
 
     // if profile already exists in uniqueUsers object, return
     if (profiles[threeID]) return;
 
     const currentUser3BoxProfile = await Box.getProfile(myAddress);
     currentUser3BoxProfile.ethAddr = myAddress;
-    currentUser3BoxProfile.profileURL = userProfileURL ? userProfileURL(myAddress) : `https://3box.io/${myAddress}`;
+    currentUser3BoxProfile.profileURL = userProfileURL
+      ? userProfileURL(myAddress)
+      : `https://3box.io/${myAddress}`;
     profiles[threeID] = currentUser3BoxProfile;
 
     this.setState({ currentUser3BoxProfile, profiles });
-  }
+  };
 
   updateComments = async () => {
     const { thread } = this.state;
     const dialogue = await thread.getPosts();
-    this.setState({ dialogue, dialogueLength: dialogue.length });
-  }
+    const commentDialogue = dialogue.filter(
+      dai => JSON.parse(dai.message).type === "comment"
+    );
+    const replyDialogue = dialogue.filter(
+      dai => JSON.parse(dai.message).type === "reply"
+    );
+    const replyToReplyDialogue = dialogue.filter(
+      dai => JSON.parse(dai.message).type === "replyToReply"
+    );
+    const votes = dialogue.filter(
+      dai => JSON.parse(dai.message).type === "vote"
+    );
+    const reactions = dialogue.filter(
+      dai => JSON.parse(dai.message).type === "reaction"
+    );
+
+    commentDialogue.forEach(comment => {
+      Object.assign(comment, {
+        replies: replyDialogue.filter(
+          dai => JSON.parse(dai.message).postId === comment.postId
+        )
+      });
+      Object.assign(comment, {
+        votes: votes.filter(
+          dai => JSON.parse(dai.message).postId === comment.postId
+        )
+      });
+      const upvotes = comment.votes.filter(
+        vote => JSON.parse(vote.message).voteType === "up"
+      ).length;
+      const downvotes = comment.votes.filter(
+        vote => JSON.parse(vote.message).voteType === "down"
+      ).length;
+      Object.assign(comment, {
+        num_of_votes: upvotes - downvotes
+      });
+      Object.assign(comment, {
+        reactions: reactions.filter(
+          dai => JSON.parse(dai.message).postId === comment.postId
+        )
+      });
+
+      comment.replies.forEach(reply => {
+        Object.assign(reply, {
+          replies: replyToReplyDialogue.filter(
+            dai => JSON.parse(dai.message).postId === reply.postId
+          )
+        });
+      });
+      comment.replies.forEach(reply => {
+        Object.assign(reply, {
+          votes: votes.filter(
+            dai => JSON.parse(dai.message).postId === reply.postId
+          )
+        });
+        const upvotes = reply.votes.filter(
+          vote => JSON.parse(vote.message).voteType === "up"
+        ).length;
+        const downvotes = reply.votes.filter(
+          vote => JSON.parse(vote.message).voteType === "down"
+        ).length;
+        Object.assign(reply, {
+          num_of_votes: upvotes - downvotes
+        });
+        Object.assign(reply, {
+          reactions: reactions.filter(
+            dai => JSON.parse(dai.message).postId === reply.postId
+          )
+        });
+        reply.replies.forEach(reply => {
+          Object.assign(reply, {
+            votes: votes.filter(
+              dai => JSON.parse(dai.message).postId === reply.postId
+            )
+          });
+          const upvotes = reply.votes.filter(
+            vote => JSON.parse(vote.message).voteType === "up"
+          ).length;
+          const downvotes = reply.votes.filter(
+            vote => JSON.parse(vote.message).voteType === "down"
+          ).length;
+          Object.assign(reply, {
+            num_of_votes: upvotes - downvotes
+          });
+          Object.assign(reply, {
+            reactions: reactions.filter(
+              dai => JSON.parse(dai.message).postId === reply.postId
+            )
+          });
+        });
+      });
+    });
+
+    console.log(commentDialogue, replyDialogue, dialogue);
+
+    this.setState({
+      dialogue: commentDialogue,
+      dialogueLength: commentDialogue.length
+    });
+  };
 
   handleLoadMore = async () => {
     const { showCommentCount, dialogue } = this.state;
@@ -217,7 +519,7 @@ class App extends Component {
     let showLoadButton = true;
     if (newCount >= dialogue.length) showLoadButton = false;
     this.setState({ showCommentCount: newCount, showLoadButton });
-  }
+  };
 
   render() {
     const {
@@ -248,7 +550,7 @@ class App extends Component {
       <div
         className={`
         threebox-comments-react 
-        ${isMobile ? 'comment-mobile' : 'comment-desktop'}
+        ${isMobile ? "comment-mobile" : "comment-desktop"}
         `}
       >
         <Input
@@ -267,10 +569,7 @@ class App extends Component {
           openBox={this.openBox}
         />
 
-        <Context
-          dialogueLength={dialogueLength}
-          isLoading={isLoading}
-        />
+        <Context dialogueLength={dialogueLength} isLoading={isLoading} />
 
         <Dialogue
           dialogue={dialogue}
@@ -287,6 +586,13 @@ class App extends Component {
           handleLoadMore={this.handleLoadMore}
           joinThread={this.joinThread}
           openBox={this.openBox}
+          currentUser3BoxProfile={currentUser3BoxProfile}
+          spaceName={spaceName}
+          ethereum={ethereum}
+          isLoading3Box={isLoading3Box}
+          updateComments={this.updateComments}
+          type="comment"
+          isLoading={isLoading}
         />
 
         <Footer />
@@ -311,12 +617,12 @@ App.propTypes = {
   loginFunction: PropTypes.func,
   spaceName: PropTypes.string.isRequired,
   threadName: PropTypes.string.isRequired,
-  adminEthAddr: PropTypes.string.isRequired,
+  adminEthAddr: PropTypes.string.isRequired
 };
 
 App.defaultProps = {
   showCommentCount: 30,
-  currentUserAddr: '',
+  currentUserAddr: "",
   members: false,
   useHovers: false,
   userProfileURL: null,
@@ -325,5 +631,5 @@ App.defaultProps = {
   currentUser3BoxProfile: null,
   threadOpts: null,
   spaceOpts: null,
-  loginFunction: null,
+  loginFunction: null
 };

@@ -1,4 +1,4 @@
-@import '../../variables.scss';
+@import "../../variables.scss";
 
 .comment {
   width: 100%;
@@ -85,7 +85,7 @@
   height: 16px;
   width: auto;
   cursor: pointer;
-  opacity: .35;
+  opacity: 0.35;
 }
 
 .comment_content_context_time {
@@ -119,6 +119,66 @@
   word-break: break-word;
 }
 
+.comment_reply {
+  margin: 10px 10px 0px 10px;
+  width: 100%;
+}
+
+.comment_emoji {
+  display: flex;
+  align-items: center;
+}
+
+.reaction_item {
+  display: flex;
+  align-items: center;
+  margin-top: 18px;
+}
+
+.reaction_content {
+  min-width: calc(100% - 100px);
+  box-sizing: border-box;
+  padding-left: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.reaction_emoji {
+  font-size: 32px;
+  padding-bottom: 8px;
+}
+
+.comment_emoji_number {
+  font-size: 20px;
+  padding-bottom: 3px;
+  font-weight: 400;
+  color: #bcbcbc;
+
+  &:hover {
+    cursor: pointer;
+    color: rgb(255, 44, 44);
+    transform: scale(1.1);
+  }
+}
+
+.comment_my_emoji_number {
+  font-size: 20px;
+  padding-bottom: 3px;
+  font-weight: 400;
+  color: rgb(255, 44, 44);
+
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+  }
+}
+
+.comment_context {
+  width: 100%;
+}
+
 .comment_loading {
   min-width: 30px;
   min-height: 30px;
@@ -127,6 +187,71 @@
   position: absolute;
   right: -36px;
   top: -4px;
+}
+
+.up_down_vote {
+  display: flex;
+  flex-direction: column;
+  margin-right: 12px;
+}
+
+.up_vote {
+  height: 15px;
+  width: 15px;
+  margin-bottom: 3px;
+
+  &:hover {
+    cursor: pointer;
+
+    .up_vote_img {
+      fill: rgb(255, 44, 44);
+    }
+  }
+}
+
+.my_up_vote {
+  height: 15px;
+  width: 15px;
+  margin-bottom: 3px;
+
+  .up_vote_img {
+    fill: rgb(255, 44, 44);
+  }
+}
+
+.vote_number {
+  font-size: 20px;
+  padding-left: 1.2px;
+
+  &:hover {
+    cursor: pointer;
+    color: rgb(255, 44, 44);
+    transform: scale(1.1);
+  }
+}
+
+.down_vote {
+  height: 15px;
+  width: 15px;
+  margin-top: 5px;
+
+  &:hover {
+    cursor: pointer;
+
+    .down_vote_img {
+      fill: rgb(255, 44, 44);
+    }
+  }
+}
+
+.my_down_vote {
+  height: 15px;
+  width: 15px;
+  margin-top: 5px;
+
+  .down_vote_img {
+    fill: rgb(255, 44, 44);
+  }
 }
 
 @media only screen and (max-width: 768px) {

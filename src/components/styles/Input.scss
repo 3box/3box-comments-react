@@ -1,4 +1,4 @@
-@import '../../variables.scss';
+@import "../../variables.scss";
 
 .input {
   position: relative;
@@ -76,6 +76,17 @@
   align-items: center;
 }
 
+.sc-user-response--picker-wrapper {
+  min-width: $commentPictureDimension;
+  min-height: $commentPictureDimension;
+  max-width: $commentPictureDimension;
+  max-height: $commentPictureDimension;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .input_emptyUser {
   position: absolute;
   left: -1px;
@@ -98,7 +109,7 @@
   min-height: 30px;
   max-width: 30px;
   max-height: 30px;
-  opacity: .6;
+  opacity: 0.6;
 }
 
 .input_send {
@@ -120,7 +131,7 @@
   min-width: 52px;
   max-height: 52px;
   max-width: 52px;
-  opacity: .6;
+  opacity: 0.6;
 }
 
 .input_postLoading_text {
@@ -139,7 +150,7 @@
   color: $lighterFont;
   font-size: 12px;
   opacity: 0;
-  transition: .2s ease-in-out all;
+  transition: 0.2s ease-in-out all;
   white-space: nowrap;
   overflow: hidden;
 }
@@ -188,7 +199,7 @@
       min-height: 30px;
       max-width: 30px;
       max-height: 30px;
-      opacity: .6;
+      opacity: 0.6;
     }
 
     .input_form {
@@ -215,7 +226,7 @@
       min-height: $commentPictureDimension-mobile;
       max-width: $commentPictureDimension-mobile;
       max-height: $commentPictureDimension-mobile;
-      opacity: .6;
+      opacity: 0.6;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -227,7 +238,7 @@
 
     .input_send_icon {
       width: 26px;
-      opacity: .5;
+      opacity: 0.5;
     }
 
     .input_commentAs {
@@ -249,7 +260,7 @@
       max-width: 28px;
       max-height: 28px;
       border-radius: 0;
-      opacity: .7;
+      opacity: 0.7;
     }
 
     .input_postLoading {
