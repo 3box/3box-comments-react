@@ -92,7 +92,6 @@ class Comment extends Component {
           type: "vote",
           postId: comment.postId
         });
-        console.log(vote, this.state.firstTimeLoaded2);
         if (this.state.hasMyVote)
           await this.props.thread.deletePost(this.state.myVote.postId);
         await this.props.thread.post(vote);
@@ -133,7 +132,6 @@ class Comment extends Component {
           type: "vote",
           postId: comment.postId
         });
-        console.log(vote, this.state.voteType);
         if (this.state.hasMyVote)
           await this.props.thread.deletePost(this.state.myVote.postId);
         await this.props.thread.post(vote);
@@ -161,7 +159,6 @@ class Comment extends Component {
   };
 
   _handleEmojiPicked = async emoji => {
-    console.log(emoji);
     const {
       joinThread,
       thread,
@@ -189,7 +186,6 @@ class Comment extends Component {
           type: "reaction",
           postId: comment.postId
         });
-        console.log(reaction);
         if (this.state.hasMyReaction)
           await this.props.thread.deletePost(this.state.myReaction.postId);
         await this.props.thread.post(reaction);
@@ -236,7 +232,6 @@ class Comment extends Component {
       isUpdating
     } = this.state;
 
-    console.log(currentUserAddr, firstTimeLoaded2, comment.votes !== undefined);
     if (comment.replies !== undefined && !firstTimeLoaded1) {
       let showLoadButton = false;
 
@@ -254,9 +249,6 @@ class Comment extends Component {
     ) {
       const votes = comment.votes;
       const reactions = comment.reactions;
-      console.log("entered");
-
-      // console.log(votes);
 
       const hasMyVotes = votes.filter(vote => {
         const profile = profiles[vote.author];
@@ -264,7 +256,6 @@ class Comment extends Component {
         const currentUserAddrNormalized =
           currentUserAddr && currentUserAddr.toLowerCase();
 
-        // console.log(voteAddr, currentUserAddrNormalized);
         return voteAddr === currentUserAddrNormalized;
       });
 
@@ -274,16 +265,8 @@ class Comment extends Component {
         const currentUserAddrNormalized =
           currentUserAddr && currentUserAddr.toLowerCase();
 
-        // console.log(voteAddr, currentUserAddrNormalized);
         return voteAddr === currentUserAddrNormalized;
       });
-
-      console.log(
-        hasMyVotes.length > 0,
-        hasMyReactions.length > 0,
-        currentUserAddr,
-        comment.message
-      );
 
       this.setState({
         firstTimeLoaded2: true,

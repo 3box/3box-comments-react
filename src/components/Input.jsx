@@ -33,7 +33,6 @@ class Input extends Component {
 
   async componentDidMount() {
     const el = document.getElementsByClassName("input_form");
-    // console.log(el);
     for (const element of el) {
       element.addEventListener("keydown", this.searchEnter, false);
     }
@@ -41,7 +40,6 @@ class Input extends Component {
 
     this.setState({ disableComment: false });
 
-    console.log(this.state.comment);
     document.addEventListener(
       "input",
       event => {
@@ -169,7 +167,6 @@ class Input extends Component {
         postId === undefined && type === "comment"
           ? JSON.stringify({ comment, type })
           : JSON.stringify({ comment, type, postId });
-      console.log(commentNew);
       await this.props.thread.post(commentNew);
       await updateComments();
       this.setState({ postLoading: false });

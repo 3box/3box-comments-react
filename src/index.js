@@ -208,8 +208,6 @@ class App extends Component {
       });
     });
 
-    console.log(commentDialogue, replyDialogue, replyToReplyDialogue, dialogue);
-
     this.setState({
       uniqueUsers,
       dialogue: commentDialogue,
@@ -504,8 +502,6 @@ class App extends Component {
         });
       });
     });
-
-    console.log(commentDialogue, replyDialogue, dialogue);
 
     this.setState({
       dialogue: commentDialogue,

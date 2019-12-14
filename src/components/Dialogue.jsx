@@ -38,7 +38,6 @@ const Dialogue = ({
           const currentUserAddrNormalized =
             currentUserAddr && currentUserAddr.toLowerCase();
           const adminEthAddrNormalized = adminEthAddr.toLowerCase();
-          // console.log(comment);
 
           return (
             <Comment
