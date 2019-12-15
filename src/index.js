@@ -381,6 +381,7 @@ class App extends Component {
       });
     });
 
+    console.log(commentDialogue);
     this.setState({ thread, dialogue: commentDialogue });
   };
 
@@ -503,6 +504,7 @@ class App extends Component {
       });
     });
 
+    console.log(commentDialogue);
     this.setState({
       dialogue: commentDialogue,
       dialogueLength: commentDialogue.length

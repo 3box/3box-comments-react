@@ -37,7 +37,8 @@ class Comment extends Component {
       emojiPickerIsOpen: false,
       emojiFilter: "",
       openReactionModal: false,
-      openVoteModal: false
+      openVoteModal: false,
+      emojiSelected: undefined
     };
   }
 
@@ -190,7 +191,11 @@ class Comment extends Component {
           await this.props.thread.deletePost(this.state.myReaction.postId);
         await this.props.thread.post(reaction);
         await updateComments();
-        this.setState({ emojiPickerIsOpen: false, isUpdating: false });
+        this.setState({
+          emojiPickerIsOpen: false,
+          isUpdating: false,
+          emojiSelected: emoji
+        });
       } catch (error) {
         console.error("There was an error saving your vote", error);
       }
@@ -277,7 +282,11 @@ class Comment extends Component {
             ? JSON.parse(hasMyVotes[0].message).voteType
             : undefined,
         hasMyReaction: hasMyReactions.length > 0,
-        myReaction: hasMyReactions.length > 0 ? hasMyReactions[0] : undefined
+        myReaction: hasMyReactions.length > 0 ? hasMyReactions[0] : undefined,
+        emojiSelected:
+          hasMyReactions.length > 0
+            ? JSON.parse(hasMyReactions[0].message).reaction
+            : undefined
       });
     }
   }
@@ -337,7 +346,8 @@ class Comment extends Component {
       emojiPickerIsOpen,
       openReactionModal,
       openVoteModal,
-      hasMyReaction
+      hasMyReaction,
+      emojiSelected
     } = this.state;
 
     const profilePicture =
@@ -359,14 +369,18 @@ class Comment extends Component {
           <div style={{ minWidth: 400 }}>
             <h2>Reactions</h2>
             <div>
-              {comment.reactions.map((reaction, i) => (
-                <ReactionItem
-                  key={i}
-                  profiles={profiles}
-                  reaction={reaction}
-                  useHovers={useHovers}
-                />
-              ))}
+              {comment.reactions.length > 0 ? (
+                comment.reactions.map((reaction, i) => (
+                  <ReactionItem
+                    key={i}
+                    profiles={profiles}
+                    reaction={reaction}
+                    useHovers={useHovers}
+                  />
+                ))
+              ) : (
+                <h4>No Reaction present</h4>
+              )}
             </div>
           </div>
         </Modal>
@@ -374,14 +388,18 @@ class Comment extends Component {
           <div style={{ minWidth: 400 }}>
             <h2>Votes</h2>
             <div>
-              {comment.votes.map((vote, i) => (
-                <VoteItem
-                  key={i}
-                  profiles={profiles}
-                  vote={vote}
-                  useHovers={useHovers}
-                />
-              ))}
+              {comment.votes.length > 0 ? (
+                comment.votes.map((vote, i) => (
+                  <VoteItem
+                    key={i}
+                    profiles={profiles}
+                    vote={vote}
+                    useHovers={useHovers}
+                  />
+                ))
+              ) : (
+                <h4>No Votes present</h4>
+              )}
             </div>
           </div>
         </Modal>
@@ -538,6 +556,7 @@ class Comment extends Component {
               isActive={emojiPickerIsOpen}
               tooltip={this._renderEmojiPopup()}
               type="response"
+              emoji={emojiSelected}
             />
             <div
               className={

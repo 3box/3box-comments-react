@@ -8,7 +8,16 @@
   height: 22px;
   cursor: pointer;
   align-self: center;
-  opacity: .4;
+  opacity: 0.4;
+}
+
+.my_emoji {
+  font-size: 24px;
+  min-width: 60px;
+  cursor: pointer;
+  &:hover {
+    transform: scale(1.1);
+  }
 }
 
 .sc-popup-window--cointainer {
@@ -66,7 +75,7 @@
 }
 
 .sc-popup-window--search::placeholder {
-  color: #C1C7CD;
+  color: #c1c7cd;
 }
 
 // .sc-user-input--file-icon-wrapper
