@@ -6,6 +6,12 @@
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
+
+  &:hover {
+    .comment_content_context_main_user_reply {
+      visibility: visible !important;
+    }
+  }
 }
 
 .comment.isMyComment {
@@ -86,6 +92,25 @@
   width: auto;
   cursor: pointer;
   opacity: .35;
+}
+
+.comment_content_context_main_user_reply {
+  visibility: hidden;
+  margin-top: 6px;
+}
+
+.comment_content_context_main_user_reply_button {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  display: flex;
+}
+
+.comment_content_context_main_user_reply_button_icon {
+  height: 16px;
+  width: auto;
+  opacity: .35;
+  margin-right: 3px;
 }
 
 .comment_content_context_time {

@@ -3,7 +3,7 @@ import makeBlockie from 'ethereum-blockies-base64';
 import SVG from 'react-inlinesvg';
 import PropTypes from 'prop-types';
 
-import { shortenEthAddr, checkIsMobileDevice } from '../utils';
+import { shortenEthAddr, checkIsMobileDevice, encodeMessage } from '../utils';
 
 import EmojiIcon from './Emoji/EmojiIcon';
 import PopupWindow from './Emoji/PopupWindow';
@@ -32,7 +32,7 @@ class Input extends Component {
   }
 
   async componentDidMount() {
-    const el = document.getElementsByClassName('input_form')[0];
+    const el = this.inputRef.current;
     el.addEventListener("keydown", this.searchEnter, false);
     this.emojiPickerButton = document.querySelector('#sc-emoji-picker-button');
 
@@ -124,7 +124,8 @@ class Input extends Component {
       openBox,
       box,
       loginFunction,
-      ethereum
+      ethereum,
+      parentId
     } = this.props;
     const { comment, disableComment, isMobile } = this.state;
     const updatedComment = comment.replace(/(\r\n|\n|\r)/gm, "");
@@ -141,8 +142,9 @@ class Input extends Component {
 
     if (!Object.keys(thread).length) await joinThread();
 
+    const message = encodeMessage("comment", comment, parentId);
     try {
-      await this.props.thread.post(comment);
+      await this.props.thread.post(message);
       await updateComments();
       this.setState({ postLoading: false });
     } catch (error) {
@@ -279,6 +281,7 @@ Input.propTypes = {
   updateComments: PropTypes.func.isRequired,
   openBox: PropTypes.func.isRequired,
   joinThread: PropTypes.func.isRequired,
+  parentId: PropTypes.string,
 };
 
 Input.defaultProps = {

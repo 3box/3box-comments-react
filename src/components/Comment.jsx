@@ -5,16 +5,20 @@ import Linkify from 'react-linkify';
 import makeBlockie from 'ethereum-blockies-base64';
 import SVG from 'react-inlinesvg';
 
-import { timeSince, shortenEthAddr } from '../utils';
+import { timeSince, shortenEthAddr, REPLIABLE_COMMENT_LEVEL_MAX } from '../utils';
 import Delete from '../assets/Delete.svg';
+import Reply from '../assets/Reply.svg';
 import Loading from '../assets/3BoxCommentsSpinner.svg';
 import './styles/Comment.scss';
+import Input from './Input';
+import Dialogue from './Dialogue';
 
 class Comment extends Component {
   constructor(props) {
     super(props);
     this.state = {
       loadingDelete: false,
+      showReply: false,
     };
   }
 
@@ -44,8 +48,16 @@ class Comment extends Component {
     }
   }
 
+  toggleReplyInput = (e) => {
+    const { showReply } = this.state;
+    this.setState({ showReply: !showReply});
+  }
+
   render() {
-    const { loadingDelete } = this.state;
+    const {
+      loadingDelete,
+      showReply
+    } = this.state;
     const {
       comment,
       profile,
@@ -53,7 +65,21 @@ class Comment extends Component {
       useHovers,
       isMyAdmin,
       isCommenterAdmin,
-      thread
+      thread,
+      currentUserAddr,
+      currentUser3BoxProfile,
+      ethereum,
+      isLoading3Box,
+      updateComments,
+      adminEthAddr,
+      box,
+      loginFunction,
+      joinThread,
+      openBox,
+      profiles,
+      showCommentCount,
+      showLoadButton,
+      handleLoadMore,
     } = this.props;
 
     const profilePicture = profile.ethAddr &&
@@ -61,6 +87,10 @@ class Comment extends Component {
         : makeBlockie(profile.ethAddr));
     const canDelete = isMyComment || isMyAdmin;
     const hasThread = !!Object.keys(thread).length;
+
+    if (comment.children) {
+      console.log("children", comment, comment.children);
+    }
 
     return (
       <div className={`comment ${canDelete ? 'isMyComment' : ''}`}>
@@ -137,9 +167,61 @@ class Comment extends Component {
           </div>
           <div className="comment_content_text">
             <Linkify>
-              {comment.message}
+              {comment.message.data}
             </Linkify>
           </div>
+
+          {(!loadingDelete && comment.level < REPLIABLE_COMMENT_LEVEL_MAX ) && (
+            <div>
+              <div className="comment_content_context_main_user_reply">
+                <button
+                  onClick={(e) => this.toggleReplyInput(e)}
+                  className="comment_content_context_main_user_reply_button"
+                >
+                  <SVG src={Reply} alt="Reply" className="comment_content_context_main_user_reply_button_icon" />
+                  Reply
+                </button>
+              </div>
+              {showReply && (
+                <Input
+                  currentUserAddr={currentUserAddr}
+                  currentUser3BoxProfile={currentUser3BoxProfile}
+                  thread={thread}
+                  ethereum={ethereum}
+                  adminEthAddr={adminEthAddr}
+                  box={box}
+                  loginFunction={loginFunction}
+                  isLoading3Box={isLoading3Box}
+                  joinThread={joinThread}
+                  updateComments={updateComments}
+                  openBox={openBox}
+                  parentId={comment.postId}
+                />
+              )}
+            </div>
+          )}
+
+          {(comment.children && comment.children.length > 0 && (
+            <Dialogue
+              dialogue={comment.children}
+              currentUserAddr={currentUserAddr}
+              currentUser3BoxProfile={currentUser3BoxProfile}
+              adminEthAddr={adminEthAddr}
+              profiles={profiles}
+              showCommentCount={showCommentCount}
+              showLoadButton={showLoadButton}
+              loginFunction={loginFunction}
+              isLoading3Box={isLoading3Box}
+              ethereum={ethereum}
+              thread={thread}
+              box={box}
+              useHovers={useHovers}
+              handleLoadMore={handleLoadMore}
+              joinThread={joinThread}
+              updateComments={updateComments}
+              openBox={openBox}
+            />
+          ))}
         </div >
       </div >
     );
@@ -160,6 +242,15 @@ Comment.propTypes = {
   box: PropTypes.object,
   loginFunction: PropTypes.func,
   openBox: PropTypes.func.isRequired,
+  currentUserAddr: PropTypes.string,
+  currentUser3BoxProfile: PropTypes.object,
+  ethereum: PropTypes.object,
+  isLoading3Box: PropTypes.bool,
+  updateComments: PropTypes.func.isRequired,
+  profiles: PropTypes.object,
+  showCommentCount: PropTypes.number.isRequired,
+  showLoadButton: PropTypes.bool,
+  handleLoadMore: PropTypes.func.isRequired,
 };
 
 Comment.defaultProps = {

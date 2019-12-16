@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import resolve from 'did-resolver';
 import registerResolver from '3id-resolver';
 
-import { checkIsMobileDevice } from './utils';
+import { checkIsMobileDevice, reorderComments } from './utils';
 
 import Input from './components/Input';
 import Context from './components/Context';
@@ -106,9 +106,12 @@ class App extends Component {
     let showLoadButton;
     if (dialogue.length > showCommentCount) showLoadButton = true;
 
+    const updatedDialogue = reorderComments(dialogue);
+    console.log("fetch dialogue 3", dialogue, updatedDialogue);
+
     this.setState({
       uniqueUsers,
-      dialogue,
+      dialogue: updatedDialogue,
       dialogueLength: dialogue.length,
       showLoadButton,
     });
@@ -181,8 +184,10 @@ class App extends Component {
     await this.fetch3ID();
 
     const dialogue = await thread.getPosts();
+    const updatedDialogue = reorderComments(dialogue);
+    console.log("fetch dialogue 2", dialogue, updatedDialogue);
     thread.onUpdate(() => this.updateComments());
-    this.setState({ thread, dialogue });
+    this.setState({ thread, dialogue: updatedDialogue });
   }
 
   fetch3ID = async () => {
@@ -208,7 +213,12 @@ class App extends Component {
   updateComments = async () => {
     const { thread } = this.state;
     const dialogue = await thread.getPosts();
-    this.setState({ dialogue, dialogueLength: dialogue.length });
+    const updatedDialogue = reorderComments(dialogue);
+    console.log("fetch dialogue 1", dialogue, updatedDialogue);
+    this.setState({
+      dialogue: updatedDialogue,
+      dialogueLength: dialogue.length
+    });
   }
 
   handleLoadMore = async () => {
@@ -247,7 +257,7 @@ class App extends Component {
     return (
       <div
         className={`
-        threebox-comments-react 
+        threebox-comments-react
         ${isMobile ? 'comment-mobile' : 'comment-desktop'}
         `}
       >
@@ -275,17 +285,21 @@ class App extends Component {
         <Dialogue
           dialogue={dialogue}
           currentUserAddr={currentUserAddr}
+          currentUser3BoxProfile={currentUser3BoxProfile}
           adminEthAddr={adminEthAddr}
           threadName={threadName}
           profiles={profiles}
           showCommentCount={showCommentCount}
           showLoadButton={showLoadButton}
           loginFunction={loginFunction}
+          isLoading3Box={isLoading3Box}
+          ethereum={ethereum}
           thread={thread}
           box={box}
           useHovers={useHovers}
           handleLoadMore={this.handleLoadMore}
           joinThread={this.joinThread}
+          updateComments={this.updateComments}
           openBox={this.openBox}
         />
 
