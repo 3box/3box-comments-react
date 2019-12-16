@@ -77,31 +77,33 @@ class Comment extends Component {
     // myVoteNewMessage.voteType = "up";
     // let myVote = this.state.myVote;
     // myVote.message = myVoteNewMessage;
-    this.setState({ firstTimeLoaded2: false, isUpdating: true }, async () => {
-      const noWeb3 =
-        (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
+    if (this.state.firstTimeLoaded2) {
+      this.setState({ firstTimeLoaded2: false, isUpdating: true }, async () => {
+        const noWeb3 =
+          (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
 
-      if (noWeb3) return;
+        if (noWeb3) return;
 
-      if (!box || !Object.keys(box).length)
-        loginFunction ? await loginFunction() : await openBox();
+        if (!box || !Object.keys(box).length)
+          loginFunction ? await loginFunction() : await openBox();
 
-      if (!Object.keys(thread).length) await joinThread();
-      try {
-        const vote = JSON.stringify({
-          voteType: "up",
-          type: "vote",
-          postId: comment.postId
-        });
-        if (this.state.hasMyVote)
-          await this.props.thread.deletePost(this.state.myVote.postId);
-        await this.props.thread.post(vote);
-        await updateComments();
-        this.setState({ isUpdating: false });
-      } catch (error) {
-        console.error("There was an error saving your vote", error);
-      }
-    });
+        if (!Object.keys(thread).length) await joinThread();
+        try {
+          const vote = JSON.stringify({
+            voteType: "up",
+            type: "vote",
+            postId: comment.postId
+          });
+          if (this.state.hasMyVote)
+            await this.props.thread.deletePost(this.state.myVote.postId);
+          await this.props.thread.post(vote);
+          await updateComments();
+          this.setState({ isUpdating: false });
+        } catch (error) {
+          console.error("There was an error saving your vote", error);
+        }
+      });
+    }
   };
 
   downvoteComment = async () => {
@@ -116,32 +118,34 @@ class Comment extends Component {
       comment
     } = this.props;
 
-    this.setState({ firstTimeLoaded2: false, isUpdating: true }, async () => {
-      const noWeb3 =
-        (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
+    if (this.state.firstTimeLoaded2) {
+      this.setState({ firstTimeLoaded2: false, isUpdating: true }, async () => {
+        const noWeb3 =
+          (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
 
-      if (noWeb3) return;
+        if (noWeb3) return;
 
-      if (!box || !Object.keys(box).length)
-        loginFunction ? await loginFunction() : await openBox();
+        if (!box || !Object.keys(box).length)
+          loginFunction ? await loginFunction() : await openBox();
 
-      if (!Object.keys(thread).length) await joinThread();
+        if (!Object.keys(thread).length) await joinThread();
 
-      try {
-        const vote = JSON.stringify({
-          voteType: "down",
-          type: "vote",
-          postId: comment.postId
-        });
-        if (this.state.hasMyVote)
-          await this.props.thread.deletePost(this.state.myVote.postId);
-        await this.props.thread.post(vote);
-        await updateComments();
-        this.setState({ isUpdating: false });
-      } catch (error) {
-        console.error("There was an error saving your vote", error);
-      }
-    });
+        try {
+          const vote = JSON.stringify({
+            voteType: "down",
+            type: "vote",
+            postId: comment.postId
+          });
+          if (this.state.hasMyVote)
+            await this.props.thread.deletePost(this.state.myVote.postId);
+          await this.props.thread.post(vote);
+          await updateComments();
+          this.setState({ isUpdating: false });
+        } catch (error) {
+          console.error("There was an error saving your vote", error);
+        }
+      });
+    }
   };
 
   handleLoadMore = async () => {
@@ -170,36 +174,38 @@ class Comment extends Component {
       ethereum,
       comment
     } = this.props;
-    this.setState({ firstTimeLoaded2: false, isUpdating: true }, async () => {
-      const noWeb3 =
-        (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
+    if (this.state.firstTimeLoaded2) {
+      this.setState({ firstTimeLoaded2: false, isUpdating: true }, async () => {
+        const noWeb3 =
+          (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
 
-      if (noWeb3) return;
+        if (noWeb3) return;
 
-      if (!box || !Object.keys(box).length)
-        loginFunction ? await loginFunction() : await openBox();
+        if (!box || !Object.keys(box).length)
+          loginFunction ? await loginFunction() : await openBox();
 
-      if (!Object.keys(thread).length) await joinThread();
+        if (!Object.keys(thread).length) await joinThread();
 
-      try {
-        const reaction = JSON.stringify({
-          reaction: emoji,
-          type: "reaction",
-          postId: comment.postId
-        });
-        if (this.state.hasMyReaction)
-          await this.props.thread.deletePost(this.state.myReaction.postId);
-        await this.props.thread.post(reaction);
-        await updateComments();
-        this.setState({
-          emojiPickerIsOpen: false,
-          isUpdating: false,
-          emojiSelected: emoji
-        });
-      } catch (error) {
-        console.error("There was an error saving your vote", error);
-      }
-    });
+        try {
+          const reaction = JSON.stringify({
+            reaction: emoji,
+            type: "reaction",
+            postId: comment.postId
+          });
+          if (this.state.hasMyReaction)
+            await this.props.thread.deletePost(this.state.myReaction.postId);
+          await this.props.thread.post(reaction);
+          await updateComments();
+          this.setState({
+            emojiPickerIsOpen: false,
+            isUpdating: false,
+            emojiSelected: emoji
+          });
+        } catch (error) {
+          console.error("There was an error saving your vote", error);
+        }
+      });
+    }
   };
 
   closeEmojiPicker = e => {
