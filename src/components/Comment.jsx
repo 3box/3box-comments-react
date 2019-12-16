@@ -376,6 +376,7 @@ class Comment extends Component {
                     profiles={profiles}
                     reaction={reaction}
                     useHovers={useHovers}
+                    isCommenterAdmin={isCommenterAdmin}
                   />
                 ))
               ) : (
@@ -395,6 +396,7 @@ class Comment extends Component {
                     profiles={profiles}
                     vote={vote}
                     useHovers={useHovers}
+                    isCommenterAdmin={isCommenterAdmin}
                   />
                 ))
               ) : (

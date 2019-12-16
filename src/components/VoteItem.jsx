@@ -6,7 +6,7 @@ import "./styles/Comment.scss";
 
 class VoteItem extends React.Component {
   render() {
-    const { vote, profiles, useHovers } = this.props;
+    const { vote, profiles, useHovers, isCommenterAdmin } = this.props;
     const profile = profiles[vote.author];
     const profilePicture =
       profile.ethAddr &&
