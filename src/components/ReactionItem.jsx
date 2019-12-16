@@ -6,7 +6,7 @@ import "./styles/Comment.scss";
 
 class ReactionItem extends React.Component {
   render() {
-    const { reaction, profiles, useHovers } = this.props;
+    const { reaction, profiles, useHovers, isCommenterAdmin } = this.props;
     const profile = profiles[reaction.author];
     const profilePicture =
       profile.ethAddr &&
