@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import resolve from 'did-resolver';
 import registerResolver from '3id-resolver';
 
-import { checkIsMobileDevice, reorderComments } from './utils';
+import { checkIsMobileDevice, reorderComments, filterComments } from './utils';
 
 import Input from './components/Input';
 import Context from './components/Context';
@@ -105,11 +105,12 @@ class App extends Component {
 
     const updatedDialogue = reorderComments(dialogue);
     console.log("fetch dialogue in fetchThread() via Box.getThread", dialogue, updatedDialogue);
+    const comments = filterComments(dialogue, "comment");
 
     this.setState({
       uniqueUsers,
       dialogue: updatedDialogue,
-      dialogueLength: dialogue.length,
+      dialogueLength: comments.length,
     });
   }
 
@@ -211,9 +212,10 @@ class App extends Component {
     const dialogue = await thread.getPosts();
     const updatedDialogue = reorderComments(dialogue);
     console.log("fetch dialogue in updateComments() via thread.getPosts", dialogue, updatedDialogue);
+    const comments = filterComments(dialogue, "comment");
     this.setState({
       dialogue: updatedDialogue,
-      dialogueLength: dialogue.length
+      dialogueLength: comments.length
     });
   }
 

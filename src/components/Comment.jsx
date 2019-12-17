@@ -5,7 +5,7 @@ import Linkify from 'react-linkify';
 import makeBlockie from 'ethereum-blockies-base64';
 import SVG from 'react-inlinesvg';
 
-import { timeSince, shortenEthAddr, filterComments, REPLIABLE_COMMENT_LEVEL_MAX } from '../utils';
+import { timeSince, shortenEthAddr, filterComments, REPLIABLE_COMMENT_LEVEL_MAX, REPLY_THREAD_SHOW_COMMENT_COUNT } from '../utils';
 import Delete from '../assets/Delete.svg';
 import Reply from '../assets/Reply.svg';
 import Loading from '../assets/3BoxCommentsSpinner.svg';
@@ -93,7 +93,6 @@ class Comment extends Component {
       joinThread,
       openBox,
       profiles,
-      showCommentCount,
     } = this.props;
 
     const profilePicture = profile.ethAddr &&
@@ -102,15 +101,14 @@ class Comment extends Component {
     const canDelete = isMyComment || isMyAdmin;
     const hasThread = !!Object.keys(thread).length;
 
-    if (comment.children) {
-      // console.log("children", comment, comment.children);
-    }
-
     const children_comments = comment.children ? filterComments(comment.children, "comment") : [];
     const votes = comment.children ? filterComments(comment.children, "vote") : [];
     const reactions = comment.children ? filterComments(comment.children, "reaction") : [];
 
-    const visibleClass = hoverComment && !hoverGallery ? "visible" : "";
+    const notHoverChildren = !children_comments || children_comments.length === 0 || !hoverGallery;
+    const visibleClass = hoverComment && notHoverChildren ? "visible" : "";
+
+    const showCommentCount = REPLY_THREAD_SHOW_COMMENT_COUNT;
 
     return (
       <div className={`comment ${canDelete ? 'isMyComment' : ''}`} onMouseOver={() => this.toggleHoverComment(true)} onMouseLeave={() => this.toggleHoverComment(false)}>

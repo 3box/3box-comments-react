@@ -64,6 +64,10 @@ export const reorderComments = (comments) => {
       if (msg.parentId) {
         // add children attribute for parent
         const parent = table[msg.parentId];
+        if (!parent) {
+          console.log("parent not found; probably the parent comment was deleted. The child: ", c);
+          return ;
+        }
         if (!("children" in parent)) {
           parent.children = [];
         }
@@ -154,3 +158,4 @@ export const aggregateReactions = (reactions) => {
 }
 
 export const REPLIABLE_COMMENT_LEVEL_MAX = 2;
+export const REPLY_THREAD_SHOW_COMMENT_COUNT = 5;

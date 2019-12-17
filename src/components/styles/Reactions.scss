@@ -14,6 +14,15 @@
       height: 16px;
       width: auto;
       cursor: pointer;
+      fill: #0366D6;
+
+      &:hover path,
+      &:hover circle,
+      &.active path,
+      &.active circle
+      {
+        fill: #0366D6;
+      }
     }
   }
 
