@@ -59,12 +59,12 @@ class Comment extends Component {
     this.setState({ showReply: !showReply});
   }
 
-  toggleHoverComment() {
-    this.setState({ hoverComment: !this.state.hoverComment })
+  toggleHoverComment(state) {
+    this.setState({ hoverComment: state })
   }
 
-  toggleHoverGallery() {
-    this.setState({ hoverGallery: !this.state.hoverGallery })
+  toggleHoverGallery(state) {
+    this.setState({ hoverGallery: state })
   }
 
   render() {
@@ -113,7 +113,7 @@ class Comment extends Component {
     const visibleClass = hoverComment && !hoverGallery ? "visible" : "";
 
     return (
-      <div className={`comment ${canDelete ? 'isMyComment' : ''}`} onMouseEnter={this.toggleHoverComment} onMouseLeave={this.toggleHoverComment}>
+      <div className={`comment ${canDelete ? 'isMyComment' : ''}`} onMouseOver={() => this.toggleHoverComment(true)} onMouseLeave={() => this.toggleHoverComment(false)}>
         <Vote
           currentUserAddr={currentUserAddr}
           currentUser3BoxProfile={currentUser3BoxProfile}
@@ -279,8 +279,8 @@ class Comment extends Component {
               joinThread={joinThread}
               updateComments={updateComments}
               openBox={openBox}
-              onMouseEnter={this.toggleHoverGallery}
-              onMouseLeave={this.toggleHoverGallery}
+              onMouseOver={() => this.toggleHoverGallery(true)}
+              onMouseLeave={() => this.toggleHoverGallery(false)}
             />
           )}
         </div >

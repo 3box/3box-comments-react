@@ -38,7 +38,7 @@ class Dialogue extends Component {
         ethereum,
         isLoading3Box,
         updateComments,
-        onMouseEnter,
+        onMouseOver,
         onMouseLeave,
     } = this.props;
 
@@ -48,7 +48,7 @@ class Dialogue extends Component {
     if (dialogue.length > showCommentCount) showLoadButton = true;
 
     return (
-      <div className="dialogue" onMouseEnter={onMouseEnter}
+      <div className="dialogue" onMouseOver={onMouseOver}
         onMouseLeave={onMouseLeave}>
         <div className="dialogue_grid">
           {dialogue.slice(0, showCommentCount).map(comment => {
@@ -120,7 +120,7 @@ Dialogue.propTypes = {
   isLoading3Box: PropTypes.bool,
   updateComments: PropTypes.func.isRequired,
 
-  onMouseEnter: PropTypes.object,
+  onMouseOver: PropTypes.object,
   onMouseLeave: PropTypes.object,
 };
 
