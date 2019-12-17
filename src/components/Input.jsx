@@ -125,7 +125,8 @@ class Input extends Component {
       box,
       loginFunction,
       ethereum,
-      parentId
+      parentId,
+      onSubmit
     } = this.props;
     const { comment, disableComment, isMobile } = this.state;
     const updatedComment = comment.replace(/(\r\n|\n|\r)/gm, "");
@@ -150,6 +151,8 @@ class Input extends Component {
     } catch (error) {
       console.error('There was an error saving your comment', error);
     }
+
+    onSubmit();
   }
 
   render() {
@@ -282,6 +285,7 @@ Input.propTypes = {
   openBox: PropTypes.func.isRequired,
   joinThread: PropTypes.func.isRequired,
   parentId: PropTypes.string,
+  onSubmit: PropTypes.func,
 };
 
 Input.defaultProps = {

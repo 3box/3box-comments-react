@@ -118,7 +118,8 @@
 }
 
 .comment_content_context_main_user_reply_input {
-  margin: 24px 24px;
+  min-width: 280px;
+  margin: 24px 32px;
 }
 
 .comment_content_context_main_user_reactions {

@@ -257,6 +257,7 @@ class Comment extends Component {
                 updateComments={updateComments}
                 openBox={openBox}
                 parentId={comment.postId}
+                onSubmit={() => { this.setState({ showReply: false })}}
               />
             </div>
           )}
