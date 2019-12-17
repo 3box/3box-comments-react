@@ -36,10 +36,10 @@
       padding: 7px 10px 5px;
       line-height: 18px;
       border-right: 1px solid #e1e4e8;
+      cursor: pointer;
 
       &.has_reacted {
         background-color: #f1f8ff;
-        cursor: pointer;
       }
     }
   }

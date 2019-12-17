@@ -194,7 +194,7 @@ class Reactions extends Component {
                 const r = myReactionsSummary[emoji].items[0];
                 return <div className="emoji-item has_reacted" onClick={()=>(this.deleteReaction(r))}>{emoji} {count}</div>;
               } else {
-                return <div className="emoji-item">{emoji} {count}</div>;
+                return <div className="emoji-item" onClick={() => (this.react(emoji))}>{emoji} {count}</div>;
               }
 
             })

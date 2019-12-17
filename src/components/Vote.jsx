@@ -78,16 +78,16 @@ class Vote extends Component {
       if (myVote) {
         if (myVote.message.data === direction) {
           console.log("unvote", direction);
-          await this.props.thread.deletePost(myVote.postId);
+          await thread.deletePost(myVote.postId);
         } else {
           console.log("revote")
           await this.props.thread.deletePost(myVote.postId);
           const message = encodeMessage("vote", direction, parentId);
-          await this.props.thread.post(message);
+          await thread.post(message);
         }
       } else {
         const message = encodeMessage("vote", direction, parentId);
-        await this.props.thread.post(message);
+        await thread.post(message);
       }
       await updateComments();
       this.setState({ postLoading: false });
