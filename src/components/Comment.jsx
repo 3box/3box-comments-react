@@ -20,8 +20,12 @@ class Comment extends Component {
     super(props);
     this.state = {
       loadingDelete: false,
+      hoverComment: false,
+      hoverGallery: false,
       showReply: false,
     };
+    this.toggleHoverComment = this.toggleHoverComment.bind(this);
+    this.toggleHoverGallery = this.toggleHoverGallery.bind(this);
   }
 
   deleteComment = async (commentId, e) => {
@@ -55,10 +59,20 @@ class Comment extends Component {
     this.setState({ showReply: !showReply});
   }
 
+  toggleHoverComment() {
+    this.setState({ hoverComment: !this.state.hoverComment })
+  }
+
+  toggleHoverGallery() {
+    this.setState({ hoverGallery: !this.state.hoverGallery })
+  }
+
   render() {
     const {
       loadingDelete,
-      showReply
+      showReply,
+      hoverComment,
+      hoverGallery
     } = this.state;
     const {
       comment,
@@ -80,8 +94,6 @@ class Comment extends Component {
       openBox,
       profiles,
       showCommentCount,
-      showLoadButton,
-      handleLoadMore,
     } = this.props;
 
     const profilePicture = profile.ethAddr &&
@@ -94,11 +106,14 @@ class Comment extends Component {
       // console.log("children", comment, comment.children);
     }
 
+    const children_comments = comment.children ? filterComments(comment.children, "comment") : [];
     const votes = comment.children ? filterComments(comment.children, "vote") : [];
     const reactions = comment.children ? filterComments(comment.children, "reaction") : [];
 
+    const visibleClass = hoverComment && !hoverGallery ? "visible" : "";
+
     return (
-      <div className={`comment ${canDelete ? 'isMyComment' : ''}`}>
+      <div className={`comment ${canDelete ? 'isMyComment' : ''}`} onMouseEnter={this.toggleHoverComment} onMouseLeave={this.toggleHoverComment}>
         <Vote
           currentUserAddr={currentUserAddr}
           currentUser3BoxProfile={currentUser3BoxProfile}
@@ -170,7 +185,7 @@ class Comment extends Component {
 
                 {/* hasThread */}
                 {(!loadingDelete && profile.ethAddr) && (
-                  <div className="comment_content_context_main_user_delete">
+                  <div className={`comment_content_context_main_user_delete ${visibleClass}`}>
                     <button
                       onClick={(e) => this.deleteComment(comment.postId, e)}
                       className="comment_content_context_main_user_delete_button"
@@ -195,7 +210,7 @@ class Comment extends Component {
 
           {!loadingDelete && (
             <div className="comment_footer">
-              <div className="comment_content_context_main_user_reactions">
+              <div className={`comment_content_context_main_user_reactions ${visibleClass}`}>
                 <Reactions
                   currentUserAddr={currentUserAddr}
                   currentUser3BoxProfile={currentUser3BoxProfile}
@@ -214,7 +229,7 @@ class Comment extends Component {
                 />
               </div>
               {comment.level < REPLIABLE_COMMENT_LEVEL_MAX && (
-                <div className="comment_content_context_main_user_reply">
+                <div className={`comment_content_context_main_user_reply ${visibleClass}`}>
                   <button
                     onClick={(e) => this.toggleReplyInput(e)}
                     className="comment_content_context_main_user_reply_button"
@@ -228,41 +243,43 @@ class Comment extends Component {
           )}
 
           {!loadingDelete && comment.level < REPLIABLE_COMMENT_LEVEL_MAX && showReply && (
-            <Input
-              currentUserAddr={currentUserAddr}
-              currentUser3BoxProfile={currentUser3BoxProfile}
-              thread={thread}
-              ethereum={ethereum}
-              adminEthAddr={adminEthAddr}
-              box={box}
-              loginFunction={loginFunction}
-              isLoading3Box={isLoading3Box}
-              joinThread={joinThread}
-              updateComments={updateComments}
-              openBox={openBox}
-              parentId={comment.postId}
-            />
+            <div className="comment_content_context_main_user_reply_input">
+              <Input
+                currentUserAddr={currentUserAddr}
+                currentUser3BoxProfile={currentUser3BoxProfile}
+                thread={thread}
+                ethereum={ethereum}
+                adminEthAddr={adminEthAddr}
+                box={box}
+                loginFunction={loginFunction}
+                isLoading3Box={isLoading3Box}
+                joinThread={joinThread}
+                updateComments={updateComments}
+                openBox={openBox}
+                parentId={comment.postId}
+              />
+            </div>
           )}
 
-          {comment.children && comment.children.length > 0 && (
+          {children_comments && children_comments.length > 0 && (
             <Dialogue
-              dialogue={filterComments(comment.children, "comment")}
+              dialogue={children_comments}
               currentUserAddr={currentUserAddr}
               currentUser3BoxProfile={currentUser3BoxProfile}
               adminEthAddr={adminEthAddr}
               profiles={profiles}
               showCommentCount={showCommentCount}
-              showLoadButton={showLoadButton}
               loginFunction={loginFunction}
               isLoading3Box={isLoading3Box}
               ethereum={ethereum}
               thread={thread}
               box={box}
               useHovers={useHovers}
-              handleLoadMore={handleLoadMore}
               joinThread={joinThread}
               updateComments={updateComments}
               openBox={openBox}
+              onMouseEnter={this.toggleHoverGallery}
+              onMouseLeave={this.toggleHoverGallery}
             />
           )}
         </div >
@@ -292,8 +309,6 @@ Comment.propTypes = {
   updateComments: PropTypes.func.isRequired,
   profiles: PropTypes.object,
   showCommentCount: PropTypes.number.isRequired,
-  showLoadButton: PropTypes.bool,
-  handleLoadMore: PropTypes.func.isRequired,
 };
 
 Comment.defaultProps = {

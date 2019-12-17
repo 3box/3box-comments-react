@@ -103,9 +103,6 @@ class App extends Component {
     const dialogue = await Box.getThread(spaceName, threadName, adminEthAddr, members, threadOpts || {});
     const uniqueUsers = [...new Set(dialogue.map(x => x.author))];
 
-    let showLoadButton;
-    if (dialogue.length > showCommentCount) showLoadButton = true;
-
     const updatedDialogue = reorderComments(dialogue);
     console.log("fetch dialogue 3", dialogue, updatedDialogue);
 
@@ -113,7 +110,6 @@ class App extends Component {
       uniqueUsers,
       dialogue: updatedDialogue,
       dialogueLength: dialogue.length,
-      showLoadButton,
     });
   }
 
@@ -221,14 +217,6 @@ class App extends Component {
     });
   }
 
-  handleLoadMore = async () => {
-    const { showCommentCount, dialogue } = this.state;
-    const newCount = showCommentCount + showCommentCount;
-    let showLoadButton = true;
-    if (newCount >= dialogue.length) showLoadButton = false;
-    this.setState({ showCommentCount: newCount, showLoadButton });
-  }
-
   render() {
     const {
       dialogue,
@@ -297,7 +285,6 @@ class App extends Component {
           thread={thread}
           box={box}
           useHovers={useHovers}
-          handleLoadMore={this.handleLoadMore}
           joinThread={this.joinThread}
           updateComments={this.updateComments}
           openBox={this.openBox}
