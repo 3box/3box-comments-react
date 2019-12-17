@@ -1,0 +1,41 @@
+.comment_vote {
+
+  margin-right: 10px;
+
+  .vote_btn {
+    border: none;
+    background-color: transparent;
+    padding: 0 2px;
+
+    .vote_icon {
+      height: 18px;
+      width: auto;
+      cursor: pointer;
+
+      &.upvote:hover {
+        fill: #FF4501;
+      }
+      &.downvote:hover {
+        fill: #7193FF;
+      }
+      &.upvote.voted {
+        fill: #FF4501;
+      }
+      &.downvote.voted {
+        fill: #7193FF;
+      }
+    }
+  }
+
+  .count {
+    text-align: center;
+
+    &.positive {
+      color: #FF4501;
+    }
+    &.negative {
+      color: #7193FF;;
+    }
+  }
+}
+

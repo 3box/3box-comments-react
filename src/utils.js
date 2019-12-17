@@ -93,6 +93,14 @@ export const reorderComments = (comments) => {
   }
 }
 
+export const filterComments = (comments, category) => {
+  if (comments && comments.length > 0 && category) {
+    return comments.filter(c => c.message.category === category);
+  } else {
+    return [];
+  }
+}
+
 export const encodeMessage = (category, data, parentId) => {
   if (parentId) {
     return {

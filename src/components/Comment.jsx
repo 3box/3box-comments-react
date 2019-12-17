@@ -5,13 +5,14 @@ import Linkify from 'react-linkify';
 import makeBlockie from 'ethereum-blockies-base64';
 import SVG from 'react-inlinesvg';
 
-import { timeSince, shortenEthAddr, REPLIABLE_COMMENT_LEVEL_MAX } from '../utils';
+import { timeSince, shortenEthAddr, filterComments, REPLIABLE_COMMENT_LEVEL_MAX } from '../utils';
 import Delete from '../assets/Delete.svg';
 import Reply from '../assets/Reply.svg';
 import Loading from '../assets/3BoxCommentsSpinner.svg';
 import './styles/Comment.scss';
 import Input from './Input';
 import Dialogue from './Dialogue';
+import Vote from './Vote';
 
 class Comment extends Component {
   constructor(props) {
@@ -89,11 +90,30 @@ class Comment extends Component {
     const hasThread = !!Object.keys(thread).length;
 
     if (comment.children) {
-      console.log("children", comment, comment.children);
+      // console.log("children", comment, comment.children);
     }
+
+    const votes = comment.children ? filterComments(comment.children, "vote") : [];
 
     return (
       <div className={`comment ${canDelete ? 'isMyComment' : ''}`}>
+        <Vote
+          currentUserAddr={currentUserAddr}
+          currentUser3BoxProfile={currentUser3BoxProfile}
+          thread={thread}
+          ethereum={ethereum}
+          adminEthAddr={adminEthAddr}
+          box={box}
+          loginFunction={loginFunction}
+          isLoading3Box={isLoading3Box}
+          joinThread={joinThread}
+          updateComments={updateComments}
+          openBox={openBox}
+          parentId={comment.postId}
+          votes={votes}
+          profiles={profiles}
+        />
+
         <a
           href={profile.profileURL ? `${profile.profileURL}` : `https://3box.io/${profile.ethAddr}`}
           target={profile.profileURL ? '_self' : '_blank'}
@@ -203,7 +223,7 @@ class Comment extends Component {
 
           {(comment.children && comment.children.length > 0 && (
             <Dialogue
-              dialogue={comment.children}
+              dialogue={filterComments(comment.children, "comment")}
               currentUserAddr={currentUserAddr}
               currentUser3BoxProfile={currentUser3BoxProfile}
               adminEthAddr={adminEthAddr}
