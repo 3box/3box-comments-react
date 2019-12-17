@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import makeBlockie from 'ethereum-blockies-base64';
 import SVG from 'react-inlinesvg';
 import PropTypes from 'prop-types';
 
-import { shortenEthAddr, checkIsMobileDevice, encodeMessage } from '../utils';
+import { checkIsMobileDevice, encodeMessage } from '../utils';
 
 import ArrowUp from '../assets/ArrowUp.svg';
 import ArrowDown from '../assets/ArrowDown.svg';
@@ -78,16 +77,16 @@ class Vote extends Component {
       if (myVote) {
         if (myVote.message.data === direction) {
           console.log("unvote", direction);
-          await thread.deletePost(myVote.postId);
+          await this.props.thread.deletePost(myVote.postId);
         } else {
           console.log("revote")
           await this.props.thread.deletePost(myVote.postId);
           const message = encodeMessage("vote", direction, parentId);
-          await thread.post(message);
+          await this.props.thread.post(message);
         }
       } else {
         const message = encodeMessage("vote", direction, parentId);
-        await thread.post(message);
+        await this.props.thread.post(message);
       }
       await updateComments();
       this.setState({ postLoading: false });

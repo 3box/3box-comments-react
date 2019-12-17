@@ -104,7 +104,7 @@ class App extends Component {
     const uniqueUsers = [...new Set(dialogue.map(x => x.author))];
 
     const updatedDialogue = reorderComments(dialogue);
-    console.log("fetch dialogue 3", dialogue, updatedDialogue);
+    console.log("fetch dialogue in fetchThread() via Box.getThread", dialogue, updatedDialogue);
 
     this.setState({
       uniqueUsers,
@@ -181,7 +181,7 @@ class App extends Component {
 
     const dialogue = await thread.getPosts();
     const updatedDialogue = reorderComments(dialogue);
-    console.log("fetch dialogue 2", dialogue, updatedDialogue);
+    console.log("fetch dialogue in joinThread() via thread.getPosts()", dialogue, updatedDialogue);
     thread.onUpdate(() => this.updateComments());
     this.setState({ thread, dialogue: updatedDialogue });
   }
@@ -210,7 +210,7 @@ class App extends Component {
     const { thread } = this.state;
     const dialogue = await thread.getPosts();
     const updatedDialogue = reorderComments(dialogue);
-    console.log("fetch dialogue 1", dialogue, updatedDialogue);
+    console.log("fetch dialogue in updateComments() via thread.getPosts", dialogue, updatedDialogue);
     this.setState({
       dialogue: updatedDialogue,
       dialogueLength: dialogue.length

@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import makeBlockie from 'ethereum-blockies-base64';
-import SVG from 'react-inlinesvg';
 import PropTypes from 'prop-types';
 
-import { shortenEthAddr, checkIsMobileDevice, encodeMessage, aggregateReactions } from '../utils';
+import { checkIsMobileDevice, encodeMessage, aggregateReactions } from '../utils';
 
 import EmojiIcon from './Emoji/EmojiIcon';
 import PopupWindow from './Emoji/PopupWindow';
@@ -88,7 +86,6 @@ class Reactions extends Component {
     const myReactions = reactions.filter(r => {
       const profile = profiles[r.author];
       const reactionAddr = profile && profile.ethAddr.toLowerCase();
-      console.log("my reactions", reactionAddr, currentUserAddrNormalized);
       return reactionAddr === currentUserAddrNormalized
     });
     return myReactions;
@@ -125,14 +122,11 @@ class Reactions extends Component {
         console.log("my aggregated reactions", reactions);
         if (reactions[emoji]) {
           console.log("ignore because you already reacted with this emoji", emoji);
-
         } else {
-          console.log("react normally 1");
           const message = encodeMessage("reaction", emoji, parentId);
           await this.props.thread.post(message);
         }
       } else {
-        console.log("react normally 2");
         const message = encodeMessage("reaction", emoji, parentId);
         await this.props.thread.post(message);
       }
@@ -148,7 +142,7 @@ class Reactions extends Component {
     try {
       console.log("delete reaction", reaction, this);
       if (!Object.keys(thread).length) await joinThread();
-      await thread.deletePost(reaction.postId);
+      await this.props.thread.deletePost(reaction.postId);
     } catch (error) {
       console.error('There was an error deleting one reaction', error);
     }
@@ -182,7 +176,6 @@ class Reactions extends Component {
     if (myReactions.length > 0) {
       myReactionsSummary = aggregateReactions(myReactions);
     }
-    console.log("render reactions", reactionsSummary, myReactionsSummary);
 
     return (
       <div className="reactions">
