@@ -307,7 +307,6 @@ Comment.propTypes = {
   isLoading3Box: PropTypes.bool,
   updateComments: PropTypes.func.isRequired,
   profiles: PropTypes.object,
-  showCommentCount: PropTypes.number.isRequired,
 };
 
 Comment.defaultProps = {

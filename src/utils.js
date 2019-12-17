@@ -65,7 +65,7 @@ export const reorderComments = (comments) => {
         // add children attribute for parent
         const parent = table[msg.parentId];
         if (!parent) {
-          console.log("parent not found; probably the parent comment was deleted. The child: ", c);
+          console.log("parent not found: probably the parent comment was deleted or not loaded successfully. The child is: ", c);
           return ;
         }
         if (!("children" in parent)) {

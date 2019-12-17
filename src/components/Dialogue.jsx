@@ -78,7 +78,6 @@ class Dialogue extends Component {
                 ethereum={ethereum}
                 isLoading3Box={isLoading3Box}
                 updateComments={updateComments}
-                showCommentCount={showCommentCount}
               />
             )
           })}

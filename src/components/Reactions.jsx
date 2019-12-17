@@ -14,7 +14,6 @@ class Reactions extends Component {
     super(props);
     this.state = {
       user: '',
-      comment: '',
       time: '',
       disableReaction: true,
       emojiPickerIsOpen: false,
@@ -44,9 +43,7 @@ class Reactions extends Component {
     this.setState({ emojiPickerIsOpen: false });
   }
 
-
   _handleEmojiPicked = (emoji) => {
-    console.log("emoji picked", emoji);
     this.react(emoji);
     this.setState({ emojiPickerIsOpen: false });
   }
@@ -103,7 +100,7 @@ class Reactions extends Component {
       parentId
     } = this.props;
 
-    const { comment, disableReaction, isMobile } = this.state;
+    const { disableReaction, isMobile } = this.state;
     const noWeb3 = (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
 
     if (noWeb3) return;
@@ -119,7 +116,6 @@ class Reactions extends Component {
       const myReactions = this.getMyReactions();
       if (myReactions) {
         const reactions = aggregateReactions(myReactions);
-        console.log("my aggregated reactions", reactions);
         if (reactions[emoji]) {
           console.log("ignore because you already reacted with this emoji", emoji);
         } else {
@@ -140,7 +136,6 @@ class Reactions extends Component {
   deleteReaction = async (reaction) => {
     const { thread } = this.props;
     try {
-      console.log("delete reaction", reaction, this);
       if (!Object.keys(thread).length) await joinThread();
       await this.props.thread.deletePost(reaction.postId);
     } catch (error) {
@@ -149,24 +144,8 @@ class Reactions extends Component {
   }
 
   render() {
-    const {
-      comment,
-      postLoading,
-      showLoggedInAs,
-      isMobile,
-      emojiPickerIsOpen
-    } = this.state;
-
-    const {
-      currentUser3BoxProfile,
-      currentUserAddr,
-      box,
-      ethereum,
-      loginFunction,
-      openBox,
-      isLoading3Box,
-      reactions
-    } = this.props;
+    const { emojiPickerIsOpen } = this.state;
+    const { reactions } = this.props;
 
     const myReactions = this.getMyReactions();
     let reactionsSummary = {}, myReactionsSummary = {};
@@ -213,7 +192,6 @@ Reactions.propTypes = {
   currentUserAddr: PropTypes.string,
   loginFunction: PropTypes.func,
   isLoading3Box: PropTypes.bool,
-
   updateComments: PropTypes.func.isRequired,
   openBox: PropTypes.func.isRequired,
   joinThread: PropTypes.func.isRequired,
