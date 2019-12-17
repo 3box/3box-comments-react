@@ -1,3 +1,5 @@
+@import '../../variables.scss';
+
 .comment_vote {
 
   margin-right: 10px;
@@ -13,16 +15,16 @@
       cursor: pointer;
 
       &.upvote:hover {
-        fill: #FF4501;
+        fill: $positiveColor;
       }
       &.downvote:hover {
-        fill: #7193FF;
+        fill: $negativeColor;
       }
       &.upvote.voted {
-        fill: #FF4501;
+        fill: $positiveColor;
       }
       &.downvote.voted {
-        fill: #7193FF;
+        fill: $negativeColor;
       }
     }
   }
@@ -31,10 +33,10 @@
     text-align: center;
 
     &.positive {
-      color: #FF4501;
+      color: $positiveColor;
     }
     &.negative {
-      color: #7193FF;;
+      color: $negativeColor;;
     }
   }
 }

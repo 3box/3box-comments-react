@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { checkIsMobileDevice, encodeMessage, aggregateReactions } from '../utils';
+import { shortenEthAddr, checkIsMobileDevice, encodeMessage, aggregateReactions } from '../utils';
 
 import EmojiIcon from './Emoji/EmojiIcon';
 import PopupWindow from './Emoji/PopupWindow';
@@ -19,8 +19,10 @@ class Reactions extends Component {
       emojiPickerIsOpen: false,
       emojiFilter: '',
       postLoading: false,
+      hintText: null,
       isMobile: checkIsMobileDevice(),
     }
+    this.onHover = this.onHover.bind(this);
   }
 
   async componentDidMount() {
@@ -143,6 +145,35 @@ class Reactions extends Component {
     }
   }
 
+  getAuthor = (reaction) => {
+    const { profiles } = this.props;
+    const profile = profiles[reaction.author];
+    return profile.name || shortenEthAddr(profile.ethAddr.toLowerCase());
+  }
+
+  onHover = (items) => {
+    if (items && items.length > 0) {
+      let users = "";
+      try {
+        if (items.length === 1) {
+          users = `${this.getAuthor(items[0])}`;
+        } else if (items.length === 2) {
+          users = `${this.getAuthor(items[0])} and ${this.getAuthor(items[1])}`;
+        } else {
+          users = `${this.getAuthor(items[0])}, ${this.getAuthor(items[1])} and others`;
+        }
+        const emoji = items[0].message.data;
+        const text = `${users} reacted with ${emoji} emoji`;
+        this.setState({ hintText: text });
+      } catch(error) {
+        console.log("There was an error when setting hint", error);
+      }
+    } else {
+      this.setState({ hintText: null});
+    }
+
+  }
+
   render() {
     const { emojiPickerIsOpen } = this.state;
     const { reactions } = this.props;
@@ -159,14 +190,15 @@ class Reactions extends Component {
     return (
       <div className="reactions">
         {reactions && reactions.length > 0 && (
-          <div className="emoji-bar">{
+          <div className="emoji-bar" onMouseLeave={() => (this.onHover(null))}>{
             Object.keys(reactionsSummary).map(emoji => {
               const count = reactionsSummary[emoji].count;
+              const items = reactionsSummary[emoji].items;
               if (myReactionsSummary[emoji]) {
                 const r = myReactionsSummary[emoji].items[0];
-                return <div className="emoji-item has_reacted" key={emoji} onClick={()=>(this.deleteReaction(r))}>{emoji} {count}</div>;
+                return <div className="emoji-item has_reacted" key={emoji} onClick={() => (this.deleteReaction(r))} onMouseEnter={() => (this.onHover(items))}>{emoji} {count}</div>;
               } else {
-                return <div className="emoji-item" key={emoji} onClick={() => (this.react(emoji))}>{emoji} {count}</div>;
+                return <div className="emoji-item" key={emoji} onClick={() => (this.react(emoji))} onMouseEnter={() => (this.onHover(items))}>{emoji} {count}</div>;
               }
 
             })
@@ -177,6 +209,9 @@ class Reactions extends Component {
           isActive={emojiPickerIsOpen}
           tooltip={this._renderEmojiPopup()}
         />
+        <p className={`hint ${this.state.hintText ? 'visible' : ''}`}>
+          {this.state.hintText}
+        </p>
       </div>
     );
   }
