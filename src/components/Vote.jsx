@@ -92,7 +92,7 @@ class Vote extends Component {
       await updateComments();
       this.setState({ postLoading: false });
     } catch (error) {
-      console.error('There was an error saving your comment', error);
+      console.error('There was an error saving your vote', error);
     }
   }
 
@@ -143,18 +143,6 @@ class Vote extends Component {
             className={`vote_icon downvote ${voted === -1 ? "voted" : ""}`}
           />
         </button>
-
-        {/* {(isBoxEmpty && !currentUserAddr && !isLoading3Box) && (
-          <button className="input_login" onClick={openBox}>
-            Login
-          </button>
-        )}
-
-        {(isBoxEmpty && !currentUserAddr && !isLoading3Box) && (
-          <div className="input_login">
-            <SVG className="input_login_loading" src={Loading} alt="Loading" />
-          </div>
-        )} */}
 
       </div>
     );

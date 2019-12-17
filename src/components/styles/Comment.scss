@@ -11,6 +11,9 @@
     .comment_content_context_main_user_reply {
       visibility: visible !important;
     }
+    .comment_content_context_main_user_reactions {
+      visibility: visible !important;
+    }
   }
 }
 
@@ -111,6 +114,11 @@
   width: auto;
   opacity: .35;
   margin-right: 3px;
+}
+
+.comment_content_context_main_user_reactions {
+  visibility: hidden;
+  margin-top: 6px;
 }
 
 .comment_content_context_time {

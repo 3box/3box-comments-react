@@ -13,6 +13,7 @@ import './styles/Comment.scss';
 import Input from './Input';
 import Dialogue from './Dialogue';
 import Vote from './Vote';
+import Reactions from './Reactions';
 
 class Comment extends Component {
   constructor(props) {
@@ -94,6 +95,7 @@ class Comment extends Component {
     }
 
     const votes = comment.children ? filterComments(comment.children, "vote") : [];
+    const reactions = comment.children ? filterComments(comment.children, "reaction") : [];
 
     return (
       <div className={`comment ${canDelete ? 'isMyComment' : ''}`}>
@@ -191,8 +193,7 @@ class Comment extends Component {
             </Linkify>
           </div>
 
-          {(!loadingDelete && comment.level < REPLIABLE_COMMENT_LEVEL_MAX ) && (
-            <div>
+          {!loadingDelete && comment.level < REPLIABLE_COMMENT_LEVEL_MAX && (
               <div className="comment_content_context_main_user_reply">
                 <button
                   onClick={(e) => this.toggleReplyInput(e)}
@@ -202,26 +203,47 @@ class Comment extends Component {
                   Reply
                 </button>
               </div>
-              {showReply && (
-                <Input
-                  currentUserAddr={currentUserAddr}
-                  currentUser3BoxProfile={currentUser3BoxProfile}
-                  thread={thread}
-                  ethereum={ethereum}
-                  adminEthAddr={adminEthAddr}
-                  box={box}
-                  loginFunction={loginFunction}
-                  isLoading3Box={isLoading3Box}
-                  joinThread={joinThread}
-                  updateComments={updateComments}
-                  openBox={openBox}
-                  parentId={comment.postId}
-                />
-              )}
+          )}
+
+          {!loadingDelete && (
+            <div className="comment_content_context_main_user_reactions">
+              <Reactions
+                currentUserAddr={currentUserAddr}
+                currentUser3BoxProfile={currentUser3BoxProfile}
+                thread={thread}
+                ethereum={ethereum}
+                adminEthAddr={adminEthAddr}
+                box={box}
+                loginFunction={loginFunction}
+                isLoading3Box={isLoading3Box}
+                joinThread={joinThread}
+                updateComments={updateComments}
+                openBox={openBox}
+                parentId={comment.postId}
+                reactions={reactions}
+                profiles={profiles}
+              />
             </div>
           )}
 
-          {(comment.children && comment.children.length > 0 && (
+          {!loadingDelete && comment.level < REPLIABLE_COMMENT_LEVEL_MAX && showReply && (
+            <Input
+              currentUserAddr={currentUserAddr}
+              currentUser3BoxProfile={currentUser3BoxProfile}
+              thread={thread}
+              ethereum={ethereum}
+              adminEthAddr={adminEthAddr}
+              box={box}
+              loginFunction={loginFunction}
+              isLoading3Box={isLoading3Box}
+              joinThread={joinThread}
+              updateComments={updateComments}
+              openBox={openBox}
+              parentId={comment.postId}
+            />
+          )}
+
+          {comment.children && comment.children.length > 0 && (
             <Dialogue
               dialogue={filterComments(comment.children, "comment")}
               currentUserAddr={currentUserAddr}
@@ -241,7 +263,7 @@ class Comment extends Component {
               updateComments={updateComments}
               openBox={openBox}
             />
-          ))}
+          )}
         </div >
       </div >
     );
