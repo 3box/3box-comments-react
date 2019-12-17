@@ -132,4 +132,25 @@ export const decodeMessage = (comment) => {
   }
 }
 
+export const aggregateReactions = (reactions) => {
+  if (reactions && reactions.length > 0) {
+    let table = {};
+    reactions.forEach((r) => {
+      const emoji = r.message.data;
+      if (emoji in table) {
+        table[emoji].count += 1;
+        table[emoji].items.push(r);
+      } else {
+        table[emoji] = {
+          count: 1,
+          items: [r]
+        };
+      }
+    })
+    return table;
+  } else {
+    return {}
+  }
+}
+
 export const REPLIABLE_COMMENT_LEVEL_MAX = 2;

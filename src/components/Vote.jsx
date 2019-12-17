@@ -44,7 +44,7 @@ class Vote extends Component {
     const myVotes = votes.filter(v => {
       const profile = profiles[v.author];
       const voterAddr = profile && profile.ethAddr.toLowerCase();
-      console.log("my vote", voterAddr, currentUserAddrNormalized);
+      // console.log("my vote", voterAddr, currentUserAddrNormalized);
       return voterAddr === currentUserAddrNormalized
     });
     return myVotes && myVotes.length > 0 ? myVotes[0] : null;
@@ -135,7 +135,7 @@ class Vote extends Component {
             className={`vote_icon upvote ${voted === 1 ? "voted" : ""}`}
           />
         </button>
-        <div class={`count ${countClass}`}>{count}</div>
+        <div className={`count ${countClass}`}>{count}</div>
         <button className="vote_btn" onClick={this.downvote}>
           <SVG
             src={ArrowDown}
@@ -165,7 +165,7 @@ Vote.propTypes = {
   joinThread: PropTypes.func.isRequired,
   parentId: PropTypes.string,
   votes: PropTypes.array,
-  profiles: PropTypes.array,
+  profiles: PropTypes.object,
 };
 
 Vote.defaultProps = {
@@ -175,5 +175,5 @@ Vote.defaultProps = {
   currentUserAddr: null,
   ethereum: null,
   votes: [],
-  profiles: [],
+  profiles: {},
 };

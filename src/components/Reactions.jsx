@@ -3,7 +3,7 @@ import makeBlockie from 'ethereum-blockies-base64';
 import SVG from 'react-inlinesvg';
 import PropTypes from 'prop-types';
 
-import { shortenEthAddr, checkIsMobileDevice, encodeMessage } from '../utils';
+import { shortenEthAddr, checkIsMobileDevice, encodeMessage, aggregateReactions } from '../utils';
 
 import EmojiIcon from './Emoji/EmojiIcon';
 import PopupWindow from './Emoji/PopupWindow';
@@ -20,6 +20,7 @@ class Reactions extends Component {
       time: '',
       disableReaction: true,
       emojiPickerIsOpen: false,
+      emojiFilter: '',
       postLoading: false,
       isMobile: checkIsMobileDevice(),
     }
@@ -47,6 +48,7 @@ class Reactions extends Component {
 
 
   _handleEmojiPicked = (emoji) => {
+    console.log("emoji picked", emoji);
     this.react(emoji);
     this.setState({ emojiPickerIsOpen: false });
   }
@@ -116,18 +118,21 @@ class Reactions extends Component {
 
 
     try {
+      console.log("react with emoji", emoji);
       const myReactions = this.getMyReactions();
       if (myReactions) {
-        // if (myVote.message.data === direction) {
-        //   console.log("unvote", direction);
-        //   await this.props.thread.deletePost(myVote.postId);
-        // } else {
-        //   console.log("revote")
-        //   await this.props.thread.deletePost(myVote.postId);
-        //   const message = encodeMessage("vote", direction, parentId);
-        //   await this.props.thread.post(message);
-        // }
+        const reactions = aggregateReactions(myReactions);
+        console.log("my aggregated reactions", reactions);
+        if (reactions[emoji]) {
+          console.log("ignore because you already reacted with this emoji", emoji);
+
+        } else {
+          console.log("react normally 1");
+          const message = encodeMessage("reaction", emoji, parentId);
+          await this.props.thread.post(message);
+        }
       } else {
+        console.log("react normally 2");
         const message = encodeMessage("reaction", emoji, parentId);
         await this.props.thread.post(message);
       }
@@ -135,6 +140,17 @@ class Reactions extends Component {
       this.setState({ postLoading: false });
     } catch (error) {
       console.error('There was an error saving your reaction', error);
+    }
+  }
+
+  deleteReaction = async (reaction) => {
+    const { thread } = this.props;
+    try {
+      console.log("delete reaction", reaction, this);
+      if (!Object.keys(thread).length) await joinThread();
+      await thread.deletePost(reaction.postId);
+    } catch (error) {
+      console.error('There was an error deleting one reaction', error);
     }
   }
 
@@ -159,9 +175,31 @@ class Reactions extends Component {
     } = this.props;
 
     const myReactions = this.getMyReactions();
+    let reactionsSummary = {}, myReactionsSummary = {};
+    if (reactions.length > 0) {
+      reactionsSummary = aggregateReactions(reactions);
+    }
+    if (myReactions.length > 0) {
+      myReactionsSummary = aggregateReactions(myReactions);
+    }
+    console.log("render reactions", reactionsSummary, myReactionsSummary);
 
     return (
       <div className="reactions">
+        {reactions && reactions.length > 0 && (
+          <div className="emoji-bar">{
+            Object.keys(reactionsSummary).map(emoji => {
+              const count = reactionsSummary[emoji].count;
+              if (myReactionsSummary[emoji]) {
+                const r = myReactionsSummary[emoji].items[0];
+                return <div className="emoji-item has_reacted" onClick={()=>(this.deleteReaction(r))}>{emoji} {count}</div>;
+              } else {
+                return <div className="emoji-item">{emoji} {count}</div>;
+              }
+
+            })
+          }</div>
+        )}
         <EmojiIcon
           onClick={this.toggleEmojiPicker}
           isActive={emojiPickerIsOpen}
@@ -188,7 +226,7 @@ Reactions.propTypes = {
   joinThread: PropTypes.func.isRequired,
   parentId: PropTypes.string,
   reactions: PropTypes.array,
-  profiles: PropTypes.array,
+  profiles: PropTypes.object,
 };
 
 Reactions.defaultProps = {
@@ -198,5 +236,5 @@ Reactions.defaultProps = {
   currentUserAddr: null,
   ethereum: null,
   reactions: [],
-  profiles: [],
+  profiles: {},
 };

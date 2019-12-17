@@ -100,6 +100,8 @@
 .comment_content_context_main_user_reply {
   visibility: hidden;
   margin-top: 6px;
+  padding: 7px 10px 5px;
+  border-left: 1px solid #e1e4e8;
 }
 
 .comment_content_context_main_user_reply_button {
@@ -119,6 +121,11 @@
 .comment_content_context_main_user_reactions {
   visibility: hidden;
   margin-top: 6px;
+}
+
+.comment_footer {
+  display: flex;
+  align-items: center;
 }
 
 .comment_content_context_time {

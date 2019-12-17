@@ -193,36 +193,37 @@ class Comment extends Component {
             </Linkify>
           </div>
 
-          {!loadingDelete && comment.level < REPLIABLE_COMMENT_LEVEL_MAX && (
-              <div className="comment_content_context_main_user_reply">
-                <button
-                  onClick={(e) => this.toggleReplyInput(e)}
-                  className="comment_content_context_main_user_reply_button"
-                >
-                  <SVG src={Reply} alt="Reply" className="comment_content_context_main_user_reply_button_icon" />
-                  Reply
-                </button>
-              </div>
-          )}
-
           {!loadingDelete && (
-            <div className="comment_content_context_main_user_reactions">
-              <Reactions
-                currentUserAddr={currentUserAddr}
-                currentUser3BoxProfile={currentUser3BoxProfile}
-                thread={thread}
-                ethereum={ethereum}
-                adminEthAddr={adminEthAddr}
-                box={box}
-                loginFunction={loginFunction}
-                isLoading3Box={isLoading3Box}
-                joinThread={joinThread}
-                updateComments={updateComments}
-                openBox={openBox}
-                parentId={comment.postId}
-                reactions={reactions}
-                profiles={profiles}
-              />
+            <div className="comment_footer">
+              <div className="comment_content_context_main_user_reactions">
+                <Reactions
+                  currentUserAddr={currentUserAddr}
+                  currentUser3BoxProfile={currentUser3BoxProfile}
+                  thread={thread}
+                  ethereum={ethereum}
+                  adminEthAddr={adminEthAddr}
+                  box={box}
+                  loginFunction={loginFunction}
+                  isLoading3Box={isLoading3Box}
+                  joinThread={joinThread}
+                  updateComments={updateComments}
+                  openBox={openBox}
+                  parentId={comment.postId}
+                  reactions={reactions}
+                  profiles={profiles}
+                />
+              </div>
+              {comment.level < REPLIABLE_COMMENT_LEVEL_MAX && (
+                <div className="comment_content_context_main_user_reply">
+                  <button
+                    onClick={(e) => this.toggleReplyInput(e)}
+                    className="comment_content_context_main_user_reply_button"
+                  >
+                    <SVG src={Reply} alt="Reply" className="comment_content_context_main_user_reply_button_icon" />
+                    Reply
+                </button>
+                </div>
+              )}
             </div>
           )}
 
