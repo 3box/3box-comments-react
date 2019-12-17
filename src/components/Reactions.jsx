@@ -160,13 +160,13 @@ class Reactions extends Component {
         } else if (items.length === 2) {
           users = `${this.getAuthor(items[0])} and ${this.getAuthor(items[1])}`;
         } else {
-          users = `${this.getAuthor(items[0])}, ${this.getAuthor(items[1])} and others`;
+          users = `${this.getAuthor(items[0])}, ${this.getAuthor(items[1])} and ${items.length - 2} others`;
         }
         const emoji = items[0].message.data;
         const text = `${users} reacted with ${emoji} emoji`;
         this.setState({ hintText: text });
       } catch(error) {
-        console.log("There was an error when setting hint", error);
+        console.error("There was an error when setting hint", error);
       }
     } else {
       this.setState({ hintText: null});
