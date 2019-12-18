@@ -251,11 +251,7 @@ class Comment extends Component {
       let showLoadButton = false;
 
       if (comment.replies.length > showCommentCount) showLoadButton = true;
-      // console.log(
-      //   comment.replies.length,
-      //   showCommentCount,
-      //   comment.replies.length > showCommentCount
-      // );
+
       this.setState({
         showLoadButton,
         firstTimeLoaded1: true

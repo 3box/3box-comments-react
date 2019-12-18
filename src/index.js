@@ -130,7 +130,6 @@ class App extends Component {
 
     let showLoadButton;
     if (commentDialogue.length > showCommentCount) showLoadButton = true;
-    console.log(showCommentCount);
 
     commentDialogue.forEach(comment => {
       Object.assign(comment, {
