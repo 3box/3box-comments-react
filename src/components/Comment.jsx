@@ -18,6 +18,9 @@ import EmojiPicker from "./Emoji/EmojiPicker";
 import Modal from "react-responsive-modal";
 import ReactionItem from "./ReactionItem";
 import VoteItem from "./VoteItem";
+import ReplyIcon from "../assets/comment.svg";
+import UpVote from "../assets/upArrow.svg";
+import DownVote from "../assets/downArrow.svg";
 
 class Comment extends Component {
   constructor(props) {
@@ -25,7 +28,7 @@ class Comment extends Component {
     this.state = {
       loadingDelete: false,
       showLoadButton: false,
-      showCommentCount: 30,
+      showCommentCount: props.showCommentCount || 5,
       firstTimeLoaded1: false,
       firstTimeLoaded2: false,
       isUpdating: false,
@@ -38,7 +41,8 @@ class Comment extends Component {
       emojiFilter: "",
       openReactionModal: false,
       openVoteModal: false,
-      emojiSelected: undefined
+      emojiSelected: undefined,
+      hideInput: true
     };
   }
 
@@ -77,7 +81,7 @@ class Comment extends Component {
     // myVoteNewMessage.voteType = "up";
     // let myVote = this.state.myVote;
     // myVote.message = myVoteNewMessage;
-    if (this.state.firstTimeLoaded2) {
+    if (this.state.firstTimeLoaded2 && this.state.voteType !== "up") {
       this.setState({ firstTimeLoaded2: false, isUpdating: true }, async () => {
         const noWeb3 =
           (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
@@ -118,7 +122,7 @@ class Comment extends Component {
       comment
     } = this.props;
 
-    if (this.state.firstTimeLoaded2) {
+    if (this.state.firstTimeLoaded2 && this.state.voteType !== "down") {
       this.setState({ firstTimeLoaded2: false, isUpdating: true }, async () => {
         const noWeb3 =
           (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
@@ -247,6 +251,11 @@ class Comment extends Component {
       let showLoadButton = false;
 
       if (comment.replies.length > showCommentCount) showLoadButton = true;
+      // console.log(
+      //   comment.replies.length,
+      //   showCommentCount,
+      //   comment.replies.length > showCommentCount
+      // );
       this.setState({
         showLoadButton,
         firstTimeLoaded1: true
@@ -317,6 +326,10 @@ class Comment extends Component {
     this.setState({ openVoteModal: false });
   };
 
+  openReplyInput = () => {
+    this.setState({ hideInput: !this.state.hideInput });
+  };
+
   render() {
     const { loadingDelete } = this.state;
     const {
@@ -353,7 +366,8 @@ class Comment extends Component {
       openReactionModal,
       openVoteModal,
       hasMyReaction,
-      emojiSelected
+      emojiSelected,
+      hideInput
     } = this.state;
 
     const profilePicture =
@@ -372,7 +386,7 @@ class Comment extends Component {
           onClose={this.onCloseReactionModal}
           center
         >
-          <div style={{ minWidth: 400 }}>
+          <div className="modal_styles">
             <h2>Reactions</h2>
             <div>
               {comment.reactions.length > 0 ? (
@@ -392,7 +406,7 @@ class Comment extends Component {
           </div>
         </Modal>
         <Modal open={openVoteModal} onClose={this.onCloseVoteModal} center>
-          <div style={{ minWidth: 400 }}>
+          <div className="modal_styles">
             <h2>Votes</h2>
             <div>
               {comment.votes.length > 0 ? (
@@ -422,18 +436,7 @@ class Comment extends Component {
             }
             onClick={this.upvoteComment}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              width="15"
-              height="15"
-              className="up_vote_img"
-            >
-              <path
-                className="heroicon-ui"
-                d="M13 5.41V21a1 1 0 0 1-2 0V5.41l-5.3 5.3a1 1 0 1 1-1.4-1.42l7-7a1 1 0 0 1 1.4 0l7 7a1 1 0 1 1-1.4 1.42L13 5.4z"
-              />
-            </svg>
+            <SVG className="up_vote_img" src={UpVote} alt="up vote" />
           </div>
           <div className="vote_number" onClick={this.onOpenVoteModal}>
             {comment.num_of_votes}
@@ -448,18 +451,7 @@ class Comment extends Component {
             }
             onClick={this.downvoteComment}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              width="15"
-              height="15"
-              className="down_vote_img"
-            >
-              <path
-                className="heroicon-ui"
-                d="M11 18.59V3a1 1 0 0 1 2 0v15.59l5.3-5.3a1 1 0 0 1 1.4 1.42l-7 7a1 1 0 0 1-1.4 0l-7-7a1 1 0 0 1 1.4-1.42l5.3 5.3z"
-              />
-            </svg>
+            <SVG className="down_vote_img" src={DownVote} alt="down vote" />
           </div>
         </div>
         <a
@@ -576,37 +568,50 @@ class Comment extends Component {
             >
               {comment.reactions.length}
             </div>
+            <div className="reply_button" onClick={this.openReplyInput}>
+              <SVG
+                src={ReplyIcon}
+                alt="reply"
+                style={{ height: 22, width: 22 }}
+                className="reply_icon"
+              />
+              Reply
+            </div>
           </div>
           {type !== "replyToReply" ? (
-            <div className="comment_reply">
-              <Input
-                currentUserAddr={currentUserAddr}
-                currentUser3BoxProfile={currentUser3BoxProfile}
-                spaceName={spaceName}
-                threadName={threadName}
-                thread={thread}
-                ethereum={ethereum}
-                adminEthAddr={adminEthAddr}
-                box={box}
-                loginFunction={loginFunction}
-                isLoading3Box={isLoading3Box}
-                joinThread={joinThread}
-                updateComments={updateComments}
-                openBox={openBox}
-                type={type === "comment" ? "reply" : "replyToReply"}
-                postId={comment.postId}
-              />
-            </div>
+            !hideInput ? (
+              <div className="comment_reply">
+                <Input
+                  currentUserAddr={currentUserAddr}
+                  currentUser3BoxProfile={currentUser3BoxProfile}
+                  spaceName={spaceName}
+                  threadName={threadName}
+                  thread={thread}
+                  ethereum={ethereum}
+                  adminEthAddr={adminEthAddr}
+                  box={box}
+                  loginFunction={loginFunction}
+                  isLoading3Box={isLoading3Box}
+                  joinThread={joinThread}
+                  updateComments={updateComments}
+                  openBox={openBox}
+                  type={type === "comment" ? "reply" : "replyToReply"}
+                  postId={comment.postId}
+                />
+              </div>
+            ) : null
           ) : null}
           {type !== "replyToReply" ? (
-            <div className="comment_context">
-              <Context
-                dialogueLength={comment.replies.length}
-                isLoading={isLoading}
-              />
-            </div>
+            comment.replies.length !== 0 ? (
+              <div className="comment_context">
+                <Context
+                  dialogueLength={comment.replies.length}
+                  isLoading={isLoading}
+                />
+              </div>
+            ) : null
           ) : null}
-          {comment.replies !== undefined ? (
+          {comment.replies !== undefined && comment.replies.length !== 0 ? (
             <div className="comment_reply">
               <Dialogue
                 dialogue={comment.replies}

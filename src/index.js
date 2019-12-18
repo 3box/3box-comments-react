@@ -29,7 +29,7 @@ class App extends Component {
       currentUser3BoxProfile: {},
       box,
       currentUserAddr,
-      showCommentCount: showCommentCount || 30,
+      showCommentCount: showCommentCount || 5,
       ethereum: ethereum || window.ethereum,
       isMobile: checkIsMobileDevice()
     };
@@ -129,7 +129,8 @@ class App extends Component {
     const uniqueUsers = [...new Set(dialogue.map(x => x.author))];
 
     let showLoadButton;
-    if (dialogue.length > showCommentCount) showLoadButton = true;
+    if (commentDialogue.length > showCommentCount) showLoadButton = true;
+    console.log(showCommentCount);
 
     commentDialogue.forEach(comment => {
       Object.assign(comment, {
@@ -617,7 +618,7 @@ App.propTypes = {
 };
 
 App.defaultProps = {
-  showCommentCount: 30,
+  showCommentCount: 5,
   currentUserAddr: "",
   members: false,
   useHovers: false,

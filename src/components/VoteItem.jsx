@@ -3,6 +3,9 @@ import ProfileHover from "profile-hover";
 import makeBlockie from "ethereum-blockies-base64";
 import { timeSince, shortenEthAddr } from "../utils";
 import "./styles/Comment.scss";
+import SVG from "react-inlinesvg";
+import UpVote from "../assets/upArrow.svg";
+import DownVote from "../assets/downArrow.svg";
 
 class VoteItem extends React.Component {
   render() {
@@ -87,31 +90,23 @@ class VoteItem extends React.Component {
         </div>
         <div className="reaction_emoji">
           {JSON.parse(vote.message).voteType === "up" ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
+            <SVG
+              className="up_vote_img"
+              src={UpVote}
+              alt="up vote"
+              fill="rgb(255, 44, 44)"
               width="30"
               height="30"
-              fill="rgb(255, 44, 44)"
-            >
-              <path
-                className="heroicon-ui"
-                d="M13 5.41V21a1 1 0 0 1-2 0V5.41l-5.3 5.3a1 1 0 1 1-1.4-1.42l7-7a1 1 0 0 1 1.4 0l7 7a1 1 0 1 1-1.4 1.42L13 5.4z"
-              />
-            </svg>
+            />
           ) : (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
+            <SVG
+              className="down_vote_img"
+              src={DownVote}
+              alt="up vote"
+              fill="rgb(255, 44, 44)"
               width="30"
               height="30"
-              fill="rgb(255, 44, 44)"
-            >
-              <path
-                className="heroicon-ui"
-                d="M11 18.59V3a1 1 0 0 1 2 0v15.59l5.3-5.3a1 1 0 0 1 1.4 1.42l-7 7a1 1 0 0 1-1.4 0l-7-7a1 1 0 0 1 1.4-1.42l5.3 5.3z"
-              />
-            </svg>
+            />
           )}
         </div>
       </div>

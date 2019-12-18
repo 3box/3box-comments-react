@@ -31,7 +31,7 @@
 }
 
 .comment_content {
-  min-width: calc(100% - 60px);
+  min-width: calc(100% - 100px);
   box-sizing: border-box;
   padding-left: 12px;
   display: flex;
@@ -117,6 +117,7 @@
   font-size: 15px;
   text-align: left;
   word-break: break-word;
+  max-width: 100%;
 }
 
 .comment_reply {
@@ -127,6 +128,13 @@
 .comment_emoji {
   display: flex;
   align-items: center;
+  width: 100%;
+
+  &:hover {
+    .reply_button {
+      display: flex;
+    }
+  }
 }
 
 .reaction_item {
@@ -161,6 +169,20 @@
     color: rgb(255, 44, 44);
     transform: scale(1.1);
   }
+}
+
+.reply_button {
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  margin-left: 24px;
+  color: #bcbcbc;
+}
+
+.reply_icon {
+  height: 22px;
+  width: 22px;
+  margin-right: 12px;
 }
 
 .comment_my_emoji_number {
@@ -253,6 +275,12 @@
   .down_vote_img {
     fill: rgb(255, 44, 44);
   }
+}
+
+.modal_styles {
+  max-height: 500px;
+  overflow: scroll;
+  min-width: 400px;
 }
 
 @media only screen and (max-width: 768px) {
