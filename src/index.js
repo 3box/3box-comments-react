@@ -99,7 +99,6 @@ class App extends Component {
     // check if admin has that space first, if not, thread is empty
     const spaces = await Box.listSpaces(adminEthAddr);
     if (!spaces.includes(spaceName)) return;
-
     const dialogue = await Box.getThread(spaceName, threadName, adminEthAddr, members, threadOpts || {});
     const uniqueUsers = [...new Set(dialogue.map(x => x.author))];
 
