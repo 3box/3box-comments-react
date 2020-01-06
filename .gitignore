@@ -1,5 +1,6 @@
 node_modules
 dist/*.js
+lib/*
 # examples/dist/*.js removed, required for pages
 coverage
 

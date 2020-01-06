@@ -16,6 +16,7 @@ yarn.lock
 # project files
 src
 test
+dist
 examples
 CHANGELOG.md
 .travis.yml

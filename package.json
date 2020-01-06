@@ -1,8 +1,8 @@
 {
   "name": "3box-comments-react",
-  "version": "0.0.1-beta.20",
+  "version": "0.0.2",
   "description": "Comments component for decentralized applications by 3Box",
-  "main": "./dist/index.js",
+  "main": "./lib/index.js",
   "author": "3box.io",
   "license": "MIT",
   "contributors": [
@@ -16,6 +16,7 @@
   ],
   "scripts": {
     "build": "webpack --config webpack.config.babel.js",
+    "build:es5": "rm -rf ./lib; ./node_modules/.bin/babel src --out-dir lib --source-maps inline --copy-files --ignore=src/__tests__/,src/__mocks__/",
     "build-examples": "webpack --config examples/webpack.config.babel.js --progress",
     "clean": "rm -rf dist coverage",
     "coverage": "jest --coverage",
@@ -25,6 +26,7 @@
     "test": "npm run lint && npm run coverage"
   },
   "devDependencies": {
+    "@babel/cli": "^7.7.7",
     "@babel/core": "^7.1.2",
     "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/preset-env": "^7.1.0",
