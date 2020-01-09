@@ -1,6 +1,6 @@
 {
   "name": "3box-comments-react",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Comments component for decentralized applications by 3Box",
   "main": "./lib/index.js",
   "author": "3box.io",
@@ -50,7 +50,6 @@
     "react-addons-test-utils": "^15.5.1",
     "react-dom": "^16.6.0",
     "react-hot-loader": "next",
-    "react-inlinesvg": "^1.1.6",
     "react-test-renderer": "^16.0.0",
     "regenerator-runtime": "^0.12.1",
     "sass-loader": "^7.0.1",
@@ -74,6 +73,7 @@
     "emoji-js": "^3.4.1",
     "ethereum-blockies-base64": "^1.0.2",
     "profile-hover": "^1.1.1",
+    "react-inlinesvg": "^1.2.0",
     "react-linkify": "^1.0.0-alpha",
     "svg-inline-loader": "^0.8.0"
   }
