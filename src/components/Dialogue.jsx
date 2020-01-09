@@ -11,7 +11,6 @@ const Dialogue = ({
   handleLoadMore,
   showCommentCount,
   showLoadButton,
-  joinThread,
   thread,
   useHovers,
   currentUserAddr,
@@ -41,7 +40,6 @@ const Dialogue = ({
               isCommenterAdmin={adminEthAddrNormalized === commentAddr}
               key={comment.postId}
               thread={thread}
-              joinThread={joinThread}
               useHovers={useHovers}
               box={box}
               loginFunction={loginFunction}
@@ -79,7 +77,6 @@ Dialogue.propTypes = {
 
   openBox: PropTypes.func.isRequired,
   handleLoadMore: PropTypes.func.isRequired,
-  joinThread: PropTypes.func.isRequired,
   showCommentCount: PropTypes.number.isRequired,
   adminEthAddr: PropTypes.string.isRequired,
 };

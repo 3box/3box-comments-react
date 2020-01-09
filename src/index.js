@@ -20,6 +20,9 @@ class App extends Component {
       currentUserAddr,
       box,
       ethereum,
+      adminEthAddr,
+      threadOpts,
+      members
     } = this.props;
 
     this.state = {
@@ -27,6 +30,7 @@ class App extends Component {
       showLoadButton: false,
       isLoading: false,
       isLoading3Box: false,
+      hasAuthed: false,
       dialogue: [],
       uniqueUsers: [],
       thread: {},
@@ -37,6 +41,10 @@ class App extends Component {
       showCommentCount: showCommentCount || 30,
       ethereum: ethereum || window.ethereum,
       isMobile: checkIsMobileDevice(),
+      threadOpts: threadOpts || {
+        firstModerator: adminEthAddr,
+        members,
+      }
     }
   }
 
@@ -85,13 +93,12 @@ class App extends Component {
 
   // get thread from public api only on component mount
   fetchThread = async () => {
-    const { showCommentCount } = this.state;
+    const { showCommentCount, ethereum, threadOpts } = this.state;
     const {
       spaceName,
       threadName,
       adminEthAddr,
       members,
-      threadOpts
     } = this.props;
 
     if (!spaceName || !threadName) console.error('You must pass both spaceName and threadName props');
@@ -99,27 +106,55 @@ class App extends Component {
     // check if admin has that space first, if not, thread is empty
     const spaces = await Box.listSpaces(adminEthAddr);
     if (!spaces.includes(spaceName)) return;
-    const dialogue = await Box.getThread(spaceName, threadName, adminEthAddr, members, threadOpts || {});
-    const uniqueUsers = [...new Set(dialogue.map(x => x.author))];
+
+    let box;
+    let thread;
+    let dialogue;
+    let uniqueUsers;
+
+    if (ethereum) {
+      box = await Box.create(ethereum);
+      thread = await box.openThread(spaceName, threadName, threadOpts);
+      dialogue = await thread.getPosts();
+      uniqueUsers = [...new Set(dialogue.map(x => x.author))];
+    } else {
+      dialogue = await Box.getThread(spaceName, threadName, adminEthAddr, members, threadOpts || {});
+    }
 
     let showLoadButton;
     if (dialogue.length > showCommentCount) showLoadButton = true;
-
-    this.setState({
-      uniqueUsers,
+    
+    this.setState({ 
+      thread, 
       dialogue,
+      uniqueUsers,
       dialogueLength: dialogue.length,
       showLoadButton,
-    });
+      box
+    }, () => {
+      if (ethereum) thread.onUpdate(() => this.updateComments())}
+    );
   }
 
   fetchMe = async () => {
-    const { currentUserAddr } = this.props;
+    const { currentUserAddr, spaceName, userProfileURL } = this.props;
+    const { profiles } = this.state;
     const stateCurrentUserAddr = this.state.currentUserAddr;
     const myAddress = currentUserAddr || stateCurrentUserAddr;
     const currentUser3BoxProfile = await Box.getProfile(myAddress);
 
     this.setState({ currentUser3BoxProfile });
+
+    const config = await Box.getConfig(myAddress);
+    const threeID = config.spaces && config.spaces[spaceName] && config.spaces[spaceName].DID;
+
+    if (profiles[threeID]) return;
+
+    currentUser3BoxProfile.ethAddr = myAddress;
+    currentUser3BoxProfile.profileURL = userProfileURL ? userProfileURL(myAddress) : `https://3box.io/${myAddress}`;
+    profiles[threeID] = currentUser3BoxProfile;
+
+    this.setState({ profiles });
   }
 
   // get profiles of commenters from public api only on component mount
@@ -142,11 +177,14 @@ class App extends Component {
       user.profileURL = userProfileURL ? userProfileURL(ethAddr) : `https://3box.io/${ethAddr}`;
       profiles[uniqueUsers[i]] = user;
     });
+    
     this.setState({ profiles });
   }
 
   openBox = async () => {
-    const { ethereum } = this.state;
+    const { ethereum, hasAuthed, box } = this.state;
+    const { spaceName } = this.props;
+
     if (!ethereum) console.error('You must provide an ethereum object to the comments component.');
 
     this.setState({ isLoading3Box: true });
@@ -154,60 +192,23 @@ class App extends Component {
     const addresses = await ethereum.enable();
     const currentUserAddr = addresses[0];
     this.setState({ currentUserAddr }, async () => await this.fetchMe());
+    
+    if (!hasAuthed) {
+      await box.auth([spaceName], { address: currentUserAddr });
+      this.setState({ hasAuthed: true });
+    }
 
-    const box = await Box.openBox(currentUserAddr, ethereum, {});
-
-    box.onSyncDone(() => this.setState({ box }));
+    await box.syncDone();
     this.setState({ box, isLoading3Box: false });
-  }
-
-  joinThread = async () => {
-    const {
-      spaceName,
-      threadName,
-      adminEthAddr,
-      spaceOpts
-    } = this.props;
-    const stateBox = (this.state.box && Object.keys(this.state.box).length) && this.state.box;
-    const propBox = (this.props.box && Object.keys(this.props.box).length) && this.props.box;
-    const box = stateBox || propBox;
-
-    const space = await box.openSpace(spaceName, spaceOpts || {});
-    const opts = { firstModerator: adminEthAddr };
-    const thread = await space.joinThread(threadName, opts);
-
-    // fetch current user's space did to match herself against comment auth
-    await this.fetch3ID();
-
-    const dialogue = await thread.getPosts();
-    thread.onUpdate(() => this.updateComments());
-    this.setState({ thread, dialogue });
-  }
-
-  fetch3ID = async () => {
-    const { currentUserAddr, spaceName, userProfileURL } = this.props;
-    const { profiles } = this.state;
-    const stateCurrentUserAddr = this.state.currentUserAddr;
-    const myAddress = currentUserAddr || stateCurrentUserAddr;
-
-    const config = await Box.getConfig(myAddress);
-    const threeID = config.spaces && config.spaces[spaceName] && config.spaces[spaceName].DID;
-
-    // if profile already exists in uniqueUsers object, return
-    if (profiles[threeID]) return;
-
-    const currentUser3BoxProfile = await Box.getProfile(myAddress);
-    currentUser3BoxProfile.ethAddr = myAddress;
-    currentUser3BoxProfile.profileURL = userProfileURL ? userProfileURL(myAddress) : `https://3box.io/${myAddress}`;
-    profiles[threeID] = currentUser3BoxProfile;
-
-    this.setState({ currentUser3BoxProfile, profiles });
   }
 
   updateComments = async () => {
     const { thread } = this.state;
     const dialogue = await thread.getPosts();
-    this.setState({ dialogue, dialogueLength: dialogue.length });
+    const uniqueUsers = [...new Set(dialogue.map(x => x.author))];
+    
+    this.setState({ dialogue, dialogueLength: dialogue.length, uniqueUsers }, 
+      () => this.fetchCommenters());
   }
 
   handleLoadMore = async () => {
@@ -232,7 +233,8 @@ class App extends Component {
       currentUserAddr,
       isMobile,
       ethereum,
-      isLoading3Box
+      isLoading3Box,
+      hasAuthed,
     } = this.state;
 
     const {
@@ -240,7 +242,8 @@ class App extends Component {
       threadName,
       adminEthAddr,
       useHovers,
-      loginFunction
+      loginFunction,
+      members,
     } = this.props;
 
     return (
@@ -261,7 +264,8 @@ class App extends Component {
           box={box}
           loginFunction={loginFunction}
           isLoading3Box={isLoading3Box}
-          joinThread={this.joinThread}
+          members={members}
+          hasAuthed={hasAuthed}
           updateComments={this.updateComments}
           openBox={this.openBox}
         />
@@ -284,7 +288,6 @@ class App extends Component {
           box={box}
           useHovers={useHovers}
           handleLoadMore={this.handleLoadMore}
-          joinThread={this.joinThread}
           openBox={this.openBox}
         />
 

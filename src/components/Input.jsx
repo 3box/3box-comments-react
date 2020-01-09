@@ -118,13 +118,12 @@ class Input extends Component {
 
   saveComment = async () => {
     const {
-      joinThread,
       thread,
       updateComments,
       openBox,
-      box,
       loginFunction,
-      ethereum
+      ethereum,
+      hasAuthed,
     } = this.props;
     const { comment, disableComment, isMobile } = this.state;
     const updatedComment = comment.replace(/(\r\n|\n|\r)/gm, "");
@@ -137,12 +136,10 @@ class Input extends Component {
     this.inputRef.current.style.height = (isMobile) ? '64px' : '74px';
     this.setState({ postLoading: true, comment: '' });
 
-    if (!box || !Object.keys(box).length) loginFunction ? await loginFunction() : await openBox();
-
-    if (!Object.keys(thread).length) await joinThread();
-
+    if (!hasAuthed) loginFunction ? await loginFunction() : await openBox();
+    
     try {
-      await this.props.thread.post(comment);
+      await thread.post(comment);
       await updateComments();
       this.setState({ postLoading: false });
     } catch (error) {
@@ -166,7 +163,7 @@ class Input extends Component {
       ethereum,
       loginFunction,
       openBox,
-      isLoading3Box
+      isLoading3Box,
     } = this.props;
 
     const noWeb3 = (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
@@ -206,8 +203,8 @@ class Input extends Component {
         ) : <div />}
 
         <p className={`input_commentAs ${showLoggedInAs ? 'showLoggedInAs' : ''}`}>
-          {(isBoxEmpty && !noWeb3 && !currentUserAddr) ? 'You will log in upon commenting' : ''}
-          {((box && !isBoxEmpty && !noWeb3) || currentUserAddr) ? `Commenting as ${currentUser3BoxProfile.name || shortenEthAddr(currentUserAddr)}` : ''}
+          {(!noWeb3 && !currentUserAddr) ? 'You will log in upon commenting' : ''}
+          {currentUserAddr ? `Commenting as ${currentUser3BoxProfile.name || shortenEthAddr(currentUserAddr)}` : ''}
           {noWeb3 ? 'Cannot comment without Web3' : ''}
         </p>
 
@@ -249,11 +246,11 @@ class Input extends Component {
           </button>
         )}
 
-        {(isBoxEmpty && !currentUserAddr && !isLoading3Box) && (
+        {/* {(isBoxEmpty && !currentUserAddr && !isLoading3Box) && (
           <div className="input_login">
             <SVG className="input_login_loading" src={Loading} alt="Loading" />
           </div>
-        )}
+        )} */}
 
         <EmojiIcon
           onClick={this.toggleEmojiPicker}
@@ -273,12 +270,13 @@ Input.propTypes = {
   ethereum: PropTypes.object,
   currentUser3BoxProfile: PropTypes.object,
   currentUserAddr: PropTypes.string,
+  spaceName: PropTypes.string.isRequired,
   loginFunction: PropTypes.func,
   isLoading3Box: PropTypes.bool,
+  hasAuthed: PropTypes.bool.isRequired,
 
   updateComments: PropTypes.func.isRequired,
   openBox: PropTypes.func.isRequired,
-  joinThread: PropTypes.func.isRequired,
 };
 
 Input.defaultProps = {
