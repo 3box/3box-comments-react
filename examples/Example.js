@@ -16,7 +16,7 @@ class Example extends React.Component {
   }
 
   componentDidMount() {
-    this.handleLogin();
+    // this.handleLogin();
   }
 
   handleLogin = async () => {
@@ -48,19 +48,20 @@ class Example extends React.Component {
             </p>
           </div>
           <div className="userscontainer">
+            {/* {myProfile && ( */}
             <Comments
               // required
               spaceName='3boxtestcomments'
-              threadName='freshcomments2'
+              threadName='freshcomments3'
               // threadName='freshcomments'
               adminEthAddr="0x2a0D29C819609Df18D8eAefb429AEC067269BBb6"
 
               // case A & B
-              box={box}
-              currentUserAddr={myAddress}
+              // box={box}
+              // currentUserAddr={myAddress}
 
               // case B
-              // loginFunction={this.handleLogin}
+              loginFunction={this.handleLogin}
 
               // case C
               // ethereum={window.ethereum}
@@ -74,6 +75,7 @@ class Example extends React.Component {
             // currentUser3BoxProfile={myProfile}
             // userProfileURL={address => `https://userprofiles.co/user/${address}`}
             />
+          {/* )} */}
           </div>
         </div>
       </div>

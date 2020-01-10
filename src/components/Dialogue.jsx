@@ -11,14 +11,14 @@ const Dialogue = ({
   handleLoadMore,
   showCommentCount,
   showLoadButton,
-  joinThread,
   thread,
   useHovers,
   currentUserAddr,
   adminEthAddr,
   box,
   loginFunction,
-  openBox
+  openBox,
+  hasAuthed
 }) => {
 
   const updatedDialogue = sortChronologically(dialogue);
@@ -41,11 +41,11 @@ const Dialogue = ({
               isCommenterAdmin={adminEthAddrNormalized === commentAddr}
               key={comment.postId}
               thread={thread}
-              joinThread={joinThread}
               useHovers={useHovers}
               box={box}
               loginFunction={loginFunction}
               openBox={openBox}
+              hasAuthed={hasAuthed}
             />
           )
         })}
@@ -75,11 +75,11 @@ Dialogue.propTypes = {
   currentUserAddr: PropTypes.string,
   showLoadButton: PropTypes.bool,
   useHovers: PropTypes.bool,
+  hasAuthed: PropTypes.bool,
   loginFunction: PropTypes.func,
 
   openBox: PropTypes.func.isRequired,
   handleLoadMore: PropTypes.func.isRequired,
-  joinThread: PropTypes.func.isRequired,
   showCommentCount: PropTypes.number.isRequired,
   adminEthAddr: PropTypes.string.isRequired,
 };

@@ -28,6 +28,7 @@
   }
 }
 
+\
 ::placeholder {
   font-size: 15px;
   white-space: nowrap;
@@ -46,7 +47,7 @@
   max-width: $commentPictureDimension;
   max-height: $commentPictureDimension;
   border-radius: 50%;
-  background-color: #1168df;
+  // background-color: #1168df;
   object-fit: cover;
 }
 
@@ -60,6 +61,13 @@
   font-size: 14px;
   cursor: pointer;
   padding: 0;
+}
+
+.input_login_loading {
+  min-height: 52px;
+  min-width: 52px;
+  max-height: 52px;
+  max-width: 52px;
 }
 
 .sc-user-input--picker-wrapper {
