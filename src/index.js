@@ -109,17 +109,13 @@ class App extends Component {
 
     let box;
     let thread;
-    let dialogue;
-    let uniqueUsers;
-
-    if (ethereum) {
+    if (ethereum){
       box = await Box.create(ethereum);
       thread = await box.openThread(spaceName, threadName, threadOpts);
-      dialogue = await thread.getPosts();
-      uniqueUsers = [...new Set(dialogue.map(x => x.author))];
-    } else {
-      dialogue = await Box.getThread(spaceName, threadName, adminEthAddr, members, threadOpts || {});
     }
+    // use static api first, as it's much quicker
+    const dialogue = await Box.getThread(spaceName, threadName, adminEthAddr, members, threadOpts || {});
+    const uniqueUsers = [...new Set(dialogue.map(x => x.author))];
 
     let showLoadButton;
     if (dialogue.length > showCommentCount) showLoadButton = true;
@@ -198,7 +194,8 @@ class App extends Component {
       this.setState({ hasAuthed: true });
     }
 
-    await box.syncDone();
+    console.log('box.syncDone', box.syncDone)
+    await box.syncDone;
     this.setState({ box, isLoading3Box: false });
   }
 

@@ -10,7 +10,6 @@ import PopupWindow from './Emoji/PopupWindow';
 import EmojiPicker from './Emoji/EmojiPicker';
 import Loading from '../assets/3BoxCommentsSpinner.svg';
 import Logo from '../assets/3BoxLogo.svg';
-import Send from '../assets/Send.svg';
 import Profile from '../assets/Profile.svg';
 import './styles/Input.scss';
 import './styles/PopupWindow.scss';
@@ -159,17 +158,17 @@ class Input extends Component {
     const {
       currentUser3BoxProfile,
       currentUserAddr,
-      box,
       ethereum,
       loginFunction,
       openBox,
       isLoading3Box,
+      hasAuthed,
     } = this.props;
 
     const noWeb3 = (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
     const updatedProfilePicture = currentUser3BoxProfile.image ? `https://ipfs.infura.io/ipfs/${currentUser3BoxProfile.image[0].contentUrl['/']}`
       : currentUserAddr && makeBlockie(currentUserAddr);
-    const isBoxEmpty = !box || !Object.keys(box).length;
+    // const isBoxEmpty = !box || !Object.keys(box).length;
 
     return (
       <div className="input">
@@ -240,7 +239,7 @@ class Input extends Component {
           </svg>
         </button>
 
-        {(isBoxEmpty && !currentUserAddr && !isLoading3Box) && (
+        {(!hasAuthed && !currentUserAddr && !isLoading3Box && !noWeb3) && (
           <button className="input_login" onClick={openBox}>
             Login
           </button>
