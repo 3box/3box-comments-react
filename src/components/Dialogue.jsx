@@ -1,68 +1,109 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { sortChronologically } from '../utils';
 import Comment from './Comment';
 import './styles/Dialogue.scss';
 
-const Dialogue = ({
-  dialogue,
-  profiles,
-  handleLoadMore,
-  showCommentCount,
-  showLoadButton,
-  thread,
-  useHovers,
-  currentUserAddr,
-  adminEthAddr,
-  box,
-  loginFunction,
-  openBox,
-  hasAuthed
-}) => {
+class Dialogue extends Component {
+  constructor(props) {
+    super(props);
 
-  const updatedDialogue = sortChronologically(dialogue);
+    this.state = {
+      showCommentCount: this.props.showCommentCount || 30
+    }
+  }
 
-  return (
-    <div className="dialogue">
-      <div className="dialogue_grid">
-        {updatedDialogue.slice(0, showCommentCount).map(comment => {
-          const profile = profiles[comment.author];
-          const commentAddr = profile && profile.ethAddr.toLowerCase();
-          const currentUserAddrNormalized = currentUserAddr && currentUserAddr.toLowerCase();
-          const adminEthAddrNormalized = adminEthAddr.toLowerCase();
+  handleLoadMore = async () => {
+    const { showCommentCount } = this.state;
+    const { dialogue } = this.props;
+    const newCount = showCommentCount + showCommentCount;
+    let showLoadButton = true;
+    if (newCount >= dialogue.length) showLoadButton = false;
+    this.setState({ showCommentCount: newCount, showLoadButton });
+  }
 
-          return (
-            <Comment
-              comment={comment}
-              profile={profile || {}}
-              isMyComment={commentAddr === currentUserAddrNormalized}
-              isMyAdmin={adminEthAddrNormalized === currentUserAddrNormalized}
-              isCommenterAdmin={adminEthAddrNormalized === commentAddr}
-              key={comment.postId}
-              thread={thread}
-              useHovers={useHovers}
-              box={box}
-              loginFunction={loginFunction}
-              openBox={openBox}
-              hasAuthed={hasAuthed}
-            />
-          )
-        })}
+  render() {
+    const {
+      dialogue,
+      profiles,
+      thread,
+      useHovers,
+      currentUserAddr,
+      adminEthAddr,
+      box,
+      loginFunction,
+      openBox,
+      currentUser3BoxProfile,
+      ethereum,
+      isLoading3Box,
+      updateComments,
+      onMouseOver,
+      onMouseLeave,
+
+      login,
+
+      // start createbox
+      hasAuthed
+      // end createbox
+    } = this.props;
+
+    const { showCommentCount } = this.state;
+
+    // const updatedDialogue = sortChronologically(dialogue); // createbox
+
+    let showLoadButton = false;
+    if (dialogue.length > showCommentCount) showLoadButton = true;
+
+    return (
+      <div className="dialogue" onMouseOver={onMouseOver}
+        onMouseLeave={onMouseLeave}>
+        <div className="dialogue_grid">
+          {dialogue.slice(0, showCommentCount).map(comment => {
+            const profile = profiles[comment.author];
+            const commentAddr = profile && profile.ethAddr.toLowerCase();
+            const currentUserAddrNormalized = currentUserAddr && currentUserAddr.toLowerCase();
+            const adminEthAddrNormalized = adminEthAddr.toLowerCase();
+
+            return (
+              <Comment
+                comment={comment}
+                profile={profile || {}}
+                profiles={profiles}
+                isMyComment={commentAddr === currentUserAddrNormalized}
+                isMyAdmin={adminEthAddrNormalized === currentUserAddrNormalized}
+                isCommenterAdmin={adminEthAddrNormalized === commentAddr}
+                adminEthAddr={adminEthAddr}
+                key={comment.postId}
+                thread={thread}
+                useHovers={useHovers}
+                box={box}
+                loginFunction={loginFunction}
+                openBox={openBox}
+                currentUserAddr={currentUserAddr}
+                currentUser3BoxProfile={currentUser3BoxProfile}
+                ethereum={ethereum}
+                isLoading3Box={isLoading3Box}
+                updateComments={updateComments}
+                hasAuthed={hasAuthed}
+                login={login}
+              />
+            )
+          })}
+        </div>
+
+        <div className="dialogue_button_container">
+          {showLoadButton && (
+            <button
+              className="dialogue_button"
+              onClick={this.handleLoadMore}
+            >
+              Load more
+          </button>
+          )}
+        </div>
       </div>
-
-      <div className="dialogue_button_container">
-        {showLoadButton && (
-          <button
-            className="dialogue_button"
-            onClick={handleLoadMore}
-          >
-            Load more
-        </button>
-        )}
-      </div>
-    </div>
-  );
+    );
+  }
 }
 
 export default Dialogue;
@@ -73,15 +114,23 @@ Dialogue.propTypes = {
   thread: PropTypes.object,
   box: PropTypes.object,
   currentUserAddr: PropTypes.string,
-  showLoadButton: PropTypes.bool,
   useHovers: PropTypes.bool,
   hasAuthed: PropTypes.bool,
   loginFunction: PropTypes.func,
 
   openBox: PropTypes.func.isRequired,
-  handleLoadMore: PropTypes.func.isRequired,
+
   showCommentCount: PropTypes.number.isRequired,
   adminEthAddr: PropTypes.string.isRequired,
+
+  currentUser3BoxProfile: PropTypes.object,
+  ethereum: PropTypes.object,
+  isLoading3Box: PropTypes.bool,
+  updateComments: PropTypes.func.isRequired,
+  login: PropTypes.func.isRequired,
+
+  onMouseOver: PropTypes.func,
+  onMouseLeave: PropTypes.func,
 };
 
 Dialogue.defaultProps = {
@@ -90,6 +139,5 @@ Dialogue.defaultProps = {
   thread: {},
   box: {},
   currentUserAddr: null,
-  showLoadButton: false,
   useHovers: false,
 };

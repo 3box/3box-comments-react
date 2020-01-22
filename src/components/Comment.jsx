@@ -5,17 +5,27 @@ import Linkify from 'react-linkify';
 import makeBlockie from 'ethereum-blockies-base64';
 import SVG from 'react-inlinesvg';
 
-import { timeSince, shortenEthAddr } from '../utils';
+import { timeSince, shortenEthAddr, filterComments, REPLIABLE_COMMENT_LEVEL_MAX, REPLY_THREAD_SHOW_COMMENT_COUNT } from '../utils';
 import Delete from '../assets/Delete.svg';
+import Reply from '../assets/Reply.svg';
 import Loading from '../assets/3BoxCommentsSpinner.svg';
 import './styles/Comment.scss';
+import Input from './Input';
+import Dialogue from './Dialogue';
+import Vote from './Vote';
+import Reactions from './Reactions';
 
 class Comment extends Component {
   constructor(props) {
     super(props);
     this.state = {
       loadingDelete: false,
+      hoverComment: false,
+      hoverGallery: false,
+      showReply: false,
     };
+    this.toggleHoverComment = this.toggleHoverComment.bind(this);
+    this.toggleHoverGallery = this.toggleHoverGallery.bind(this);
   }
 
   deleteComment = async (commentId, e) => {
@@ -39,8 +49,26 @@ class Comment extends Component {
     }
   }
 
+  toggleReplyInput = (e) => {
+    const { showReply } = this.state;
+    this.setState({ showReply: !showReply });
+  }
+
+  toggleHoverComment(state) {
+    this.setState({ hoverComment: state })
+  }
+
+  toggleHoverGallery(state) {
+    this.setState({ hoverGallery: state })
+  }
+
   render() {
-    const { loadingDelete } = this.state;
+    const {
+      loadingDelete,
+      showReply,
+      hoverComment,
+      hoverGallery
+    } = this.state;
     const {
       comment,
       profile,
@@ -48,17 +76,54 @@ class Comment extends Component {
       useHovers,
       isMyAdmin,
       isCommenterAdmin,
-      thread
+      thread,
+      currentUserAddr,
+      currentUser3BoxProfile,
+      ethereum,
+      isLoading3Box,
+      updateComments,
+      adminEthAddr,
+      box,
+      loginFunction,
+      login,
+      openBox,
+      profiles,
+      hasAuthed,
     } = this.props;
 
     const profilePicture = profile.ethAddr &&
       (profile.image ? `https://ipfs.infura.io/ipfs/${profile.image[0].contentUrl['/']}`
         : makeBlockie(profile.ethAddr));
     const canDelete = isMyComment || isMyAdmin;
-    const hasThread = !!Object.keys(thread).length;
+
+    const children_comments = comment.children ? filterComments(comment.children, "comment") : [];
+    const votes = comment.children ? filterComments(comment.children, "vote") : [];
+    const reactions = comment.children ? filterComments(comment.children, "reaction") : [];
+
+    const notHoverChildren = !children_comments || children_comments.length === 0 || !hoverGallery;
+    const visibleClass = hoverComment && notHoverChildren ? "visible" : "";
+
+    const showCommentCount = REPLY_THREAD_SHOW_COMMENT_COUNT;
 
     return (
-      <div className={`comment ${canDelete ? 'isMyComment' : ''}`}>
+      <div className={`comment ${canDelete ? 'isMyComment' : ''}`} onMouseOver={() => this.toggleHoverComment(true)} onMouseLeave={() => this.toggleHoverComment(false)}>
+        <Vote
+          currentUserAddr={currentUserAddr}
+          currentUser3BoxProfile={currentUser3BoxProfile}
+          thread={thread}
+          ethereum={ethereum}
+          adminEthAddr={adminEthAddr}
+          box={box}
+          loginFunction={loginFunction}
+          isLoading3Box={isLoading3Box}
+          login={login}
+          updateComments={updateComments}
+          openBox={openBox}
+          parentId={comment.postId}
+          votes={votes}
+          profiles={profiles}
+        />
+
         <a
           href={profile.profileURL ? `${profile.profileURL}` : `https://3box.io/${profile.ethAddr}`}
           target={profile.profileURL ? '_self' : '_blank'}
@@ -113,7 +178,7 @@ class Comment extends Component {
 
                 {/* hasThread */}
                 {(!loadingDelete && profile.ethAddr) && (
-                  <div className="comment_content_context_main_user_delete">
+                  <div className={`comment_content_context_main_user_delete ${visibleClass}`}>
                     <button
                       onClick={(e) => this.deleteComment(comment.postId, e)}
                       className="comment_content_context_main_user_delete_button"
@@ -132,9 +197,87 @@ class Comment extends Component {
           </div>
           <div className="comment_content_text">
             <Linkify>
-              {comment.message}
+              {comment.message.data}
             </Linkify>
           </div>
+
+          {!loadingDelete && (
+            <div className="comment_footer">
+              <div className={`comment_content_context_main_user_reactions ${visibleClass}`}>
+                <Reactions
+                  currentUserAddr={currentUserAddr}
+                  currentUser3BoxProfile={currentUser3BoxProfile}
+                  thread={thread}
+                  ethereum={ethereum}
+                  adminEthAddr={adminEthAddr}
+                  box={box}
+                  loginFunction={loginFunction}
+                  isLoading3Box={isLoading3Box}
+                  login={login}
+                  updateComments={updateComments}
+                  openBox={openBox}
+                  parentId={comment.postId}
+                  reactions={reactions}
+                  profiles={profiles}
+                />
+              </div>
+              {comment.level < REPLIABLE_COMMENT_LEVEL_MAX && (
+                <div className={`comment_content_context_main_user_reply ${visibleClass}`}>
+                  <button
+                    onClick={(e) => this.toggleReplyInput(e)}
+                    className="comment_content_context_main_user_reply_button"
+                  >
+                    <SVG src={Reply} alt="Reply" className="comment_content_context_main_user_reply_button_icon" />
+                    Reply
+                </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {!loadingDelete && comment.level < REPLIABLE_COMMENT_LEVEL_MAX && showReply && (
+            <div className="comment_content_context_main_user_reply_input">
+              <Input
+                currentUserAddr={currentUserAddr}
+                currentUser3BoxProfile={currentUser3BoxProfile}
+                thread={thread}
+                ethereum={ethereum}
+                adminEthAddr={adminEthAddr}
+                box={box}
+                loginFunction={loginFunction}
+                isLoading3Box={isLoading3Box}
+                login={login}
+                hasAuthed={hasAuthed}
+                updateComments={updateComments}
+                openBox={openBox}
+                parentId={comment.postId}
+                onSubmit={() => { this.setState({ showReply: false }) }}
+              />
+            </div>
+          )}
+
+          {children_comments && children_comments.length > 0 && (
+            <Dialogue
+              dialogue={children_comments}
+              currentUserAddr={currentUserAddr}
+              currentUser3BoxProfile={currentUser3BoxProfile}
+              adminEthAddr={adminEthAddr}
+              profiles={profiles}
+              showCommentCount={showCommentCount}
+              loginFunction={loginFunction}
+              isLoading3Box={isLoading3Box}
+              ethereum={ethereum}
+              thread={thread}
+              box={box}
+              useHovers={useHovers}
+              login={login}
+              updateComments={updateComments}
+              openBox={openBox}
+              hasAuthed={hasAuthed}
+              onMouseOver={() => this.toggleHoverGallery(true)}
+              onMouseLeave={() => this.toggleHoverGallery(false)}
+            />
+          )}
         </div >
       </div >
     );
@@ -155,6 +298,14 @@ Comment.propTypes = {
   box: PropTypes.object,
   loginFunction: PropTypes.func,
   openBox: PropTypes.func.isRequired,
+  currentUserAddr: PropTypes.string,
+  adminEthAddr: PropTypes.string,
+  currentUser3BoxProfile: PropTypes.object,
+  ethereum: PropTypes.object,
+  isLoading3Box: PropTypes.bool,
+  updateComments: PropTypes.func.isRequired,
+  login: PropTypes.func.isRequired,
+  profiles: PropTypes.object,
 };
 
 Comment.defaultProps = {

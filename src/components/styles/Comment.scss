@@ -9,8 +9,8 @@
 }
 
 .comment.isMyComment {
-  &:hover {
-    .comment_content_context_main_user_delete {
+  .comment_content_context_main_user_delete {
+    &.visible {
       visibility: visible !important;
     }
   }
@@ -88,6 +88,50 @@
   opacity: .35;
 }
 
+.comment_content_context_main_user_reply {
+  visibility: hidden;
+  margin-top: 6px;
+  padding: 7px 10px 5px;
+  border-left: 1px solid #e1e4e8;
+
+  &.visible {
+    visibility: visible !important;
+  }
+}
+
+.comment_content_context_main_user_reply_button {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  display: flex;
+}
+
+.comment_content_context_main_user_reply_button_icon {
+  height: 16px;
+  width: auto;
+  opacity: .35;
+  margin-right: 3px;
+}
+
+.comment_content_context_main_user_reply_input {
+  min-width: 280px;
+  margin: 24px 32px;
+}
+
+.comment_content_context_main_user_reactions {
+  visibility: hidden;
+  margin-top: 6px;
+
+  &.visible {
+    visibility: visible !important;
+  }
+}
+
+.comment_footer {
+  display: flex;
+  align-items: center;
+}
+
 .comment_content_context_time {
   font-size: 11px;
   color: $lighterFont;
@@ -127,6 +171,16 @@
   position: absolute;
   right: -36px;
   top: -4px;
+}
+
+.comment {
+  .dialogue {
+    margin-bottom: 0;
+    margin-top: 20px;
+    .dialogue_button_container {
+      height: 0;
+    }
+  }
 }
 
 @media only screen and (max-width: 768px) {

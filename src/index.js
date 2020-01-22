@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import resolve from 'did-resolver';
 import registerResolver from '3id-resolver';
 
-import { checkIsMobileDevice } from './utils';
+import { checkIsMobileDevice, reorderComments, filterComments } from './utils';
 
 import Input from './components/Input';
 import Context from './components/Context';
@@ -109,26 +109,30 @@ class App extends Component {
 
     let box;
     let thread;
-    if (ethereum){
+    if (ethereum) {
       box = await Box.create(ethereum);
       thread = await box.openThread(spaceName, threadName, threadOpts);
     }
     // use static api first, as it's much quicker
     const dialogue = await Box.getThread(spaceName, threadName, adminEthAddr, members, threadOpts || {});
+    const updatedDialogue = reorderComments(dialogue);
+    console.log("fetch dialogue in fetchThread() via Box.getThread", dialogue, updatedDialogue);
+    const comments = filterComments(dialogue, "comment");
     const uniqueUsers = [...new Set(dialogue.map(x => x.author))];
 
     let showLoadButton;
     if (dialogue.length > showCommentCount) showLoadButton = true;
-    
-    this.setState({ 
-      thread, 
-      dialogue,
+
+    this.setState({
+      thread,
+      dialogue: updatedDialogue,
       uniqueUsers,
-      dialogueLength: dialogue.length,
+      dialogueLength: comments.length,
       showLoadButton,
       box
     }, () => {
-      if (ethereum) thread.onUpdate(() => this.updateComments())}
+      if (ethereum) thread.onUpdate(() => this.updateComments())
+    }
     );
   }
 
@@ -173,7 +177,7 @@ class App extends Component {
       user.profileURL = userProfileURL ? userProfileURL(ethAddr) : `https://3box.io/${ethAddr}`;
       profiles[uniqueUsers[i]] = user;
     });
-    
+
     this.setState({ profiles });
   }
 
@@ -188,7 +192,7 @@ class App extends Component {
     const addresses = await ethereum.enable();
     const currentUserAddr = addresses[0];
     this.setState({ currentUserAddr }, async () => await this.fetchMe());
-    
+
     await box.auth([spaceName], { address: currentUserAddr });
     this.setState({ hasAuthed: true });
 
@@ -196,12 +200,13 @@ class App extends Component {
     this.setState({ box, isLoading3Box: false });
   }
 
+  // current change (createbox)**********************************************
   updateComments = async () => {
     const { thread } = this.state;
     const dialogue = await thread.getPosts();
     const uniqueUsers = [...new Set(dialogue.map(x => x.author))];
-    
-    this.setState({ dialogue, dialogueLength: dialogue.length, uniqueUsers }, 
+
+    this.setState({ dialogue, dialogueLength: dialogue.length, uniqueUsers },
       () => this.fetchCommenters());
   }
 
@@ -211,6 +216,33 @@ class App extends Component {
     let showLoadButton = true;
     if (newCount >= dialogue.length) showLoadButton = false;
     this.setState({ showCommentCount: newCount, showLoadButton });
+  }
+  // end createbox ***********************************************
+
+  updateComments = async () => {
+    const { thread } = this.state;
+    const dialogue = await thread.getPosts();
+
+    const updatedDialogue = reorderComments(dialogue);
+    const comments = filterComments(dialogue, "comment");
+
+    const uniqueUsers = [...new Set(dialogue.map(x => x.author))];
+
+    this.setState({
+      dialogue: updatedDialogue,
+      dialogueLength: comments.length,
+      uniqueUsers,
+    }, () => this.fetchCommenters());
+  }
+
+  login = async () => {
+    const { loginFunction } = this.props;
+    const { box, hasAuthed } = this.state;
+    const boxToUse = (!box || !Object.keys(box).length) ? this.props.box : box;
+    const isBoxEmpty = !boxToUse || !Object.keys(boxToUse).length;
+
+    if (isBoxEmpty && loginFunction) await loginFunction();
+    if (!hasAuthed) await this.openBox();
   }
 
   render() {
@@ -243,7 +275,7 @@ class App extends Component {
     return (
       <div
         className={`
-        threebox-comments-react 
+        threebox-comments-react
         ${isMobile ? 'comment-mobile' : 'comment-desktop'}
         `}
       >
@@ -262,6 +294,7 @@ class App extends Component {
           hasAuthed={hasAuthed}
           updateComments={this.updateComments}
           openBox={this.openBox}
+          login={this.login}
         />
 
         <Context
@@ -272,18 +305,30 @@ class App extends Component {
         <Dialogue
           dialogue={dialogue}
           currentUserAddr={currentUserAddr}
+          currentUser3BoxProfile={currentUser3BoxProfile}
           adminEthAddr={adminEthAddr}
           threadName={threadName}
           profiles={profiles}
           showCommentCount={showCommentCount}
           showLoadButton={showLoadButton}
           loginFunction={loginFunction}
+          isLoading3Box={isLoading3Box}
+          ethereum={ethereum}
           thread={thread}
           box={box}
           hasAuthed={hasAuthed}
           useHovers={useHovers}
+
+          // currentchange (createbox)
           handleLoadMore={this.handleLoadMore}
+          // end createbox
+
+          // start gitocoin
+          updateComments={this.updateComments}
+          // end gitcoin
+
           openBox={this.openBox}
+          login={this.login}
         />
 
         <Footer />

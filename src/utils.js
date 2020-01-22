@@ -44,3 +44,118 @@ export const sortChronologically = (threadPosts) => {
 
   return updatedThreadPosts;
 }
+
+// assume all the comments are loaded
+export const reorderComments = (comments) => {
+  if (comments && comments.length > 0) {
+    // add the table to ease query
+    let table = {};
+    comments.forEach(c => {
+      if (c.postId) {
+        table[c.postId] = c;
+      }
+      c.message = decodeMessage(c.message);
+    })
+
+    // build the comments tree
+    comments.forEach(c => {
+      c.level = 0;
+      const msg = c.message;
+      if (msg.parentId) {
+        // add children attribute for parent
+        const parent = table[msg.parentId];
+        if (!parent) {
+          console.log("parent not found: probably the parent comment was deleted or not loaded successfully. The child is: ", c);
+          return ;
+        }
+        if (!("children" in parent)) {
+          parent.children = [];
+        }
+        parent.children.push(c);
+
+        // add level attribute
+        let node = c;
+        while (node.message.parentId) {
+          c.level ++;
+          node = table[node.message.parentId];
+        }
+      }
+    })
+
+    // sort children chronologically
+    comments = sortChronologically(comments)
+    comments.forEach(c => {
+      if (c.children && c.children.length > 0) {
+        c.children = sortChronologically(c.children);
+      }
+    })
+
+    // return the top level comments
+    return comments.filter(c => c.level === 0);
+  } else {
+    return [];
+  }
+}
+
+export const filterComments = (comments, category) => {
+  if (comments && comments.length > 0 && category) {
+    return comments.filter(c => c.message.category === category);
+  } else {
+    return [];
+  }
+}
+
+export const encodeMessage = (category, data, parentId) => {
+  if (parentId) {
+    return {
+      category,
+      data,
+      parentId
+    }
+  } else {
+    return {
+      category,
+      data
+    }
+  }
+}
+
+export const decodeMessage = (comment) => {
+  if (typeof comment === "object") {
+    return comment;
+  } else { // string
+    try {
+      return JSON.parse(comment);
+    } catch(err) {
+      return {
+        category: "comment",
+        data: comment,
+        parentId: null
+      }
+    }
+  }
+}
+
+export const aggregateReactions = (reactions) => {
+  if (reactions && reactions.length > 0) {
+    let table = {};
+    reactions.forEach((r) => {
+      const emoji = r.message.data;
+      if (emoji in table) {
+        table[emoji].count += 1;
+        table[emoji].items.push(r);
+      } else {
+        table[emoji] = {
+          count: 1,
+          items: [r]
+        };
+      }
+    })
+    return table;
+  } else {
+    return {}
+  }
+}
+
+export const REPLIABLE_COMMENT_LEVEL_MAX = 2;
+export const REPLY_THREAD_SHOW_COMMENT_COUNT = 5;

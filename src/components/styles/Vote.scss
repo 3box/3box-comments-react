@@ -1,0 +1,43 @@
+@import '../../variables.scss';
+
+.comment_vote {
+
+  margin-right: 10px;
+
+  .vote_btn {
+    border: none;
+    background-color: transparent;
+    padding: 0 2px;
+
+    .vote_icon {
+      height: 18px;
+      width: auto;
+      cursor: pointer;
+
+      &.upvote:hover {
+        fill: $positiveColor;
+      }
+      &.downvote:hover {
+        fill: $negativeColor;
+      }
+      &.upvote.voted {
+        fill: $positiveColor;
+      }
+      &.downvote.voted {
+        fill: $negativeColor;
+      }
+    }
+  }
+
+  .count {
+    text-align: center;
+
+    &.positive {
+      color: $positiveColor;
+    }
+    &.negative {
+      color: $negativeColor;;
+    }
+  }
+}
+

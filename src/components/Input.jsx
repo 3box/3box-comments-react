@@ -3,7 +3,7 @@ import makeBlockie from 'ethereum-blockies-base64';
 import SVG from 'react-inlinesvg';
 import PropTypes from 'prop-types';
 
-import { shortenEthAddr, checkIsMobileDevice } from '../utils';
+import { shortenEthAddr, checkIsMobileDevice, encodeMessage } from '../utils';
 
 import EmojiIcon from './Emoji/EmojiIcon';
 import PopupWindow from './Emoji/PopupWindow';
@@ -31,7 +31,7 @@ class Input extends Component {
   }
 
   async componentDidMount() {
-    const el = document.getElementsByClassName('input_form')[0];
+    const el = this.inputRef.current;
     el.addEventListener("keydown", this.searchEnter, false);
     this.emojiPickerButton = document.querySelector('#sc-emoji-picker-button');
 
@@ -121,16 +121,16 @@ class Input extends Component {
     const {
       thread,
       updateComments,
-      openBox,
       loginFunction,
       ethereum,
-      hasAuthed,
-      box,
+      parentId,
+      onSubmit,
+      login,
     } = this.props;
+    
     const { comment, disableComment, isMobile } = this.state;
     const updatedComment = comment.replace(/(\r\n|\n|\r)/gm, "");
     const noWeb3 = (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
-    const isBoxEmpty = !box || !Object.keys(box).length;
 
     if (noWeb3) return;
     if (disableComment || !updatedComment) return;
@@ -139,16 +139,19 @@ class Input extends Component {
     this.inputRef.current.style.height = (isMobile) ? '64px' : '74px';
     this.setState({ postLoading: true, comment: '' });
 
-    if (isBoxEmpty && loginFunction) await loginFunction();
-    if (!hasAuthed) await openBox();
+    await login();
     
     try {
-      await thread.post(comment);
+      const message = encodeMessage("comment", comment, parentId); // new lines
+      await thread.post(message); // new lines
+
       await updateComments();
       this.setState({ postLoading: false });
     } catch (error) {
       console.error('There was an error saving your comment', error);
     }
+
+    onSubmit();
   }
 
   render() {
@@ -275,13 +278,15 @@ Input.propTypes = {
   ethereum: PropTypes.object,
   currentUser3BoxProfile: PropTypes.object,
   currentUserAddr: PropTypes.string,
-  spaceName: PropTypes.string.isRequired,
   loginFunction: PropTypes.func,
   isLoading3Box: PropTypes.bool,
   hasAuthed: PropTypes.bool.isRequired,
 
   updateComments: PropTypes.func.isRequired,
   openBox: PropTypes.func.isRequired,
+  login: PropTypes.func.isRequired,
+  parentId: PropTypes.string,
+  onSubmit: PropTypes.func,
 };
 
 Input.defaultProps = {
