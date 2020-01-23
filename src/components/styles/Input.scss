@@ -10,8 +10,8 @@
 
 .input_form {
   font-size: 15px;
-  min-height: 74px;
-  height: 74px;
+  min-height: calc(#{$commentPictureDimension} + 14px);
+  height: calc(#{$commentPictureDimension} + 14px);
   box-sizing: border-box;
   min-width: calc(100% + 16px);
   width: 100%;

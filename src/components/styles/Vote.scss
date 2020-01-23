@@ -1,43 +1,67 @@
 @import '../../variables.scss';
 
 .comment_vote {
+  margin-left: calc(#{$commentPictureDimension} + 12px);
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  border: 1px solid $borderColor;
+  border-radius: 4px;
+  margin-top: 4px;
+  height: 26px;
+}
 
-  margin-right: 10px;
+.vote_btn {
+  border: none;
+  background-color: transparent;
+  padding: 0 2px;
+  width: 28px;
+  height: 100%;
+  width: 30px;
 
-  .vote_btn {
-    border: none;
-    background-color: transparent;
-    padding: 0 2px;
+  .vote_icon {
+    height: 18px;
+    width: auto;
+    cursor: pointer;
 
-    .vote_icon {
-      height: 18px;
-      width: auto;
-      cursor: pointer;
-
-      &.upvote:hover {
-        fill: $positiveColor;
-      }
-      &.downvote:hover {
-        fill: $negativeColor;
-      }
-      &.upvote.voted {
-        fill: $positiveColor;
-      }
-      &.downvote.voted {
-        fill: $negativeColor;
-      }
+    &.upvote:hover {
+      fill: $positiveColor;
     }
-  }
 
-  .count {
-    text-align: center;
-
-    &.positive {
-      color: $positiveColor;
+    &.downvote:hover {
+      fill: $negativeColor;
     }
-    &.negative {
-      color: $negativeColor;;
+
+    &.upvote.voted {
+      fill: $positiveColor;
+    }
+
+    &.downvote.voted {
+      fill: $negativeColor;
     }
   }
 }
 
+.vote_btn-middle {
+  border-right: 1px solid $borderColor;
+  border-left: 1px solid $borderColor;
+}
+
+.count {
+  width: 30px;
+  opacity: .5;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+
+  &.positive {
+    color: $positiveColor;
+  }
+
+  &.negative {
+    color: $negativeColor;
+    ;
+  }
+}

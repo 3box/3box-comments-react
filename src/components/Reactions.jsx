@@ -4,8 +4,6 @@ import PropTypes from 'prop-types';
 import { shortenEthAddr, checkIsMobileDevice, encodeMessage, aggregateReactions } from '../utils';
 
 import EmojiIcon from './Emoji/EmojiIcon';
-import PopupWindow from './Emoji/PopupWindow';
-import EmojiPicker from './Emoji/EmojiPicker';
 import './styles/PopupWindow.scss';
 import './styles/Reactions.scss';
 
@@ -15,63 +13,12 @@ class Reactions extends Component {
     this.state = {
       user: '',
       time: '',
-      disableReaction: true,
       emojiPickerIsOpen: false,
-      emojiFilter: '',
       postLoading: false,
       hintText: null,
       isMobile: checkIsMobileDevice(),
     }
     this.onHover = this.onHover.bind(this);
-  }
-
-  async componentDidMount() {
-    this.emojiPickerButton = document.querySelector('#sc-emoji-picker-button');
-    this.setState({ disableReaction: false });
-  }
-
-  toggleEmojiPicker = (e) => {
-    e.preventDefault();
-    if (!this.state.emojiPickerIsOpen) {
-      this.setState({ emojiPickerIsOpen: true });
-    }
-  }
-
-  closeEmojiPicker = (e) => {
-    if (this.emojiPickerButton.contains(e.target)) {
-      e.stopPropagation();
-      e.preventDefault();
-    }
-    this.setState({ emojiPickerIsOpen: false });
-  }
-
-  _handleEmojiPicked = (emoji) => {
-    this.react(emoji);
-    this.setState({ emojiPickerIsOpen: false });
-  }
-
-  handleEmojiFilterChange = (event) => {
-    const emojiFilter = event.target.value;
-    this.setState({ emojiFilter });
-  }
-
-  _renderEmojiPopup = () => (
-    <PopupWindow
-      isOpen={this.state.emojiPickerIsOpen}
-      onClickedOutside={this.closeEmojiPicker}
-      onInputChange={this.handleEmojiFilterChange}
-    >
-      <EmojiPicker
-        onEmojiPicked={this._handleEmojiPicked}
-        filter={this.state.emojiFilter}
-      />
-    </PopupWindow>
-  )
-
-
-  handleLoggedInAs = () => {
-    const { showLoggedInAs } = this.state;
-    this.setState({ showLoggedInAs: !showLoggedInAs });
   }
 
   getMyReactions = () => {
@@ -93,29 +40,22 @@ class Reactions extends Component {
   react = async (emoji) => {
     const {
       login,
-      thread,
       updateComments,
-      openBox,
-      box,
       loginFunction,
       ethereum,
       parentId
     } = this.props;
 
-    const { disableReaction, isMobile } = this.state;
     const noWeb3 = (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
 
     if (noWeb3) return;
-    if (disableReaction) return;
 
-    await login()
-    // if (!box || !Object.keys(box).length) loginFunction ? await loginFunction() : await openBox();
-    // if (!Object.keys(thread).length) await joinThread();
-
+    await login();
 
     try {
       console.log("react with emoji", emoji);
       const myReactions = this.getMyReactions();
+
       if (myReactions) {
         const reactions = aggregateReactions(myReactions);
         if (reactions[emoji]) {
@@ -128,6 +68,7 @@ class Reactions extends Component {
         const message = encodeMessage("reaction", emoji, parentId);
         await this.props.thread.post(message);
       }
+
       await updateComments();
       this.setState({ postLoading: false });
     } catch (error) {
@@ -136,12 +77,11 @@ class Reactions extends Component {
   }
 
   deleteReaction = async (reaction) => {
-    const { login } = this.props;
+    const { login, thread } = this.props;
 
     try {
       await login();
-      // if (!Object.keys(thread).length) await login();
-      await this.props.thread.deletePost(reaction.postId);
+      await thread.deletePost(reaction.postId);
     } catch (error) {
       console.error('There was an error deleting one reaction', error);
     }
@@ -173,12 +113,11 @@ class Reactions extends Component {
     } else {
       this.setState({ hintText: null });
     }
-
   }
 
   render() {
     const { emojiPickerIsOpen } = this.state;
-    const { reactions } = this.props;
+    const { reactions, toggleEmojiPicker, renderEmojiPopup } = this.props;
 
     const myReactions = this.getMyReactions();
     let reactionsSummary = {}, myReactionsSummary = {};
@@ -191,7 +130,7 @@ class Reactions extends Component {
 
     return (
       <div className="reactions">
-        {reactions && reactions.length > 0 && (
+        {reactions.length && (
           <div className="emoji-bar" onMouseLeave={() => (this.onHover(null))}>{
             Object.keys(reactionsSummary).map(emoji => {
               const count = reactionsSummary[emoji].count;
@@ -206,11 +145,13 @@ class Reactions extends Component {
             })
           }</div>
         )}
+
         <EmojiIcon
-          onClick={this.toggleEmojiPicker}
+          onClick={toggleEmojiPicker}
           isActive={emojiPickerIsOpen}
-          tooltip={this._renderEmojiPopup()}
+          tooltip={renderEmojiPopup()}
         />
+
         <p className={`hint ${this.state.hintText ? 'visible' : ''}`}>
           {this.state.hintText}
         </p>
@@ -232,6 +173,8 @@ Reactions.propTypes = {
   updateComments: PropTypes.func.isRequired,
   openBox: PropTypes.func.isRequired,
   login: PropTypes.func.isRequired,
+  toggleEmojiPicker: PropTypes.func.isRequired,
+  renderEmojiPopup: PropTypes.func.isRequired,
   parentId: PropTypes.string,
   reactions: PropTypes.array,
   profiles: PropTypes.object,

@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+import { filterComments } from '../utils';
+
 import Comment from './Comment';
 import './styles/Dialogue.scss';
 
@@ -39,17 +41,11 @@ class Dialogue extends Component {
       updateComments,
       onMouseOver,
       onMouseLeave,
-
       login,
-
-      // start createbox
       hasAuthed
-      // end createbox
     } = this.props;
 
     const { showCommentCount } = this.state;
-
-    // const updatedDialogue = sortChronologically(dialogue); // createbox
 
     let showLoadButton = false;
     if (dialogue.length > showCommentCount) showLoadButton = true;
@@ -63,6 +59,10 @@ class Dialogue extends Component {
             const commentAddr = profile && profile.ethAddr.toLowerCase();
             const currentUserAddrNormalized = currentUserAddr && currentUserAddr.toLowerCase();
             const adminEthAddrNormalized = adminEthAddr.toLowerCase();
+
+            const children_comments = comment.children ? filterComments(comment.children, "comment") : [];
+            const votes = comment.children ? filterComments(comment.children, "vote") : [];
+            const reactions = comment.children ? filterComments(comment.children, "reaction") : [];
 
             return (
               <Comment
@@ -86,6 +86,10 @@ class Dialogue extends Component {
                 updateComments={updateComments}
                 hasAuthed={hasAuthed}
                 login={login}
+
+                children_comments={children_comments}
+                votes={votes}
+                reactions={reactions}
               />
             )
           })}

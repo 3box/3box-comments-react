@@ -8,7 +8,7 @@
 .dialogue_grid {
   width: 100%;
   display: inline-grid;
-  row-gap: 30px;
+  row-gap: 26px;
   grid-template-columns: repeat(1, 100% [col-start]);
   margin-bottom: 10px;
 }
