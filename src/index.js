@@ -272,6 +272,8 @@ class App extends Component {
       members,
     } = this.props;
 
+    const noWeb3 = (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
+
     return (
       <div
         className={`
@@ -292,6 +294,7 @@ class App extends Component {
           isLoading3Box={isLoading3Box}
           members={members}
           hasAuthed={hasAuthed}
+          noWeb3={noWeb3}
           updateComments={this.updateComments}
           openBox={this.openBox}
           login={this.login}

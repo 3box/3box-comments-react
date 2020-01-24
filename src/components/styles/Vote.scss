@@ -1,14 +1,13 @@
 @import '../../variables.scss';
 
 .comment_vote {
-  margin-left: calc(#{$commentPictureDimension} + 12px);
   display: flex;
   justify-content: flex-start;
   align-items: center;
   border: 1px solid $borderColor;
   border-radius: 4px;
-  margin-top: 4px;
-  height: 26px;
+  height: $reactionHeight;
+  margin-right: 12px;
 }
 
 .vote_btn {
@@ -18,43 +17,50 @@
   width: 28px;
   height: 100%;
   width: 30px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: $lightBorderColor;
+
+    .vote_icon {
+      &.upvote {
+        fill: $positiveColor;
+      }
+
+      &.downvote {
+        fill: $negativeColor;
+      }
+
+      &.upvote.voted {
+        fill: $positiveColor;
+      }
+
+      &.downvote.voted {
+        fill: $negativeColor;
+      }
+    }
+  }
 
   .vote_icon {
-    height: 18px;
+    height: 16px;
     width: auto;
-    cursor: pointer;
-
-    &.upvote:hover {
-      fill: $positiveColor;
-    }
-
-    &.downvote:hover {
-      fill: $negativeColor;
-    }
-
-    &.upvote.voted {
-      fill: $positiveColor;
-    }
-
-    &.downvote.voted {
-      fill: $negativeColor;
-    }
+    opacity: .4;
   }
 }
 
 .vote_btn-middle {
-  border-right: 1px solid $borderColor;
-  border-left: 1px solid $borderColor;
+  // border-right: 1px solid $borderColor;
+  // border-left: 1px solid $borderColor;
 }
 
 .count {
   width: 30px;
-  opacity: .5;
+  opacity: .8;
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 14px;
+  font-size: 13px;
 
   &.positive {
     color: $positiveColor;

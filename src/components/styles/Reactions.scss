@@ -6,6 +6,13 @@
   align-items: center;
   position: relative;
 
+  height: $reactionHeight;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  border: 1px solid $borderColor;
+  border-radius: 4px;
+
   .sc-user-input--picker-wrapper {
     min-width: 0;
     min-height: 0;
@@ -17,15 +24,14 @@
       height: 16px;
       width: auto;
       cursor: pointer;
-      fill: $buttonColor;
+      // fill: $buttonColor;
 
-      &:hover path,
-      &:hover circle,
-      &.active path,
-      &.active circle
-      {
-        fill: $buttonColor;
-      }
+      // &:hover path,
+      // &:hover circle,
+      // &.active path,
+      // &.active circle {
+      //   fill: $buttonColor;
+      // }
     }
   }
 
@@ -33,38 +39,46 @@
     display: flex;
     align-items: center;
     visibility: visible !important;
-    border-left: 1px solid $lightBorderColor;
 
-    .emoji-item{
+    .emoji-item {
       display: flex;
       align-items: center;
+      justify-content: center;
       color: #0366D6;
-      // padding: 0 6px;
-      float: left;
-      padding: 7px 10px 5px;
-      line-height: 18px;
-      border-right: 1px solid $lightBorderColor;
       cursor: pointer;
+      min-width: 46px;
+      height: $reactionHeight;
+      font-size: 13px;
 
       &.has_reacted {
         background-color: $activeIconBackgroundColor;
       }
+
+      &:hover {
+        background-color: $lightBorderColor;
+      }
+    }
+
+    .emoji-item.isFirst {
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
     }
   }
 
   .hint {
     display: none;
     position: absolute;
-    left: 32px;
+    left: 0;
     top: 18px;
     color: $tooltipFont;
     background-color: $darkBackgroundColor;
     font-size: 12px;
-    // opacity: 0;
     transition: .2s ease-in-out all;
     white-space: nowrap;
     overflow: hidden;
     padding: 2px 10px;
+    border-radius: 4px;
+    z-index: 10;
 
     &.visible {
       display: block;
@@ -72,4 +86,3 @@
   }
 
 }
-

@@ -4,10 +4,18 @@ import PropTypes from 'prop-types';
 import '../styles/PopupWindow.scss';
 import '../styles/EmojiPicker.scss';
 
-const EmojiIcon = ({ tooltip, onClick, isActive }) => (
-  <div className="sc-user-input--picker-wrapper">
+const EmojiIcon = ({ tooltip, onClick, isActive, isInlinePicker }) => (
+  <div
+    className={`sc-user-input--picker-wrapper ${isInlinePicker ? 'inlinePicker' : 'inputPicker'}`}
+    onClick={isInlinePicker ? onClick : () => { }}
+  >
     {tooltip}
-    <button id="sc-emoji-picker-button" className="sc-user-input--emoji-icon-wrapper" onClick={onClick}>
+
+    <button
+      id="sc-emoji-picker-button"
+      className="sc-user-input--emoji-icon-wrapper"
+      onClick={isInlinePicker ? () => { } : onClick}
+    >
       <svg
         className={`sc-user-input--emoji-icon ${(isActive ? 'active' : '')}`}
         version="1.1"
@@ -52,6 +60,7 @@ EmojiIcon.propTypes = {
   tooltip: PropTypes.object,
   onClick: PropTypes.func.isRequired,
   isActive: PropTypes.bool,
+  isInlinePicker: PropTypes.bool,
 };
 
 export default EmojiIcon;

@@ -126,6 +126,7 @@ class Input extends Component {
       parentId,
       onSubmit,
       login,
+      isNestedInput,
     } = this.props;
     
     const { comment, disableComment, isMobile } = this.state;
@@ -136,7 +137,8 @@ class Input extends Component {
     if (disableComment || !updatedComment) return;
 
     this.inputRef.current.blur();
-    this.inputRef.current.style.height = (isMobile) ? '64px' : '74px';
+    this.inputRef.current.style.height = isNestedInput ? '46px' : isMobile ? '64px' : '74px';
+    
     this.setState({ postLoading: true, comment: '' });
 
     await login();
@@ -168,7 +170,7 @@ class Input extends Component {
       currentUserAddr,
       ethereum,
       loginFunction,
-      openBox,
+      login,
       isLoading3Box,
       hasAuthed,
       box,
@@ -198,18 +200,19 @@ class Input extends Component {
           )}
 
         {postLoading ? (
-          <div className="input_postLoading">
-            <SVG
-              src={Loading}
-              alt="Loading"
-              className="input_postLoading_spinner"
-            />
-            <span className="input_postLoading_text">
-              <SVG src={Logo} alt="Logo" className="footer_text_image" />
-            </span>
-          </div>
-        ) : <div />}
-
+            <div className="input_postLoading">
+              <SVG
+                src={Loading}
+                alt="Loading"
+                className="input_postLoading_spinner"
+              />
+              <span className="input_postLoading_text">
+                <SVG src={Logo} alt="Logo" className="footer_text_image" />
+              </span>
+            </div>
+          ) : <div />
+        }
+        
         <p className={`input_commentAs ${showLoggedInAs ? 'showLoggedInAs' : ''}`}>
           {(!noWeb3 && !currentUserAddr) ? 'You will log in upon commenting' : ''}
           {currentUserAddr ? `Commenting as ${currentUser3BoxProfile.name || shortenEthAddr(currentUserAddr)}` : ''}
@@ -249,7 +252,7 @@ class Input extends Component {
         </button>
 
         {(!hasAuthed && !currentUserAddr && !isLoading3Box && !noWeb3) && (
-          <button className="input_login" onClick={openBox}>
+          <button className="input_login" onClick={login}>
             Login
           </button>
         )}
@@ -280,10 +283,11 @@ Input.propTypes = {
   currentUserAddr: PropTypes.string,
   loginFunction: PropTypes.func,
   isLoading3Box: PropTypes.bool,
+  noWeb3: PropTypes.bool,
+  isNestedInput: PropTypes.bool,
   hasAuthed: PropTypes.bool.isRequired,
 
   updateComments: PropTypes.func.isRequired,
-  openBox: PropTypes.func.isRequired,
   login: PropTypes.func.isRequired,
   parentId: PropTypes.string,
   onSubmit: PropTypes.func,
@@ -295,4 +299,6 @@ Input.defaultProps = {
   currentUser3BoxProfile: {},
   currentUserAddr: null,
   ethereum: null,
+  noWeb3: false,
+  isNestedInput: false,
 };

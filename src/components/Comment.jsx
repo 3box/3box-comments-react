@@ -10,8 +10,8 @@ import {
   shortenEthAddr,
   filterComments,
   REPLIABLE_COMMENT_LEVEL_MAX,
-  REPLY_THREAD_SHOW_COMMENT_COUNT,
   encodeMessage,
+  aggregateReactions,
 } from '../utils';
 
 import EmojiIcon from './Emoji/EmojiIcon';
@@ -23,7 +23,6 @@ import Delete from '../assets/Delete.svg';
 import Reply from '../assets/Reply.svg';
 import Loading from '../assets/3BoxCommentsSpinner.svg';
 import Input from './Input';
-import Dialogue from './Dialogue';
 import Vote from './Vote';
 import Reactions from './Reactions';
 import './styles/Comment.scss';
@@ -32,16 +31,16 @@ import './styles/Vote.scss';
 class Comment extends Component {
   constructor(props) {
     super(props);
+    const { ethereum, loginFunction } = this.props;
+    const noWeb3 = (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
+
     this.state = {
       loadingDelete: false,
-      hoverComment: false,
-      hoverGallery: false,
       showReply: false,
       emojiPickerIsOpen: false,
       emojiFilter: '',
+      noWeb3,
     };
-    this.toggleHoverComment = this.toggleHoverComment.bind(this);
-    this.toggleHoverGallery = this.toggleHoverGallery.bind(this);
     this.upvote = () => { this.vote(1); }
     this.downvote = () => { this.vote(-1); }
   }
@@ -53,15 +52,11 @@ class Comment extends Component {
   vote = async (direction) => {
     const {
       updateComments,
-      loginFunction,
-      ethereum,
       login,
       comment,
       thread,
     } = this.props;
-
-    const { disableVote } = this.state;
-    const noWeb3 = (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
+    const { disableVote, noWeb3 } = this.state;
 
     if (noWeb3 || disableVote) return;
 
@@ -93,15 +88,14 @@ class Comment extends Component {
   deleteComment = async (commentId, e) => {
     e.preventDefault();
     const {
-      loginFunction,
-      openBox,
+      login,
       hasAuthed,
       thread,
     } = this.props;
 
     if (!hasAuthed) {
       this.setState({ loadingDelete: true });
-      loginFunction ? await loginFunction() : await openBox();
+      await login();
     }
 
     try {
@@ -115,14 +109,6 @@ class Comment extends Component {
   toggleReplyInput = () => {
     const { showReply } = this.state;
     this.setState({ showReply: !showReply });
-  }
-
-  toggleHoverComment(state) {
-    this.setState({ hoverComment: state })
-  }
-
-  toggleHoverGallery(state) {
-    this.setState({ hoverGallery: state })
   }
 
   getMyVote = () => {
@@ -172,7 +158,7 @@ class Comment extends Component {
   }
 
   _handleEmojiPicked = (emoji) => {
-    this.react(emoji);
+    this.addReaction(emoji);
     this.setState({ emojiPickerIsOpen: false });
   }
 
@@ -181,13 +167,63 @@ class Comment extends Component {
     this.setState({ emojiFilter });
   }
 
+  addReaction = async (emoji) => {
+    const {
+      login,
+      updateComments,
+      comment,
+    } = this.props;
+    const { noWeb3 } = this.state;
+
+    if (noWeb3) return;
+
+    await login();
+
+    try {
+      console.log("react with emoji", emoji);
+      const myReactions = this.getMyReactions();
+
+      if (myReactions) {
+        const reactions = aggregateReactions(myReactions);
+        if (reactions[emoji]) {
+          console.log("ignore because you already reacted with this emoji", emoji);
+        } else {
+          const message = encodeMessage("reaction", emoji, comment.postId);
+          await this.props.thread.post(message);
+        }
+      } else {
+        const message = encodeMessage("reaction", emoji, comment.postId);
+        await this.props.thread.post(message);
+      }
+
+      await updateComments();
+      this.setState({ postLoading: false });
+    } catch (error) {
+      console.error('There was an error saving your reaction', error);
+    }
+  }
+
+  getMyReactions = () => {
+    const {
+      currentUserAddr,
+      reactions,
+      profiles
+    } = this.props;
+
+    const currentUserAddrNormalized = currentUserAddr && currentUserAddr.toLowerCase();
+    const myReactions = reactions.filter(r => {
+      const profile = profiles[r.author];
+      const reactionAddr = profile && profile.ethAddr.toLowerCase();
+      return reactionAddr === currentUserAddrNormalized
+    });
+    return myReactions;
+  }
+
   render() {
     const {
       loadingDelete,
       showReply,
-      hoverComment,
-      hoverGallery,
-      emojiPickerIsOpen
+      emojiPickerIsOpen,
     } = this.state;
 
     const {
@@ -207,23 +243,17 @@ class Comment extends Component {
       box,
       loginFunction,
       login,
-      openBox,
       profiles,
       hasAuthed,
-      children_comments,
       votes,
       reactions,
+      isNestedComment,
     } = this.props;
 
     const profilePicture = profile.ethAddr &&
       (profile.image ? `https://ipfs.infura.io/ipfs/${profile.image[0].contentUrl['/']}`
         : makeBlockie(profile.ethAddr));
     const canDelete = isMyComment || isMyAdmin;
-
-    const notHoverChildren = !children_comments || children_comments.length === 0 || !hoverGallery;
-    const visibleClass = hoverComment && notHoverChildren ? "visible" : "";
-
-    const showCommentCount = REPLY_THREAD_SHOW_COMMENT_COUNT;
 
     let voted = 0;
     const myVote = this.getMyVote();
@@ -232,8 +262,10 @@ class Comment extends Component {
     const count = votes.reduce((sum, v) => (sum + v.message.data), 0);
 
     return (
-      <div className={`comment ${canDelete ? 'isMyComment' : ''}`} onMouseOver={() => this.toggleHoverComment(true)} onMouseLeave={() => this.toggleHoverComment(false)}>
-        <div className="comment_wrapper">
+      <div className={`comment ${canDelete ? 'isMyComment' : ''}`}>
+        <div
+          className="comment_wrapper"
+        >
           <a
             href={profile.profileURL ? `${profile.profileURL}` : `https://3box.io/${profile.ethAddr}`}
             target={profile.profileURL ? '_self' : '_blank'}
@@ -243,9 +275,9 @@ class Comment extends Component {
               <img
                 src={profilePicture}
                 alt="profile"
-                className="comment_picture comment_picture-bgWhite"
+                className={`comment_picture comment_picture-bgWhite ${isNestedComment ? 'nestedComment' : 'originalComment'}`}
               />
-            ) : <div className="comment_picture" />}
+            ) : <div className={`comment_picture ${isNestedComment ? 'nestedComment' : 'originalComment'}`} />}
           </a>
 
           <div className="comment_content">
@@ -288,7 +320,7 @@ class Comment extends Component {
 
                   {/* hasThread */}
                   {(!loadingDelete && profile.ethAddr) && (
-                    <div className={`comment_content_context_main_user_delete ${visibleClass}`}>
+                    <div className="comment_content_context_main_user_delete">
                       <button
                         onClick={(e) => this.deleteComment(comment.postId, e)}
                         className="comment_content_context_main_user_delete_button"
@@ -298,7 +330,6 @@ class Comment extends Component {
                     </div>
                   )}
                 </a>
-
               </div>
 
               <div className="comment_content_context_time">
@@ -311,9 +342,32 @@ class Comment extends Component {
               </Linkify>
             </div>
 
-            {(!loadingDelete && !!reactions.length) && (
-              <div className="comment_footer">
-                <div className={`comment_content_context_main_user_reactions ${visibleClass}`}>
+            {(count !== 0 && (!loadingDelete && !!reactions.length)) && (
+              <div className={`comment_reactions ${isNestedComment ? 'nestedComment' : ''}`}>
+                {count !== 0 && (
+                  <Vote
+                    currentUserAddr={currentUserAddr}
+                    currentUser3BoxProfile={currentUser3BoxProfile}
+                    thread={thread}
+                    ethereum={ethereum}
+                    adminEthAddr={adminEthAddr}
+                    box={box}
+                    loginFunction={loginFunction}
+                    isLoading3Box={isLoading3Box}
+                    login={login}
+                    updateComments={updateComments}
+                    parentId={comment.postId}
+                    votes={votes}
+                    profiles={profiles}
+                    voted={voted}
+                    count={count}
+                    getMyVote={this.getMyVote}
+                    upvote={this.upvote}
+                    downvote={this.downvote}
+                  />
+                )}
+
+                {(!loadingDelete && !!reactions.length) && (
                   <Reactions
                     currentUserAddr={currentUserAddr}
                     currentUser3BoxProfile={currentUser3BoxProfile}
@@ -325,77 +379,22 @@ class Comment extends Component {
                     isLoading3Box={isLoading3Box}
                     login={login}
                     updateComments={updateComments}
-                    openBox={openBox}
                     parentId={comment.postId}
                     reactions={reactions}
                     profiles={profiles}
                     toggleEmojiPicker={this.toggleEmojiPicker}
                     renderEmojiPopup={this.renderEmojiPopup}
+                    addReaction={this.addReaction}
+                    getMyReactions={this.getMyReactions}
                   />
-                </div>
-
-                {comment.level < REPLIABLE_COMMENT_LEVEL_MAX && (
-                  <div className={`comment_content_context_main_user_reply ${visibleClass}`}>
-                    <button
-                      onClick={(e) => this.toggleReplyInput(e)}
-                      className="comment_content_context_main_user_reply_button"
-                    >
-                      <SVG src={Reply} alt="Reply" className="comment_content_context_main_user_reply_button_icon" />
-                      Reply
-                </button>
-                  </div>
                 )}
               </div>
-            )}
-
-            {!loadingDelete && comment.level < REPLIABLE_COMMENT_LEVEL_MAX && showReply && (
-              <div className="comment_content_context_main_user_reply_input">
-                <Input
-                  currentUserAddr={currentUserAddr}
-                  currentUser3BoxProfile={currentUser3BoxProfile}
-                  thread={thread}
-                  ethereum={ethereum}
-                  adminEthAddr={adminEthAddr}
-                  box={box}
-                  loginFunction={loginFunction}
-                  isLoading3Box={isLoading3Box}
-                  login={login}
-                  hasAuthed={hasAuthed}
-                  updateComments={updateComments}
-                  openBox={openBox}
-                  parentId={comment.postId}
-                  onSubmit={() => { this.setState({ showReply: false }) }}
-                />
-              </div>
-            )}
-
-            {(children_comments && !!children_comments.length) && (
-              <Dialogue
-                dialogue={children_comments}
-                currentUserAddr={currentUserAddr}
-                currentUser3BoxProfile={currentUser3BoxProfile}
-                adminEthAddr={adminEthAddr}
-                profiles={profiles}
-                showCommentCount={showCommentCount}
-                loginFunction={loginFunction}
-                isLoading3Box={isLoading3Box}
-                ethereum={ethereum}
-                thread={thread}
-                box={box}
-                useHovers={useHovers}
-                login={login}
-                updateComments={updateComments}
-                openBox={openBox}
-                hasAuthed={hasAuthed}
-                onMouseOver={() => this.toggleHoverGallery(true)}
-                onMouseLeave={() => this.toggleHoverGallery(false)}
-              />
             )}
           </div>
         </div>
 
-        {count !== 0 && (
-          <Vote
+        {!loadingDelete && comment.level < REPLIABLE_COMMENT_LEVEL_MAX && showReply && (
+          <Input
             currentUserAddr={currentUserAddr}
             currentUser3BoxProfile={currentUser3BoxProfile}
             thread={thread}
@@ -405,42 +404,57 @@ class Comment extends Component {
             loginFunction={loginFunction}
             isLoading3Box={isLoading3Box}
             login={login}
+            hasAuthed={hasAuthed}
             updateComments={updateComments}
-            openBox={openBox}
             parentId={comment.postId}
-            votes={votes}
-            profiles={profiles}
-            voted={voted}
-            count={count}
-            getMyVote={this.getMyVote}
-            upvote={this.upvote}
-            downvote={this.downvote}
+            onSubmit={() => { this.setState({ showReply: false }) }}
+            isNestedInput
           />
         )}
 
         <div className="comment_control">
-          <button className="vote_btn" onClick={this.upvote}>
-            <SVG
-              src={ArrowUp}
-              alt="Upvote"
-              className={`vote_icon upvote ${voted === 1 ? "voted" : ""}`}
-            />
-          </button>
+          {
+            count === 0 && (
+              <>
+                <button className="vote_btn" onClick={this.upvote}>
+                  <SVG
+                    src={ArrowUp}
+                    alt="Upvote"
+                    className={`vote_icon upvote ${voted === 1 ? "voted" : ""}`}
+                  />
+                </button>
 
-          <button className="vote_btn vote_btn-middle" onClick={this.downvote}>
-            <SVG
-              src={ArrowDown}
-              alt="Downvote"
-              className={`vote_icon downvote ${voted === -1 ? "voted" : ""}`}
-            />
-          </button>
+                <button className="vote_btn vote_btn-middle" onClick={this.downvote}>
+                  <SVG
+                    src={ArrowDown}
+                    alt="Downvote"
+                    className={`vote_icon downvote ${voted === -1 ? "voted" : ""}`}
+                  />
+                </button>
+              </>
+            )}
 
-          <EmojiIcon
-            onClick={this.toggleEmojiPicker}
-            isActive={emojiPickerIsOpen}
-            tooltip={this.renderEmojiPopup()}
-          />
+          {!reactions.length && (
+            <EmojiIcon
+              onClick={this.toggleEmojiPicker}
+              isActive={emojiPickerIsOpen}
+              tooltip={this.renderEmojiPopup()}
+              isInlinePicker
+            />
+          )}
+
+          {comment.level < REPLIABLE_COMMENT_LEVEL_MAX && (
+            <button
+              onClick={(e) => this.toggleReplyInput(e)}
+              className="comment_content_context_main_user_reply_button"
+            >
+              <SVG src={Reply} alt="Reply" className="comment_content_context_main_user_reply_button_icon" />
+              Reply
+            </button>
+          )}
         </div>
+
+        {isNestedComment && <div className="comment_dialogue_timeline" />}
       </div>
     );
   }
@@ -459,23 +473,22 @@ Comment.propTypes = {
   profile: PropTypes.object.isRequired,
   box: PropTypes.object,
   loginFunction: PropTypes.func,
-  openBox: PropTypes.func.isRequired,
   currentUserAddr: PropTypes.string,
   adminEthAddr: PropTypes.string,
   currentUser3BoxProfile: PropTypes.object,
   ethereum: PropTypes.object,
   isLoading3Box: PropTypes.bool,
+  isNestedComment: PropTypes.bool,
   updateComments: PropTypes.func.isRequired,
   login: PropTypes.func.isRequired,
   profiles: PropTypes.object,
-  children_comments: PropTypes.array,
   votes: PropTypes.array,
   reactions: PropTypes.array,
 };
 
 Comment.defaultProps = {
   thread: {},
-  children_comments: [],
   votes: [],
   reactions: [],
+  isNestedComment: false,
 };

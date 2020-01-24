@@ -22,7 +22,12 @@ class Vote extends Component {
   }
 
   render() {
-    const { count, voted, upvote, downvote } = this.props;
+    const {
+      count,
+      voted,
+      upvote,
+      downvote,
+    } = this.props;
 
     const countClass = count > 0 ? "positive" : (count < 0 ? "negative" : "");
 
@@ -53,30 +58,12 @@ class Vote extends Component {
 export default Vote;
 
 Vote.propTypes = {
-  box: PropTypes.object,
-  thread: PropTypes.object,
-  ethereum: PropTypes.object,
-  currentUser3BoxProfile: PropTypes.object,
-  currentUserAddr: PropTypes.string,
-  loginFunction: PropTypes.func,
-  isLoading3Box: PropTypes.bool,
   voted: PropTypes.number,
-  updateComments: PropTypes.func.isRequired,
   upvote: PropTypes.func.isRequired,
   downvote: PropTypes.func.isRequired,
-  openBox: PropTypes.func.isRequired,
-  login: PropTypes.func.isRequired,
-  parentId: PropTypes.string,
-  profiles: PropTypes.object,
   count: PropTypes.number.isRequired,
 };
 
 Vote.defaultProps = {
-  box: {},
-  thread: {},
-  currentUser3BoxProfile: {},
-  currentUserAddr: null,
-  ethereum: null,
-  profiles: {},
   voted: 0,
 };

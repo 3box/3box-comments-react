@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { filterComments } from '../utils';
+import { filterComments, REPLY_THREAD_SHOW_COMMENT_COUNT } from '../utils';
 
 import Comment from './Comment';
 import './styles/Dialogue.scss';
@@ -24,6 +24,8 @@ class Dialogue extends Component {
     this.setState({ showCommentCount: newCount, showLoadButton });
   }
 
+  toggleHoverGallery = (state) => this.setState({ hoverGallery: state })
+
   render() {
     const {
       dialogue,
@@ -42,7 +44,8 @@ class Dialogue extends Component {
       onMouseOver,
       onMouseLeave,
       login,
-      hasAuthed
+      hasAuthed,
+      isNestedComment
     } = this.props;
 
     const { showCommentCount } = this.state;
@@ -51,8 +54,7 @@ class Dialogue extends Component {
     if (dialogue.length > showCommentCount) showLoadButton = true;
 
     return (
-      <div className="dialogue" onMouseOver={onMouseOver}
-        onMouseLeave={onMouseLeave}>
+      <div className={`dialogue ${isNestedComment ? 'nestedDialogue' : ''}`} onMouseOver={onMouseOver} onMouseLeave={onMouseLeave}>
         <div className="dialogue_grid">
           {dialogue.slice(0, showCommentCount).map(comment => {
             const profile = profiles[comment.author];
@@ -65,32 +67,57 @@ class Dialogue extends Component {
             const reactions = comment.children ? filterComments(comment.children, "reaction") : [];
 
             return (
-              <Comment
-                comment={comment}
-                profile={profile || {}}
-                profiles={profiles}
-                isMyComment={commentAddr === currentUserAddrNormalized}
-                isMyAdmin={adminEthAddrNormalized === currentUserAddrNormalized}
-                isCommenterAdmin={adminEthAddrNormalized === commentAddr}
-                adminEthAddr={adminEthAddr}
-                key={comment.postId}
-                thread={thread}
-                useHovers={useHovers}
-                box={box}
-                loginFunction={loginFunction}
-                openBox={openBox}
-                currentUserAddr={currentUserAddr}
-                currentUser3BoxProfile={currentUser3BoxProfile}
-                ethereum={ethereum}
-                isLoading3Box={isLoading3Box}
-                updateComments={updateComments}
-                hasAuthed={hasAuthed}
-                login={login}
+              <div key={comment.postId}>
+                <Comment
+                  comment={comment}
+                  profile={profile || {}}
+                  profiles={profiles}
+                  isMyComment={commentAddr === currentUserAddrNormalized}
+                  isMyAdmin={adminEthAddrNormalized === currentUserAddrNormalized}
+                  isCommenterAdmin={adminEthAddrNormalized === commentAddr}
+                  adminEthAddr={adminEthAddr}
+                  thread={thread}
+                  useHovers={useHovers}
+                  box={box}
+                  loginFunction={loginFunction}
+                  openBox={openBox}
+                  login={login}
+                  currentUserAddr={currentUserAddr}
+                  currentUser3BoxProfile={currentUser3BoxProfile}
+                  ethereum={ethereum}
+                  isLoading3Box={isLoading3Box}
+                  updateComments={updateComments}
+                  hasAuthed={hasAuthed}
+                  children_comments={children_comments}
+                  votes={votes}
+                  reactions={reactions}
+                  isNestedComment={isNestedComment}
+                />
 
-                children_comments={children_comments}
-                votes={votes}
-                reactions={reactions}
-              />
+                {(!!children_comments.length) && (
+                  <Dialogue
+                    dialogue={children_comments}
+                    currentUserAddr={currentUserAddr}
+                    currentUser3BoxProfile={currentUser3BoxProfile}
+                    adminEthAddr={adminEthAddr}
+                    profiles={profiles}
+                    showCommentCount={REPLY_THREAD_SHOW_COMMENT_COUNT}
+                    loginFunction={loginFunction}
+                    isLoading3Box={isLoading3Box}
+                    ethereum={ethereum}
+                    thread={thread}
+                    box={box}
+                    useHovers={useHovers}
+                    login={login}
+                    updateComments={updateComments}
+                    openBox={openBox}
+                    hasAuthed={hasAuthed}
+                    onMouseOver={() => this.toggleHoverGallery(true)}
+                    onMouseLeave={() => this.toggleHoverGallery(false)}
+                    isNestedComment
+                  />
+                )}
+              </div>
             )
           })}
         </div>
@@ -130,6 +157,7 @@ Dialogue.propTypes = {
   currentUser3BoxProfile: PropTypes.object,
   ethereum: PropTypes.object,
   isLoading3Box: PropTypes.bool,
+  isNestedComment: PropTypes.bool,
   updateComments: PropTypes.func.isRequired,
   login: PropTypes.func.isRequired,
 
@@ -144,4 +172,5 @@ Dialogue.defaultProps = {
   box: {},
   currentUserAddr: null,
   useHovers: false,
+  isNestedComment: false,
 };

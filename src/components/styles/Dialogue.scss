@@ -2,13 +2,27 @@
 
 .dialogue {
   width: 100%;
-  margin-bottom: 20px;
+  margin-top: 8px;
+}
+
+.nestedDialogue.dialogue {
+  margin-left: 52px;
+
+  .dialogue_grid {
+    width: calc(100% - 68px);
+    row-gap: 0;
+  }
+
+  // second nested dialogue
+  .nestedDialogue.dialogue {
+    margin-left: 30px;
+  }
 }
 
 .dialogue_grid {
   width: 100%;
   display: inline-grid;
-  row-gap: 26px;
+  row-gap: 22px;
   grid-template-columns: repeat(1, 100% [col-start]);
   margin-bottom: 10px;
 }
