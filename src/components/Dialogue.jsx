@@ -65,7 +65,6 @@ class Dialogue extends Component {
             const children_comments = comment.children ? filterComments(comment.children, "comment", "deleted") : [];
             const votes = comment.children ? filterComments(comment.children, "vote") : [];
             const reactions = comment.children ? filterComments(comment.children, "reaction") : [];
-            console.log('children_comments', children_comments)
             return (
               <div key={comment.postId}>
                 <Comment

@@ -45,34 +45,22 @@ export const sortChronologically = (threadPosts) => {
   return updatedThreadPosts;
 }
 
-// assume all the comments are loaded
-export const reorderComments = (comments) => {
-  if (!comments || comments.length === 0) return [];
-
-  // if (comments && comments.length > 0) {
-  // add the table to ease query
-  let table = {};
-  comments.forEach(c => {
-    if (c.postId) table[c.postId] = c;
-
-    c.message = decodeMessage(c.message);
-  });
-
+const buildCommentsTree = (comments, table) => {
+  if (!comments.length) return;
   let deletedComments = [];
-  // build the comments tree
+
   comments.forEach(c => {
-    console.log('originalcomment', c)
     const msg = c.message;
     if (!msg.parentId) return;
 
     let parent = table[msg.parentId];
-    let wasParentDeleted;
+
+    let parentWasDeleted;
     if (!parent) {
-      // parent was deleted
+      parentWasDeleted = true;
       let parentId;
       if (c.message.nestLevel === 2) parentId = c.message.grandParentId;
 
-      wasParentDeleted = true;
       parent = {
         postId: msg.parentId,
         author: undefined,
@@ -89,50 +77,29 @@ export const reorderComments = (comments) => {
     if (!("children" in parent)) parent.children = [];
     parent.children.push(c);
 
-    if (wasParentDeleted) deletedComments.push(parent)
+    if (parentWasDeleted) deletedComments.push(parent)
   });
-  console.log('deletedComments', deletedComments.length)
+
+  return [deletedComments, table];
+}
+
+// assume all the comments are loaded
+export const reorderComments = (comments) => {
+  if (!comments || comments.length === 0) return [];
+
+  let table = {};
+  comments.forEach(c => {
+    if (c.postId) table[c.postId] = c;
+    c.message = decodeMessage(c.message);
+  });
 
   let mergedComments;
-  let deletedComments2 = [];
-  if (deletedComments.length) {
-    deletedComments.forEach(c => {
-      const msg = c.message;
-      if (!msg.parentId) return;
+  // nest children under parent posts
+  const [deletedComments, updatedTable] = buildCommentsTree(comments, table);
+  // nest deleted posts under parent posts
+  const [nestedDeletedComments] = buildCommentsTree(deletedComments, updatedTable);
 
-      let parent = table[msg.parentId];
-      console.log('parentparent', parent)
-      let wasParentDeleted;
-      if (!parent) {
-        // parent was deleted
-        let parentId;
-        if (c.message.nestLevel === 1) parentId = c.message.grandParentId;
-
-        wasParentDeleted = true;
-        parent = {
-          postId: msg.parentId,
-          author: undefined,
-          message: {
-            category: 'deleted',
-            parentId,
-            nestLevel: c.message.nestLevel - 1
-          },
-          timestamp: c.timestamp,
-        };
-        table[msg.parentId] = parent;
-      }
-
-      if (!("children" in parent)) parent.children = [];
-      parent.children.push(c);
-
-      if (wasParentDeleted) deletedComments2.push(parent)
-    });
-    // iterate through deleted comments
-    // find deleted comments that have a parentId
-    // include it as a child of the parent
-    // if the parent doesnt exist, create it
-  }
-  mergedComments = comments.concat(deletedComments).concat(deletedComments2);
+  mergedComments = comments.concat(deletedComments).concat(nestedDeletedComments);
 
   // sort children chronologically
   const updatedComments = sortChronologically(mergedComments);
@@ -141,8 +108,6 @@ export const reorderComments = (comments) => {
       c.children = sortChronologically(c.children);
     }
   });
-
-  console.log('commentscomments', updatedComments)
 
   // return the top level comments
   return updatedComments.filter(c => c.message.nestLevel === 0);
