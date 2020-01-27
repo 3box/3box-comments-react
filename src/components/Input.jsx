@@ -124,9 +124,11 @@ class Input extends Component {
       loginFunction,
       ethereum,
       parentId,
+      grandParentId,
       onSubmit,
       login,
       isNestedInput,
+      currentNestLevel,
     } = this.props;
     
     const { comment, disableComment, isMobile } = this.state;
@@ -138,13 +140,15 @@ class Input extends Component {
 
     this.inputRef.current.blur();
     this.inputRef.current.style.height = isNestedInput ? '46px' : isMobile ? '64px' : '74px';
-    
+
     this.setState({ postLoading: true, comment: '' });
 
     await login();
     
     try {
-      const message = encodeMessage("comment", comment, parentId); // new lines
+      // add nest level
+      const grandParentIdToUse = currentNestLevel === 2 && grandParentId;
+      const message = encodeMessage("comment", comment, parentId, currentNestLevel, grandParentIdToUse); // new lines
       await thread.post(message); // new lines
 
       await updateComments();
@@ -153,7 +157,7 @@ class Input extends Component {
       console.error('There was an error saving your comment', error);
     }
 
-    onSubmit();
+    if(onSubmit) onSubmit();
   }
 
   render() {
@@ -286,6 +290,8 @@ Input.propTypes = {
   noWeb3: PropTypes.bool,
   isNestedInput: PropTypes.bool,
   hasAuthed: PropTypes.bool.isRequired,
+  currentNestLevel: PropTypes.number,
+  grandParentId: PropTypes.string,
 
   updateComments: PropTypes.func.isRequired,
   login: PropTypes.func.isRequired,

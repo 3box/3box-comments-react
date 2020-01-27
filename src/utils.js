@@ -47,75 +47,130 @@ export const sortChronologically = (threadPosts) => {
 
 // assume all the comments are loaded
 export const reorderComments = (comments) => {
-  if (comments && comments.length > 0) {
-    // add the table to ease query
-    let table = {};
-    comments.forEach(c => {
-      if (c.postId) {
-        table[c.postId] = c;
-      }
-      c.message = decodeMessage(c.message);
-    })
+  if (!comments || comments.length === 0) return [];
 
-    // build the comments tree
-    comments.forEach(c => {
-      c.level = 0;
+  // if (comments && comments.length > 0) {
+  // add the table to ease query
+  let table = {};
+  comments.forEach(c => {
+    if (c.postId) table[c.postId] = c;
+
+    c.message = decodeMessage(c.message);
+  });
+
+  let deletedComments = [];
+  // build the comments tree
+  comments.forEach(c => {
+    console.log('originalcomment', c)
+    const msg = c.message;
+    if (!msg.parentId) return;
+
+    let parent = table[msg.parentId];
+    let wasParentDeleted;
+    if (!parent) {
+      // parent was deleted
+      let parentId;
+      if (c.message.nestLevel === 2) parentId = c.message.grandParentId;
+
+      wasParentDeleted = true;
+      parent = {
+        postId: msg.parentId,
+        author: undefined,
+        message: {
+          category: 'deleted',
+          parentId,
+          nestLevel: c.message.nestLevel - 1
+        },
+        timestamp: c.timestamp,
+      };
+      table[msg.parentId] = parent;
+    }
+
+    if (!("children" in parent)) parent.children = [];
+    parent.children.push(c);
+
+    if (wasParentDeleted) deletedComments.push(parent)
+  });
+  console.log('deletedComments', deletedComments.length)
+
+  let mergedComments;
+  let deletedComments2 = [];
+  if (deletedComments.length) {
+    deletedComments.forEach(c => {
       const msg = c.message;
-      if (msg.parentId) {
-        // add children attribute for parent
-        const parent = table[msg.parentId];
-        if (!parent) {
-          console.log("parent not found: probably the parent comment was deleted or not loaded successfully. The child is: ", c);
-          return ;
-        }
-        if (!("children" in parent)) {
-          parent.children = [];
-        }
-        parent.children.push(c);
+      if (!msg.parentId) return;
 
-        // add level attribute
-        let node = c;
-        while (node.message.parentId) {
-          c.level ++;
-          node = table[node.message.parentId];
-        }
+      let parent = table[msg.parentId];
+      console.log('parentparent', parent)
+      let wasParentDeleted;
+      if (!parent) {
+        // parent was deleted
+        let parentId;
+        if (c.message.nestLevel === 1) parentId = c.message.grandParentId;
+
+        wasParentDeleted = true;
+        parent = {
+          postId: msg.parentId,
+          author: undefined,
+          message: {
+            category: 'deleted',
+            parentId,
+            nestLevel: c.message.nestLevel - 1
+          },
+          timestamp: c.timestamp,
+        };
+        table[msg.parentId] = parent;
       }
-    })
 
-    // sort children chronologically
-    comments = sortChronologically(comments)
-    comments.forEach(c => {
-      if (c.children && c.children.length > 0) {
-        c.children = sortChronologically(c.children);
-      }
-    })
+      if (!("children" in parent)) parent.children = [];
+      parent.children.push(c);
 
-    // return the top level comments
-    return comments.filter(c => c.level === 0);
-  } else {
-    return [];
+      if (wasParentDeleted) deletedComments2.push(parent)
+    });
+    // iterate through deleted comments
+    // find deleted comments that have a parentId
+    // include it as a child of the parent
+    // if the parent doesnt exist, create it
   }
+  mergedComments = comments.concat(deletedComments).concat(deletedComments2);
+
+  // sort children chronologically
+  const updatedComments = sortChronologically(mergedComments);
+  updatedComments.forEach(c => {
+    if (c.children && c.children.length > 0) {
+      c.children = sortChronologically(c.children);
+    }
+  });
+
+  console.log('commentscomments', updatedComments)
+
+  // return the top level comments
+  return updatedComments.filter(c => c.message.nestLevel === 0);
 }
 
-export const filterComments = (comments, category) => {
+export const filterComments = (comments, category, deleted) => {
   if (comments && comments.length > 0 && category) {
-    return comments.filter(c => c.message.category === category);
+    return comments.filter(c => (c.message.category === category || c.message.category === deleted));
   } else {
     return [];
   }
 }
 
-export const encodeMessage = (category, data, parentId) => {
+export const encodeMessage = (category, data, parentId, nestLevel, grandParentId) => {
   if (parentId) {
     return {
       category,
       data,
-      parentId
+      nestLevel,
+      parentId,
+      grandParentId
     }
   } else {
     return {
       category,
-      data
+      data,
+      nestLevel,
+      grandParentId
     }
   }
 }
@@ -126,7 +181,7 @@ export const decodeMessage = (comment) => {
   } else { // string
     try {
       return JSON.parse(comment);
-    } catch(err) {
+    } catch (err) {
       return {
         category: "comment",
         data: comment,

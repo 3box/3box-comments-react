@@ -52,7 +52,8 @@ class Example extends React.Component {
             <Comments
               // required
               spaceName='3boxtestcomments'
-              threadName='freshcomments3'
+              threadName='explicitNestLevel6'
+              // threadName='freshcomments3'
               // threadName='freshcomments'
               adminEthAddr="0x2a0D29C819609Df18D8eAefb429AEC067269BBb6"
 

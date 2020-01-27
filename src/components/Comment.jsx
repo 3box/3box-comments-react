@@ -100,7 +100,9 @@ class Comment extends Component {
 
     try {
       this.setState({ loadingDelete: false });
-      await thread.deletePost(commentId);
+      const wasDeleted = await thread.deletePost(commentId);
+      console.log('deletedid', commentId)
+      console.log('wasDeleted', wasDeleted)
     } catch (error) {
       console.error('There was an error deleting your comment', error);
     }
@@ -260,201 +262,211 @@ class Comment extends Component {
     if (myVote) voted = myVote.message.data;
 
     const count = votes.reduce((sum, v) => (sum + v.message.data), 0);
+    const isDeletedComment = comment.message.category === 'deleted';
+    console.log('thecommentcomponent', comment);
 
     return (
-      <div className={`comment ${canDelete ? 'isMyComment' : ''}`}>
-        <div
-          className="comment_wrapper"
-        >
-          <a
-            href={profile.profileURL ? `${profile.profileURL}` : `https://3box.io/${profile.ethAddr}`}
-            target={profile.profileURL ? '_self' : '_blank'}
-            rel={profile.profileURL ? 'dofollow' : 'noopener noreferrer'}
-          >
-            {profilePicture ? (
-              <img
-                src={profilePicture}
-                alt="profile"
-                className={`comment_picture comment_picture-bgWhite ${isNestedComment ? 'nestedComment' : 'originalComment'}`}
-              />
-            ) : <div className={`comment_picture ${isNestedComment ? 'nestedComment' : 'originalComment'}`} />}
-          </a>
+      <div className={`comment ${canDelete ? 'isMyComment' : ''} ${isDeletedComment ? 'isDeletedComment' : ''}`}>
 
-          <div className="comment_content">
-            <div className="comment_content_context">
-              <div className="comment_content_context_main">
-                <a
-                  href={profile.profileURL ? profile.profileURL : `https://3box.io/${profile.ethAddr}`}
-                  className="comment_content_context_main_user"
-                  target={profile.profileURL ? '_self' : '_blank'}
-                  rel={profile.profileURL ? 'dofollow' : 'noopener noreferrer'}
-                >
-                  <div className="comment_content_context_main_user_info">
-                    {useHovers ? (
-                      <ProfileHover
-                        address={profile && profile.ethAddr}
-                        orientation="right"
-                        noTheme
-                      >
-                        <div className="comment_content_context_main_user_info_username">
-                          {profile.name || shortenEthAddr(profile.ethAddr)}
-                        </div>
-                      </ProfileHover>
-                    ) : (
-                        <div className="comment_content_context_main_user_info_username">
-                          {profile.name || shortenEthAddr(profile.ethAddr)}
+        {!isDeletedComment ? (
+          <>
+            <div
+              className="comment_wrapper"
+            >
+              <a
+                href={profile.profileURL ? `${profile.profileURL}` : `https://3box.io/${profile.ethAddr}`}
+                target={profile.profileURL ? '_self' : '_blank'}
+                rel={profile.profileURL ? 'dofollow' : 'noopener noreferrer'}
+              >
+                {profilePicture ? (
+                  <img
+                    src={profilePicture}
+                    alt="profile"
+                    className={`comment_picture comment_picture-bgWhite ${isNestedComment ? 'nestedComment' : 'originalComment'}`}
+                  />
+                ) : <div className={`comment_picture ${isNestedComment ? 'nestedComment' : 'originalComment'}`} />}
+              </a>
+
+              <div className="comment_content">
+                <div className="comment_content_context">
+                  <div className="comment_content_context_main">
+                    <a
+                      href={profile.profileURL ? profile.profileURL : `https://3box.io/${profile.ethAddr}`}
+                      className="comment_content_context_main_user"
+                      target={profile.profileURL ? '_self' : '_blank'}
+                      rel={profile.profileURL ? 'dofollow' : 'noopener noreferrer'}
+                    >
+                      <div className="comment_content_context_main_user_info">
+                        {useHovers ? (
+                          <ProfileHover
+                            address={profile && profile.ethAddr}
+                            orientation="right"
+                            noTheme
+                          >
+                            <div className="comment_content_context_main_user_info_username">
+                              {profile.name || shortenEthAddr(profile.ethAddr)}
+                            </div>
+                          </ProfileHover>
+                        ) : (
+                            <div className="comment_content_context_main_user_info_username">
+                              {profile.name || shortenEthAddr(profile.ethAddr)}
+                            </div>
+                          )}
+
+                        {profile.name && (
+                          <div
+                            className="comment_content_context_main_user_info_address"
+                            title={profile.ethAddr}
+                          >
+                            {profile.ethAddr && `${shortenEthAddr(profile.ethAddr)} ${isCommenterAdmin ? 'ADMIN' : ''}`}
+                          </div>
+                        )}
+                      </div>
+
+                      {loadingDelete && <SVG className="comment_loading" src={Loading} alt="Loading" />}
+
+                      {/* hasThread */}
+                      {(!loadingDelete && profile.ethAddr) && (
+                        <div className="comment_content_context_main_user_delete">
+                          <button
+                            onClick={(e) => this.deleteComment(comment.postId, e)}
+                            className="comment_content_context_main_user_delete_button"
+                          >
+                            <SVG src={Delete} alt="Delete" className="comment_content_context_main_user_delete_button_icon" />
+                          </button>
                         </div>
                       )}
-
-                    {profile.name && (
-                      <div
-                        className="comment_content_context_main_user_info_address"
-                        title={profile.ethAddr}
-                      >
-                        {profile.ethAddr && `${shortenEthAddr(profile.ethAddr)} ${isCommenterAdmin ? 'ADMIN' : ''}`}
-                      </div>
-                    )}
+                    </a>
                   </div>
 
-                  {loadingDelete && <SVG className="comment_loading" src={Loading} alt="Loading" />}
+                  <div className="comment_content_context_time">
+                    {`${timeSince(comment.timestamp * 1000)} ago`}
+                  </div>
+                </div>
 
-                  {/* hasThread */}
-                  {(!loadingDelete && profile.ethAddr) && (
-                    <div className="comment_content_context_main_user_delete">
-                      <button
-                        onClick={(e) => this.deleteComment(comment.postId, e)}
-                        className="comment_content_context_main_user_delete_button"
-                      >
-                        <SVG src={Delete} alt="Delete" className="comment_content_context_main_user_delete_button_icon" />
-                      </button>
-                    </div>
-                  )}
-                </a>
-              </div>
+                <div className="comment_content_text">
+                  <Linkify>
+                    {comment.message.data}
+                  </Linkify>
+                </div>
 
-              <div className="comment_content_context_time">
-                {`${timeSince(comment.timestamp * 1000)} ago`}
-              </div>
-            </div>
-            <div className="comment_content_text">
-              <Linkify>
-                {comment.message.data}
-              </Linkify>
-            </div>
+                {(count !== 0 && (!loadingDelete && !!reactions.length)) && (
+                  <div className={`comment_reactions ${isNestedComment ? 'nestedComment' : ''}`}>
+                    {count !== 0 && (
+                      <Vote
+                        currentUserAddr={currentUserAddr}
+                        currentUser3BoxProfile={currentUser3BoxProfile}
+                        thread={thread}
+                        ethereum={ethereum}
+                        adminEthAddr={adminEthAddr}
+                        box={box}
+                        loginFunction={loginFunction}
+                        isLoading3Box={isLoading3Box}
+                        login={login}
+                        updateComments={updateComments}
+                        parentId={comment.postId}
+                        votes={votes}
+                        profiles={profiles}
+                        voted={voted}
+                        count={count}
+                        getMyVote={this.getMyVote}
+                        upvote={this.upvote}
+                        downvote={this.downvote}
+                      />
+                    )}
 
-            {(count !== 0 && (!loadingDelete && !!reactions.length)) && (
-              <div className={`comment_reactions ${isNestedComment ? 'nestedComment' : ''}`}>
-                {count !== 0 && (
-                  <Vote
-                    currentUserAddr={currentUserAddr}
-                    currentUser3BoxProfile={currentUser3BoxProfile}
-                    thread={thread}
-                    ethereum={ethereum}
-                    adminEthAddr={adminEthAddr}
-                    box={box}
-                    loginFunction={loginFunction}
-                    isLoading3Box={isLoading3Box}
-                    login={login}
-                    updateComments={updateComments}
-                    parentId={comment.postId}
-                    votes={votes}
-                    profiles={profiles}
-                    voted={voted}
-                    count={count}
-                    getMyVote={this.getMyVote}
-                    upvote={this.upvote}
-                    downvote={this.downvote}
-                  />
-                )}
-
-                {(!loadingDelete && !!reactions.length) && (
-                  <Reactions
-                    currentUserAddr={currentUserAddr}
-                    currentUser3BoxProfile={currentUser3BoxProfile}
-                    thread={thread}
-                    ethereum={ethereum}
-                    adminEthAddr={adminEthAddr}
-                    box={box}
-                    loginFunction={loginFunction}
-                    isLoading3Box={isLoading3Box}
-                    login={login}
-                    updateComments={updateComments}
-                    parentId={comment.postId}
-                    reactions={reactions}
-                    profiles={profiles}
-                    toggleEmojiPicker={this.toggleEmojiPicker}
-                    renderEmojiPopup={this.renderEmojiPopup}
-                    addReaction={this.addReaction}
-                    getMyReactions={this.getMyReactions}
-                  />
+                    {(!loadingDelete && !!reactions.length) && (
+                      <Reactions
+                        currentUserAddr={currentUserAddr}
+                        currentUser3BoxProfile={currentUser3BoxProfile}
+                        thread={thread}
+                        ethereum={ethereum}
+                        adminEthAddr={adminEthAddr}
+                        box={box}
+                        loginFunction={loginFunction}
+                        isLoading3Box={isLoading3Box}
+                        login={login}
+                        updateComments={updateComments}
+                        parentId={comment.postId}
+                        reactions={reactions}
+                        profiles={profiles}
+                        toggleEmojiPicker={this.toggleEmojiPicker}
+                        renderEmojiPopup={this.renderEmojiPopup}
+                        addReaction={this.addReaction}
+                        getMyReactions={this.getMyReactions}
+                      />
+                    )}
+                  </div>
                 )}
               </div>
-            )}
-          </div>
-        </div>
+            </div>
 
-        {!loadingDelete && comment.level < REPLIABLE_COMMENT_LEVEL_MAX && showReply && (
-          <Input
-            currentUserAddr={currentUserAddr}
-            currentUser3BoxProfile={currentUser3BoxProfile}
-            thread={thread}
-            ethereum={ethereum}
-            adminEthAddr={adminEthAddr}
-            box={box}
-            loginFunction={loginFunction}
-            isLoading3Box={isLoading3Box}
-            login={login}
-            hasAuthed={hasAuthed}
-            updateComments={updateComments}
-            parentId={comment.postId}
-            onSubmit={() => { this.setState({ showReply: false }) }}
-            isNestedInput
-          />
-        )}
-
-        <div className="comment_control">
-          {
-            count === 0 && (
-              <>
-                <button className="vote_btn" onClick={this.upvote}>
-                  <SVG
-                    src={ArrowUp}
-                    alt="Upvote"
-                    className={`vote_icon upvote ${voted === 1 ? "voted" : ""}`}
-                  />
-                </button>
-
-                <button className="vote_btn vote_btn-middle" onClick={this.downvote}>
-                  <SVG
-                    src={ArrowDown}
-                    alt="Downvote"
-                    className={`vote_icon downvote ${voted === -1 ? "voted" : ""}`}
-                  />
-                </button>
-              </>
+            {!loadingDelete && comment.message.nestLevel < REPLIABLE_COMMENT_LEVEL_MAX && showReply && (
+              <Input
+                currentUserAddr={currentUserAddr}
+                currentUser3BoxProfile={currentUser3BoxProfile}
+                thread={thread}
+                ethereum={ethereum}
+                adminEthAddr={adminEthAddr}
+                box={box}
+                loginFunction={loginFunction}
+                isLoading3Box={isLoading3Box}
+                login={login}
+                hasAuthed={hasAuthed}
+                updateComments={updateComments}
+                currentNestLevel={comment.message.nestLevel + 1}
+                grandParentId={comment.message.parentId}
+                parentId={comment.postId}
+                onSubmit={() => { this.setState({ showReply: false }) }}
+                isNestedInput
+              />
             )}
 
-          {!reactions.length && (
-            <EmojiIcon
-              onClick={this.toggleEmojiPicker}
-              isActive={emojiPickerIsOpen}
-              tooltip={this.renderEmojiPopup()}
-              isInlinePicker
-            />
-          )}
+            <div className="comment_control">
+              {
+                count === 0 && (
+                  <>
+                    <button className="vote_btn" onClick={this.upvote}>
+                      <SVG
+                        src={ArrowUp}
+                        alt="Upvote"
+                        className={`vote_icon upvote ${voted === 1 ? "voted" : ""}`}
+                      />
+                    </button>
 
-          {comment.level < REPLIABLE_COMMENT_LEVEL_MAX && (
-            <button
-              onClick={(e) => this.toggleReplyInput(e)}
-              className="comment_content_context_main_user_reply_button"
-            >
-              <SVG src={Reply} alt="Reply" className="comment_content_context_main_user_reply_button_icon" />
-              Reply
+                    <button className="vote_btn vote_btn-middle" onClick={this.downvote}>
+                      <SVG
+                        src={ArrowDown}
+                        alt="Downvote"
+                        className={`vote_icon downvote ${voted === -1 ? "voted" : ""}`}
+                      />
+                    </button>
+                  </>
+                )}
+
+              {!reactions.length && (
+                <EmojiIcon
+                  onClick={this.toggleEmojiPicker}
+                  isActive={emojiPickerIsOpen}
+                  tooltip={this.renderEmojiPopup()}
+                  isInlinePicker
+                />
+              )}
+
+              {comment.message.nestLevel < REPLIABLE_COMMENT_LEVEL_MAX && (
+                <button
+                  onClick={(e) => this.toggleReplyInput(e)}
+                  className="comment_content_context_main_user_reply_button"
+                >
+                  <SVG src={Reply} alt="Reply" className="comment_content_context_main_user_reply_button_icon" />
+                  Reply
             </button>
-          )}
-        </div>
+              )}
+            </div>
 
-        {isNestedComment && <div className="comment_dialogue_timeline" />}
+            {isNestedComment && <div className="comment_dialogue_timeline" />}
+          </>
+        ) : <p>This comment was deleted</p>}
       </div>
     );
   }

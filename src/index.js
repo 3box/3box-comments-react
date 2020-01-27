@@ -161,13 +161,15 @@ class App extends Component {
   fetchCommenters = async () => {
     const { uniqueUsers } = this.state;
 
+    const cleanedUniqueUsers = uniqueUsers.filter(u => !!u);
+
     const profiles = {};
     const fetchProfile = async (did) => await Box.getProfile(did);
-    const fetchAllProfiles = async () => await Promise.all(uniqueUsers.map(did => fetchProfile(did)));
+    const fetchAllProfiles = async () => await Promise.all(cleanedUniqueUsers.map(did => fetchProfile(did)));
     const profilesArray = await fetchAllProfiles();
 
     const getEthAddr = async (did) => await resolve(did);
-    const getAllEthAddr = async () => await Promise.all(uniqueUsers.map(did => getEthAddr(did)));
+    const getAllEthAddr = async () => await Promise.all(cleanedUniqueUsers.map(did => getEthAddr(did)));
     const ethAddrArray = await getAllEthAddr();
 
     profilesArray.forEach((user, i) => {
@@ -175,7 +177,7 @@ class App extends Component {
       const ethAddr = ethAddrArray[i].publicKey[2].ethereumAddress;
       user.ethAddr = ethAddr;
       user.profileURL = userProfileURL ? userProfileURL(ethAddr) : `https://3box.io/${ethAddr}`;
-      profiles[uniqueUsers[i]] = user;
+      profiles[cleanedUniqueUsers[i]] = user;
     });
 
     this.setState({ profiles });
@@ -222,7 +224,6 @@ class App extends Component {
   updateComments = async () => {
     const { thread } = this.state;
     const dialogue = await thread.getPosts();
-
     const updatedDialogue = reorderComments(dialogue);
     const comments = filterComments(dialogue, "comment");
 
@@ -295,6 +296,7 @@ class App extends Component {
           members={members}
           hasAuthed={hasAuthed}
           noWeb3={noWeb3}
+          currentNestLevel={0}
           updateComments={this.updateComments}
           openBox={this.openBox}
           login={this.login}

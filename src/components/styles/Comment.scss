@@ -34,15 +34,33 @@
   }
 }
 
+.comment.isDeletedComment {
+  border: 1px solid $lightBorderColor;
+  background-color: #fafafa;
+  border-radius: 4px;
+
+  p {
+    color: $lighterFont;
+    font-size: 13px;
+  }
+}
+
 .nestedDialogue {
   .comment {
     padding-top: 8px;
+  }
+
+  .comment_content {
+    min-width: calc(100% - #{$commentPictureDimension});
   }
 }
 
 .comment_wrapper {
   display: flex;
+  min-width: 100%;
+  min-height: 100%;
   width: 100%;
+  height: 100%;
 }
 
 .comment_picture {
@@ -88,7 +106,7 @@
 }
 
 .comment_content {
-  min-width: calc(100% - #{$commentPictureDimension});
+  width: 100%;
   box-sizing: border-box;
   padding-left: 12px;
   display: flex;
@@ -96,6 +114,11 @@
   justify-content: flex-start;
   align-items: flex-start;
   margin-bottom: 4px;
+}
+
+.comment.isDeletedComment {
+  justify-content: center;
+  align-items: center;
 }
 
 .comment_content_context {
@@ -234,7 +257,7 @@
 
 .comment_dialogue_timeline {
   position: absolute;
-  left: -24px;
+  left: -25px;
   top: 0;
   width: 3px;
   height: 100%;

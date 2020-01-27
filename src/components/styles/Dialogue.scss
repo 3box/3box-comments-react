@@ -7,9 +7,10 @@
 
 .nestedDialogue.dialogue {
   margin-left: 52px;
+  width: calc(100% - 68px);
 
   .dialogue_grid {
-    width: calc(100% - 68px);
+    // width: calc(100% - 68px);
     row-gap: 0;
   }
 
