@@ -24,7 +24,6 @@ class Dialogue extends Component {
     this.setState({ showCommentCount: newCount, showLoadButton });
   }
 
-  toggleHoverGallery = (state) => this.setState({ hoverGallery: state })
 
   render() {
     const {
@@ -41,8 +40,6 @@ class Dialogue extends Component {
       ethereum,
       isLoading3Box,
       updateComments,
-      onMouseOver,
-      onMouseLeave,
       login,
       hasAuthed,
       isNestedComment
@@ -54,7 +51,7 @@ class Dialogue extends Component {
     if (dialogue.length > showCommentCount) showLoadButton = true;
 
     return (
-      <div className={`dialogue ${isNestedComment ? 'nestedDialogue' : ''}`} onMouseOver={onMouseOver} onMouseLeave={onMouseLeave}>
+      <div className={`dialogue ${isNestedComment ? 'nestedDialogue' : ''}`}>
         <div className="dialogue_grid">
           {dialogue.slice(0, showCommentCount).map(comment => {
             const profile = profiles[comment.author];
@@ -111,8 +108,6 @@ class Dialogue extends Component {
                     updateComments={updateComments}
                     openBox={openBox}
                     hasAuthed={hasAuthed}
-                    onMouseOver={() => this.toggleHoverGallery(true)}
-                    onMouseLeave={() => this.toggleHoverGallery(false)}
                     isNestedComment
                   />
                 )}
@@ -159,9 +154,6 @@ Dialogue.propTypes = {
   isNestedComment: PropTypes.bool,
   updateComments: PropTypes.func.isRequired,
   login: PropTypes.func.isRequired,
-
-  onMouseOver: PropTypes.func,
-  onMouseLeave: PropTypes.func,
 };
 
 Dialogue.defaultProps = {

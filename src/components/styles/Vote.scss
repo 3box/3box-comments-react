@@ -30,14 +30,6 @@
       &.downvote {
         fill: $negativeColor;
       }
-
-      &.upvote.voted {
-        fill: $positiveColor;
-      }
-
-      &.downvote.voted {
-        fill: $negativeColor;
-      }
     }
   }
 
@@ -45,6 +37,14 @@
     height: 16px;
     width: auto;
     opacity: .4;
+
+    &.upvote.voted {
+      fill: $positiveColor;
+    }
+
+    &.downvote.voted {
+      fill: $negativeColor;
+    }
   }
 }
 

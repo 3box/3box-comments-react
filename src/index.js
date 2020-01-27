@@ -202,7 +202,6 @@ class App extends Component {
     this.setState({ box, isLoading3Box: false });
   }
 
-  // current change (createbox)**********************************************
   updateComments = async () => {
     const { thread } = this.state;
     const dialogue = await thread.getPosts();
@@ -219,7 +218,6 @@ class App extends Component {
     if (newCount >= dialogue.length) showLoadButton = false;
     this.setState({ showCommentCount: newCount, showLoadButton });
   }
-  // end createbox ***********************************************
 
   updateComments = async () => {
     const { thread } = this.state;
@@ -323,15 +321,8 @@ class App extends Component {
           box={box}
           hasAuthed={hasAuthed}
           useHovers={useHovers}
-
-          // currentchange (createbox)
           handleLoadMore={this.handleLoadMore}
-          // end createbox
-
-          // start gitocoin
           updateComments={this.updateComments}
-          // end gitcoin
-
           openBox={this.openBox}
           login={this.login}
         />

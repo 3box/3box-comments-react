@@ -146,10 +146,9 @@ class Input extends Component {
     await login();
     
     try {
-      // add nest level
       const grandParentIdToUse = currentNestLevel === 2 && grandParentId;
-      const message = encodeMessage("comment", comment, parentId, currentNestLevel, grandParentIdToUse); // new lines
-      await thread.post(message); // new lines
+      const message = encodeMessage("comment", comment, parentId, currentNestLevel, grandParentIdToUse);
+      await thread.post(message);
 
       await updateComments();
       this.setState({ postLoading: false });
@@ -260,12 +259,6 @@ class Input extends Component {
             Login
           </button>
         )}
-
-        {/* {(isBoxEmpty && !currentUserAddr && !isLoading3Box) && (
-          <div className="input_login">
-            <SVG className="input_login_loading" src={Loading} alt="Loading" />
-          </div>
-        )} */}
 
         <EmojiIcon
           onClick={this.toggleEmojiPicker}

@@ -100,9 +100,7 @@ class Comment extends Component {
 
     try {
       this.setState({ loadingDelete: false });
-      const wasDeleted = await thread.deletePost(commentId);
-      console.log('deletedid', commentId)
-      console.log('wasDeleted', wasDeleted)
+      await thread.deletePost(commentId);
     } catch (error) {
       console.error('There was an error deleting your comment', error);
     }
@@ -132,10 +130,10 @@ class Comment extends Component {
   }
 
   toggleEmojiPicker = (e) => {
+    const { emojiPickerIsOpen } = this.state;
+    e.stopPropagation();
     e.preventDefault();
-    if (!this.state.emojiPickerIsOpen) {
-      this.setState({ emojiPickerIsOpen: true });
-    }
+    this.setState({ emojiPickerIsOpen: !emojiPickerIsOpen });
   }
 
   renderEmojiPopup = () => (
@@ -152,10 +150,8 @@ class Comment extends Component {
   )
 
   closeEmojiPicker = (e) => {
-    if (this.emojiPickerButton.contains(e.target)) {
-      e.stopPropagation();
-      e.preventDefault();
-    }
+    e.stopPropagation();
+    e.preventDefault();
     this.setState({ emojiPickerIsOpen: false });
   }
 
@@ -263,7 +259,6 @@ class Comment extends Component {
 
     const count = votes.reduce((sum, v) => (sum + v.message.data), 0);
     const isDeletedComment = comment.message.category === 'deleted';
-    console.log('thecommentcomponent', comment);
 
     return (
       <div className={`comment ${canDelete ? 'isMyComment' : ''} ${isDeletedComment ? 'isDeletedComment' : ''}`}>
@@ -350,7 +345,7 @@ class Comment extends Component {
                   </Linkify>
                 </div>
 
-                {(count !== 0 && (!loadingDelete && !!reactions.length)) && (
+                {(count !== 0 || !!reactions.length) && (
                   <div className={`comment_reactions ${isNestedComment ? 'nestedComment' : ''}`}>
                     {count !== 0 && (
                       <Vote
@@ -375,7 +370,7 @@ class Comment extends Component {
                       />
                     )}
 
-                    {(!loadingDelete && !!reactions.length) && (
+                    {!!reactions.length && (
                       <Reactions
                         currentUserAddr={currentUserAddr}
                         currentUser3BoxProfile={currentUser3BoxProfile}
@@ -430,7 +425,7 @@ class Comment extends Component {
                       <SVG
                         src={ArrowUp}
                         alt="Upvote"
-                        className={`vote_icon upvote ${voted === 1 ? "voted" : ""}`}
+                        className="vote_icon upvote"
                       />
                     </button>
 
@@ -438,7 +433,7 @@ class Comment extends Component {
                       <SVG
                         src={ArrowDown}
                         alt="Downvote"
-                        className={`vote_icon downvote ${voted === -1 ? "voted" : ""}`}
+                        className="vote_icon downvote"
                       />
                     </button>
                   </>
@@ -455,12 +450,12 @@ class Comment extends Component {
 
               {comment.message.nestLevel < REPLIABLE_COMMENT_LEVEL_MAX && (
                 <button
-                  onClick={(e) => this.toggleReplyInput(e)}
+                  onClick={this.toggleReplyInput}
                   className="comment_content_context_main_user_reply_button"
                 >
                   <SVG src={Reply} alt="Reply" className="comment_content_context_main_user_reply_button_icon" />
                   Reply
-            </button>
+                </button>
               )}
             </div>
 
