@@ -196,7 +196,7 @@
 .comment_reactions {
   display: flex;
   justify-content: flex-start;
-  align-items: center;
+  align-items: flex-start;
   margin: 8px 0 4px 0;
 }
 
@@ -206,8 +206,6 @@
 
 .comment_reactions.nestedComment {
   display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
   margin-top: 8px;
 }
 
@@ -258,7 +256,7 @@
   }
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 600px) {
   .comment-mobile {
     .comment_picture {
       min-width: $commentPictureDimension-mobile;
@@ -306,7 +304,7 @@
   .comment_control_mobile {
     display: flex;
     position: absolute;
-    top: 0;
+    top: 5px;
     right: -12px;
     height: $reactionHeight;
   }

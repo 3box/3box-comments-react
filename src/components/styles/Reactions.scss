@@ -51,7 +51,7 @@
   display: inline-grid;
   row-gap: 4px;
   column-gap: 6px;
-  grid-template-columns: repeat(10, 46px [col-start]);
+  grid-template-columns: repeat(8, 46px [col-start]);
 
   .emoji-item {
     display: flex;
@@ -77,7 +77,7 @@
 
 .nestedDialogue.dialogue {
   .emoji-bar {
-    grid-template-columns: repeat(9, 46px [col-start]);
+    grid-template-columns: repeat(7, 46px [col-start]);
   }
 
   // second nested dialogue
@@ -88,9 +88,47 @@
   }
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 730px) {
   .emoji-bar {
-    grid-template-columns: repeat(4, 46px [col-start]);
+    grid-template-columns: repeat(7, 46px [col-start]);
+  }
+
+  .nestedDialogue.dialogue {
+    .emoji-bar {
+      grid-template-columns: repeat(6, 46px [col-start]);
+    }
+
+    // second nested dialogue
+    .nestedDialogue.dialogue {
+      .emoji-bar {
+        grid-template-columns: repeat(5, 46px [col-start]);
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 678px) {
+  .emoji-bar {
+    grid-template-columns: repeat(6, 46px [col-start]);
+  }
+
+  .nestedDialogue.dialogue {
+    .emoji-bar {
+      grid-template-columns: repeat(5, 46px [col-start]);
+    }
+
+    // second nested dialogue
+    .nestedDialogue.dialogue {
+      .emoji-bar {
+        grid-template-columns: repeat(4, 46px [col-start]);
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .emoji-bar {
+    grid-template-columns: repeat(5, 46px [col-start]);
   }
 
   .nestedDialogue.dialogue {
@@ -101,7 +139,7 @@
     // second nested dialogue
     .nestedDialogue.dialogue {
       .emoji-bar {
-        grid-template-columns: repeat(3, 46px [col-start]);
+        grid-template-columns: repeat(4, 46px [col-start]);
       }
     }
   }

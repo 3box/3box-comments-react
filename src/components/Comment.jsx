@@ -460,9 +460,9 @@ class Comment extends Component {
               )}
             </div>
 
-            <button className="comment_control_mobile" onClick={this.handleShowControlsOnMobile}>
+            <div className="comment_control_mobile" onClick={this.handleShowControlsOnMobile}>
               <SVG src={Dots} alt="options" className="comment_control_mobile_icon" />
-            </button>
+            </div>
           </>
         ) : <p>This comment was deleted</p>}
 
