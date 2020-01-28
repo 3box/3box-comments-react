@@ -1,17 +1,12 @@
 @import '../../variables.scss';
 
 .reactions {
-
-  display: flex;
-  align-items: center;
   position: relative;
 
-  height: $reactionHeight;
+  min-height: $reactionHeight;
+  height: fit-content;
   display: flex;
   justify-content: flex-start;
-  align-items: center;
-  border: 1px solid $borderColor;
-  border-radius: 4px;
 
   .sc-user-input--picker-wrapper {
     min-width: 0;
@@ -24,44 +19,6 @@
       height: 16px;
       width: auto;
       cursor: pointer;
-      // fill: $buttonColor;
-
-      // &:hover path,
-      // &:hover circle,
-      // &.active path,
-      // &.active circle {
-      //   fill: $buttonColor;
-      // }
-    }
-  }
-
-  .emoji-bar {
-    display: flex;
-    align-items: center;
-    visibility: visible !important;
-
-    .emoji-item {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #0366D6;
-      cursor: pointer;
-      min-width: 46px;
-      height: $reactionHeight;
-      font-size: 13px;
-
-      &.has_reacted {
-        background-color: $activeIconBackgroundColor;
-      }
-
-      &:hover {
-        background-color: $lightBorderColor;
-      }
-    }
-
-    .emoji-item.isFirst {
-      border-top-left-radius: 4px;
-      border-bottom-left-radius: 4px;
     }
   }
 
@@ -69,7 +26,7 @@
     display: none;
     position: absolute;
     left: 0;
-    top: 18px;
+    bottom: -42px;
     color: $tooltipFont;
     background-color: $darkBackgroundColor;
     font-size: 12px;
@@ -84,5 +41,68 @@
       display: block;
     }
   }
+}
 
+.emoji-bar {
+  visibility: visible !important;
+  width: fit-content;
+  min-width: fit-content;
+
+  display: inline-grid;
+  row-gap: 4px;
+  column-gap: 6px;
+  grid-template-columns: repeat(10, 46px [col-start]);
+
+  .emoji-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0366D6;
+    cursor: pointer;
+    min-width: 46px;
+    height: $reactionHeight;
+    font-size: 13px;
+    border: 1px solid $borderColor;
+    border-radius: 4px;
+
+    &.has_reacted {
+      background-color: $activeIconBackgroundColor;
+    }
+
+    &:hover {
+      background-color: $lightBorderColor;
+    }
+  }
+}
+
+.nestedDialogue.dialogue {
+  .emoji-bar {
+    grid-template-columns: repeat(9, 46px [col-start]);
+  }
+
+  // second nested dialogue
+  .nestedDialogue.dialogue {
+    .emoji-bar {
+      grid-template-columns: repeat(6, 46px [col-start]);
+    }
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .emoji-bar {
+    grid-template-columns: repeat(4, 46px [col-start]);
+  }
+
+  .nestedDialogue.dialogue {
+    .emoji-bar {
+      grid-template-columns: repeat(4, 46px [col-start]);
+    }
+
+    // second nested dialogue
+    .nestedDialogue.dialogue {
+      .emoji-bar {
+        grid-template-columns: repeat(3, 46px [col-start]);
+      }
+    }
+  }
 }

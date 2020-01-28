@@ -21,6 +21,7 @@ import ArrowUp from '../assets/ArrowUp.svg';
 import ArrowDown from '../assets/ArrowDown.svg';
 import Delete from '../assets/Delete.svg';
 import Reply from '../assets/Reply.svg';
+import Dots from '../assets/Dots.svg';
 import Loading from '../assets/3BoxCommentsSpinner.svg';
 import Input from './Input';
 import Vote from './Vote';
@@ -36,7 +37,7 @@ class Comment extends Component {
 
     this.state = {
       loadingDelete: false,
-      showReply: false,
+      showControlsOnMobile: false,
       emojiPickerIsOpen: false,
       emojiFilter: '',
       noWeb3,
@@ -104,11 +105,6 @@ class Comment extends Component {
     } catch (error) {
       console.error('There was an error deleting your comment', error);
     }
-  }
-
-  toggleReplyInput = () => {
-    const { showReply } = this.state;
-    this.setState({ showReply: !showReply });
   }
 
   getMyVote = () => {
@@ -217,11 +213,16 @@ class Comment extends Component {
     return myReactions;
   }
 
+  handleShowControlsOnMobile = () => {
+    const { showControlsOnMobile } = this.state;
+    this.setState({ showControlsOnMobile: !showControlsOnMobile })
+  }
+
   render() {
     const {
       loadingDelete,
-      showReply,
       emojiPickerIsOpen,
+      showControlsOnMobile,
     } = this.state;
 
     const {
@@ -246,6 +247,8 @@ class Comment extends Component {
       votes,
       reactions,
       isNestedComment,
+      showReply,
+      toggleReplyInput,
     } = this.props;
 
     const profilePicture = profile.ethAddr &&
@@ -396,7 +399,7 @@ class Comment extends Component {
               </div>
             </div>
 
-            {!loadingDelete && comment.message.nestLevel < REPLIABLE_COMMENT_LEVEL_MAX && showReply && (
+            {(!loadingDelete && comment.message.nestLevel < REPLIABLE_COMMENT_LEVEL_MAX && showReply === comment.postId) && (
               <Input
                 currentUserAddr={currentUserAddr}
                 currentUser3BoxProfile={currentUser3BoxProfile}
@@ -417,7 +420,7 @@ class Comment extends Component {
               />
             )}
 
-            <div className="comment_control">
+            <div className={`comment_control ${emojiPickerIsOpen ? 'show' : ''} ${showControlsOnMobile ? 'showOnMobile' : ''}`}>
               {
                 count === 0 && (
                   <>
@@ -439,18 +442,16 @@ class Comment extends Component {
                   </>
                 )}
 
-              {!reactions.length && (
-                <EmojiIcon
-                  onClick={this.toggleEmojiPicker}
-                  isActive={emojiPickerIsOpen}
-                  tooltip={this.renderEmojiPopup()}
-                  isInlinePicker
-                />
-              )}
+              <EmojiIcon
+                onClick={this.toggleEmojiPicker}
+                isActive={emojiPickerIsOpen}
+                tooltip={this.renderEmojiPopup()}
+                isInlinePicker
+              />
 
               {comment.message.nestLevel < REPLIABLE_COMMENT_LEVEL_MAX && (
                 <button
-                  onClick={this.toggleReplyInput}
+                  onClick={() => toggleReplyInput(comment.postId)}
                   className="comment_content_context_main_user_reply_button"
                 >
                   <SVG src={Reply} alt="Reply" className="comment_content_context_main_user_reply_button_icon" />
@@ -459,9 +460,21 @@ class Comment extends Component {
               )}
             </div>
 
-            {isNestedComment && <div className="comment_dialogue_timeline" />}
+            <button className="comment_control_mobile" onClick={this.handleShowControlsOnMobile}>
+              <SVG src={Dots} alt="options" className="comment_control_mobile_icon" />
+            </button>
           </>
         ) : <p>This comment was deleted</p>}
+
+        {showControlsOnMobile && (
+          <div
+            className="onClickOutside"
+            onClick={this.handleShowControlsOnMobile}
+            onKeyPress={this.handleShowControlsOnMobile}
+            role="button"
+            tabIndex={0}
+          />
+        )}
       </div>
     );
   }
@@ -482,11 +495,13 @@ Comment.propTypes = {
   loginFunction: PropTypes.func,
   currentUserAddr: PropTypes.string,
   adminEthAddr: PropTypes.string,
+  showReply: PropTypes.string,
   currentUser3BoxProfile: PropTypes.object,
   ethereum: PropTypes.object,
   isLoading3Box: PropTypes.bool,
   isNestedComment: PropTypes.bool,
   updateComments: PropTypes.func.isRequired,
+  toggleReplyInput: PropTypes.func.isRequired,
   login: PropTypes.func.isRequired,
   profiles: PropTypes.object,
   votes: PropTypes.array,

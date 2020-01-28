@@ -79,34 +79,28 @@ class Reactions extends Component {
     return (
       <div className="reactions">
         {reactions.length && (
-          <div className="emoji-bar" onMouseLeave={() => (this.onHover(null))}>{
-            Object.keys(reactionsSummary).map((emoji, i) => {
-              const count = reactionsSummary[emoji].count;
-              const items = reactionsSummary[emoji].items;
+          <div className="emoji-bar" onMouseLeave={() => (this.onHover(null))}>
+            {
+              Object.keys(reactionsSummary).reverse().map((emoji, i) => {
+                const count = reactionsSummary[emoji].count;
+                const items = reactionsSummary[emoji].items;
 
-              const hasReacted = myReactionsSummary[emoji];
-              const reaction = hasReacted && myReactionsSummary[emoji].items[0];
-              const action = hasReacted ? () => this.deleteReaction(reaction) : () => addReaction(emoji);
-              const isFirst = i === 0;
+                const hasReacted = myReactionsSummary[emoji];
+                const reaction = hasReacted && myReactionsSummary[emoji].items[0];
+                const action = hasReacted ? () => this.deleteReaction(reaction) : () => addReaction(emoji);
 
-              return (
-                <div
-                  className={`emoji-item ${hasReacted ? 'has_reacted' : ''} ${isFirst ? 'isFirst' : ''}`}
-                  key={emoji}
-                  onClick={action}
-                  onMouseEnter={() => (this.onHover(items))}
-                >
-                  {emoji} {count}
-                </div>
-              )
-            })
-          }
-            <EmojiIcon
-              onClick={toggleEmojiPicker}
-              isActive={emojiPickerIsOpen}
-              tooltip={renderEmojiPopup()}
-              isInlinePicker
-            />
+                return (
+                  <div
+                    className={`emoji-item ${hasReacted ? 'has_reacted' : ''}`}
+                    key={emoji}
+                    onClick={action}
+                    onMouseEnter={() => (this.onHover(items))}
+                  >
+                    {emoji} {count}
+                  </div>
+                )
+              })
+            }
           </div>
         )}
 

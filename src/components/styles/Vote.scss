@@ -7,7 +7,7 @@
   border: 1px solid $borderColor;
   border-radius: 4px;
   height: $reactionHeight;
-  margin-right: 12px;
+  margin-right: 8px;
 }
 
 .vote_btn {
@@ -69,5 +69,11 @@
   &.negative {
     color: $negativeColor;
     ;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .comment_vote {
+    margin-bottom: 6px;
   }
 }

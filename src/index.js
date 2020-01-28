@@ -22,7 +22,7 @@ class App extends Component {
       ethereum,
       adminEthAddr,
       threadOpts,
-      members
+      members,
     } = this.props;
 
     this.state = {
@@ -31,6 +31,7 @@ class App extends Component {
       isLoading: false,
       isLoading3Box: false,
       hasAuthed: false,
+      showReply: '',
       dialogue: [],
       uniqueUsers: [],
       thread: {},
@@ -244,6 +245,17 @@ class App extends Component {
     if (!hasAuthed) await this.openBox();
   }
 
+  toggleReplyInput = (postId) => {
+    const { showReply } = this.state;
+    let value;
+    if (showReply === postId) {
+      value = '';
+    } else {
+      value = postId;
+    }
+    this.setState({ showReply: value });
+  }
+
   render() {
     const {
       dialogue,
@@ -260,6 +272,7 @@ class App extends Component {
       ethereum,
       isLoading3Box,
       hasAuthed,
+      showReply,
     } = this.state;
 
     const {
@@ -321,12 +334,13 @@ class App extends Component {
           box={box}
           hasAuthed={hasAuthed}
           useHovers={useHovers}
+          showReply={showReply}
           handleLoadMore={this.handleLoadMore}
           updateComments={this.updateComments}
           openBox={this.openBox}
           login={this.login}
+          toggleReplyInput={this.toggleReplyInput}
         />
-
         <Footer />
       </div>
     );

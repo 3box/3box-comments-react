@@ -24,7 +24,6 @@ class Dialogue extends Component {
     this.setState({ showCommentCount: newCount, showLoadButton });
   }
 
-
   render() {
     const {
       dialogue,
@@ -42,7 +41,9 @@ class Dialogue extends Component {
       updateComments,
       login,
       hasAuthed,
-      isNestedComment
+      isNestedComment,
+      toggleReplyInput,
+      showReply,
     } = this.props;
 
     const { showCommentCount } = this.state;
@@ -88,6 +89,8 @@ class Dialogue extends Component {
                   votes={votes}
                   reactions={reactions}
                   isNestedComment={isNestedComment}
+                  showReply={showReply}
+                  toggleReplyInput={toggleReplyInput}
                 />
 
                 {(!!children_comments.length) && (
@@ -108,6 +111,8 @@ class Dialogue extends Component {
                     updateComments={updateComments}
                     openBox={openBox}
                     hasAuthed={hasAuthed}
+                    showReply={showReply}
+                    toggleReplyInput={toggleReplyInput}
                     isNestedComment
                   />
                 )}
@@ -139,6 +144,7 @@ Dialogue.propTypes = {
   thread: PropTypes.object,
   box: PropTypes.object,
   currentUserAddr: PropTypes.string,
+  showReply: PropTypes.string,
   useHovers: PropTypes.bool,
   hasAuthed: PropTypes.bool,
   loginFunction: PropTypes.func,
@@ -154,6 +160,7 @@ Dialogue.propTypes = {
   isNestedComment: PropTypes.bool,
   updateComments: PropTypes.func.isRequired,
   login: PropTypes.func.isRequired,
+  toggleReplyInput: PropTypes.func.isRequired,
 };
 
 Dialogue.defaultProps = {

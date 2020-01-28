@@ -89,7 +89,7 @@
 // nested reply input
 .comment {
   .sc-user-input--picker-wrapper.inputPicker {
-    top: 0;
+    top: 5.5px;
     min-width: 46px;
     min-height: 46px;
     max-width: 46px;
@@ -129,16 +129,15 @@
 }
 
 .comment {
-  .input {}
-
   .input_form {
+    margin-top: 6px;
     border-radius: 4px;
     padding: 10px 12px;
-    margin-left: 68px;
+    margin-left: $inputMarginLeft;
     min-height: 46px;
     height: 46px;
-    width: calc(100% - 68px) !important;
-    min-width: calc(100% - 68px) !important;
+    width: calc(100% - #{$inputMarginLeft});
+    min-width: calc(100% - #{$inputMarginLeft});
   }
 
   .input_emptyUser {
@@ -173,8 +172,10 @@
   .input_form {
     border-radius: 4px;
     margin-left: 0 !important;
-    width: 100% !important;
-    min-width: 100% !important;
+    width: calc(100% + 2px) !important;
+    min-width: calc(100% + 2px) !important;
+    border: 1px solid $lightBorderColor;
+    margin-bottom: 10px;
   }
 }
 
@@ -194,7 +195,7 @@
 .input_postLoading {
   position: absolute;
   top: 10px;
-  left: calc(50% - 68px);
+  left: calc(50% - #{$inputMarginLeft});
   display: flex;
   justify-content: center;
   align-items: center;
@@ -250,6 +251,12 @@
       display: none;
     }
 
+    .comment {
+      .sc-user-input--picker-wrapper {
+        display: flex;
+      }
+    }
+
     .input_user {
       top: 7px;
       left: -1px;
@@ -285,7 +292,33 @@
       border-radius: 37px;
       border: 1px solid $borderColor;
       margin-left: -8px;
-      padding: 20px 52px 20px 68px;
+      padding: 20px 52px 20px $inputMarginLeft;
+    }
+
+    .comment {
+      .input_form {
+        font-size: 15px;
+        margin-top: 6px;
+        border-radius: 4px;
+        padding: 10px 12px;
+        margin-left: 58px;
+        min-height: 46px;
+        height: 46px;
+        width: calc(100% - 58px);
+        min-width: calc(100% - 58px);
+      }
+
+      .nestedDialogue.dialogue {
+        .input_form {
+          width: 100% !important;
+          min-width: 100% !important;
+
+          .input_send {
+            bottom: 35px;
+            right: 24px;
+          }
+        }
+      }
     }
 
     .input_send {
@@ -304,6 +337,24 @@
       display: flex;
       justify-content: center;
       align-items: center;
+    }
+
+    .comment {
+      .input_send {
+        bottom: 25px;
+        right: 24px;
+        min-width: 20px;
+        min-height: 20px;
+        max-width: 20px;
+        max-height: 20px;
+      }
+    }
+
+    .nestedDialogue {
+      .input_send {
+        bottom: 33px;
+        right: 24px;
+      }
     }
 
     .input_send-visible {
@@ -352,5 +403,9 @@
       max-height: 52px;
       max-width: 52px;
     }
+  }
+
+  .inputPicker {
+    display: none !important;
   }
 }

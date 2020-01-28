@@ -1,5 +1,8 @@
 # Release Notes
 
+## v1.0.0 - 2020-01-13
+* Add replies, reactions, and up/downvotes to comments plugin
+
 ## v0.0.9 - 2020-01-13
 * fix: stricter css rules
 
