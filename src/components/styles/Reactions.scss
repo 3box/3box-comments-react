@@ -128,7 +128,7 @@
 
 @media only screen and (max-width: 600px) {
   .emoji-bar {
-    grid-template-columns: repeat(5, 46px [col-start]);
+    grid-template-columns: repeat(4, 46px [col-start]);
   }
 
   .nestedDialogue.dialogue {
@@ -139,7 +139,7 @@
     // second nested dialogue
     .nestedDialogue.dialogue {
       .emoji-bar {
-        grid-template-columns: repeat(4, 46px [col-start]);
+        grid-template-columns: repeat(3, 46px [col-start]);
       }
     }
   }
