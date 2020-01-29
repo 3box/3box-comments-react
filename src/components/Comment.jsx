@@ -412,6 +412,8 @@ class Comment extends Component {
                 login={login}
                 hasAuthed={hasAuthed}
                 updateComments={updateComments}
+                showReply={showReply}
+                toggleReplyInput={toggleReplyInput}
                 currentNestLevel={comment.message.nestLevel + 1}
                 grandParentId={comment.message.parentId}
                 parentId={comment.postId}
@@ -465,16 +467,6 @@ class Comment extends Component {
             </div>
           </>
         ) : <p>This comment was deleted</p>}
-
-        {showControlsOnMobile && (
-          <div
-            className="onClickOutside"
-            onClick={this.handleShowControlsOnMobile}
-            onKeyPress={this.handleShowControlsOnMobile}
-            role="button"
-            tabIndex={0}
-          />
-        )}
       </div>
     );
   }

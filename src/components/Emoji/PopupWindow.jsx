@@ -22,7 +22,7 @@ class PopupWindow extends Component {
     const { isOpen, children, onInputChange } = this.props;
 
     return (
-      <div className="sc-popup-window" ref={e => this.emojiPopup = e}>
+      <div className="sc-popup-window" ref={e => this.emojiPopup = e} onClick={(e) => { e.preventDefault(); e.stopPropagation() }}>
         <div className={`sc-popup-window--cointainer ${isOpen ? '' : 'closed'}`}>
           <input
             onChange={onInputChange}

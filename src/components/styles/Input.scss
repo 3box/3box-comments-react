@@ -3,6 +3,7 @@
 .input {
   position: relative;
   width: 100%;
+  z-index: 1;
 }
 
 .input_form {
@@ -164,7 +165,7 @@
   }
 
   .input_postLoading {
-    top: 2px;
+    top: 8px;
   }
 }
 

@@ -9,16 +9,28 @@
 }
 
 .page {
-  width: 80vw;
-  padding: 40px 0;
+  width: 100vw;
   display: flex;
   justify-content: flex-start;
   align-items: center;
   flex-direction: column;
 
   .page_description {
-    margin-bottom: 30px;
+    margin-bottom: 10px;
+    color: white;
+    font-size: 36px;
   }
+}
+
+.page_dapp {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: #ec5d85;
+  height: 36vh;
+  padding-top: 50px;
 }
 
 .userscontainer {
@@ -31,7 +43,7 @@
 
 .page_content {
   border: 1px solid #dadada;
-  border-radius: 25px;
+  border-radius: 8px;
   height: 25vh;
   width: 100%;
   max-width: 600px;
@@ -48,5 +60,17 @@
 @media only screen and (max-width: 600px) {
   .userscontainer {
     width: 70%;
+  }
+  
+  .page_dapp {
+    padding: 20px 0 30px 0;
+  }
+
+  .page_description {
+    width: 80%;
+  }
+
+  .page_content {
+    width: 80%;
   }
 }

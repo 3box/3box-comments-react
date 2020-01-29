@@ -177,6 +177,8 @@ class Input extends Component {
       isLoading3Box,
       hasAuthed,
       box,
+      showReply,
+      toggleReplyInput,
     } = this.props;
 
     const noWeb3 = (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
@@ -185,6 +187,7 @@ class Input extends Component {
     const isBoxEmpty = !box || !Object.keys(box).length;
 
     return (
+      <>
       <div className="input">
         {updatedProfilePicture ? (
           <img
@@ -266,6 +269,17 @@ class Input extends Component {
           tooltip={this._renderEmojiPopup()}
         />
       </div>
+      
+      {showReply && (
+          <div
+            className="onClickOutside"
+            onClick={toggleReplyInput}
+            onKeyPress={toggleReplyInput}
+            role="button"
+            tabIndex={0}
+          />
+        )}
+      </>
     );
   }
 }
@@ -282,11 +296,13 @@ Input.propTypes = {
   isLoading3Box: PropTypes.bool,
   noWeb3: PropTypes.bool,
   isNestedInput: PropTypes.bool,
+  showReply: PropTypes.bool,
   hasAuthed: PropTypes.bool.isRequired,
   currentNestLevel: PropTypes.number,
   grandParentId: PropTypes.string,
 
   updateComments: PropTypes.func.isRequired,
+  toggleReplyInput: PropTypes.func.isRequired,
   login: PropTypes.func.isRequired,
   parentId: PropTypes.string,
   onSubmit: PropTypes.func,

@@ -41,14 +41,18 @@ class Example extends React.Component {
     return (
       <div className="App">
         <div className="page">
-          <h2 className="page_description">3Box Comments Demo</h2>
-          <div className="page_content">
-            <p>
-              Your super cool dApp
+          <div className="page_dapp">
+            <h2 className="page_description">
+              3Box Comments Demo
+            </h2>
+            <div className="page_content">
+              <p>
+                Your super cool dApp
             </p>
+            </div>
           </div>
+
           <div className="userscontainer">
-            {/* {myProfile && ( */}
             <Comments
               // required
               spaceName='3boxtestcomments'
@@ -64,8 +68,8 @@ class Example extends React.Component {
               // case B
               loginFunction={this.handleLogin}
 
-              // case C
-              // ethereum={window.ethereum}
+            // case C
+            // ethereum={window.ethereum}
 
             // optional
             // members={false}
@@ -76,7 +80,6 @@ class Example extends React.Component {
             // currentUser3BoxProfile={myProfile}
             // userProfileURL={address => `https://userprofiles.co/user/${address}`}
             />
-          {/* )} */}
           </div>
         </div>
       </div>
