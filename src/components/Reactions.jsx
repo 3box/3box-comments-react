@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { shortenEthAddr, checkIsMobileDevice, aggregateReactions } from '../utils';
+import {
+  shortenEthAddr,
+  checkIsMobileDevice,
+  aggregateReactions,
+  orderReactionsChronologically,
+} from '../utils';
 
 import EmojiIcon from './Emoji/EmojiIcon';
 import './styles/PopupWindow.scss';
@@ -73,7 +78,12 @@ class Reactions extends Component {
     const myReactions = getMyReactions();
     let reactionsSummary = {}, myReactionsSummary = {};
 
-    if (reactions.length > 0) reactionsSummary = aggregateReactions(reactions);
+    let orderedReactions;
+    if (reactions.length > 0) {
+      reactionsSummary = aggregateReactions(reactions);
+      orderedReactions = orderReactionsChronologically(reactionsSummary);
+    }
+
     if (myReactions.length > 0) myReactionsSummary = aggregateReactions(myReactions);
 
     return (
@@ -81,22 +91,22 @@ class Reactions extends Component {
         {reactions.length && (
           <div className="emoji-bar" onMouseLeave={() => (this.onHover(null))}>
             {
-              Object.keys(reactionsSummary).reverse().map((emoji, i) => {
-                const count = reactionsSummary[emoji].count;
-                const items = reactionsSummary[emoji].items;
+              orderedReactions.reverse().map((emoji) => {
+                const count = reactionsSummary[emoji[0]].count;
+                const items = reactionsSummary[emoji[0]].items;
 
-                const hasReacted = myReactionsSummary[emoji];
-                const reaction = hasReacted && myReactionsSummary[emoji].items[0];
-                const action = hasReacted ? () => this.deleteReaction(reaction) : () => addReaction(emoji);
+                const hasReacted = myReactionsSummary[emoji[0]];
+                const reaction = hasReacted && myReactionsSummary[emoji[0]].items[0];
+                const action = hasReacted ? () => this.deleteReaction(reaction) : () => addReaction(emoji[0]);
 
                 return (
                   <div
                     className={`emoji-item ${hasReacted ? 'has_reacted' : ''}`}
-                    key={emoji}
+                    key={emoji[0]}
                     onClick={action}
                     onMouseEnter={() => (this.onHover(items))}
                   >
-                    {emoji} {count}
+                    {emoji[0]} {count}
                   </div>
                 )
               })

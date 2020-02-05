@@ -117,7 +117,6 @@ class App extends Component {
     // use static api first, as it's much quicker
     const dialogue = await Box.getThread(spaceName, threadName, adminEthAddr, members, threadOpts || {});
     const updatedDialogue = reorderComments(dialogue);
-    console.log("fetch dialogue in fetchThread() via Box.getThread", dialogue, updatedDialogue);
     const comments = filterComments(dialogue, "comment");
     const uniqueUsers = [...new Set(dialogue.map(x => x.author))];
 
@@ -285,7 +284,6 @@ class App extends Component {
     } = this.props;
 
     const noWeb3 = (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
-
     return (
       <div
         className={`

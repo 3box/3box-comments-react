@@ -234,6 +234,7 @@ class Input extends Component {
           onFocus={this.handleLoggedInAs}
           onBlur={this.handleLoggedInAs}
           ref={this.inputRef}
+          autoFocus
         />
 
         <button className={`input_send ${isMobile ? 'input_send-visible' : ''}`} onClick={isBoxEmpty ? () => {} : this.saveComment}>

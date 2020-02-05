@@ -79,6 +79,7 @@ class Comment extends Component {
         const message = encodeMessage("vote", direction, comment.postId);
         await thread.post(message);
       }
+
       await updateComments();
       this.setState({ postLoading: false });
     } catch (error) {
@@ -184,6 +185,7 @@ class Comment extends Component {
         } else {
           const message = encodeMessage("reaction", emoji, comment.postId);
           await this.props.thread.post(message);
+          this.setState({})
         }
       } else {
         const message = encodeMessage("reaction", emoji, comment.postId);

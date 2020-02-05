@@ -177,5 +177,17 @@ export const aggregateReactions = (reactions) => {
   }
 }
 
+export const orderReactionsChronologically = (reactions) => {
+  const updatedThreadPosts = Object.entries(reactions).sort((a, b) => {
+    const itemsArrayA = a[1].items;
+    const itemsArrayB = b[1].items;
+    a = itemsArrayA[itemsArrayA.length - 1].timestamp;
+    b = itemsArrayB[itemsArrayB.length - 1].timestamp;
+    return a > b ? -1 : a < b ? 1 : 0;
+  });
+
+  return updatedThreadPosts;
+}
+
 export const REPLIABLE_COMMENT_LEVEL_MAX = 2;
 export const REPLY_THREAD_SHOW_COMMENT_COUNT = 5;

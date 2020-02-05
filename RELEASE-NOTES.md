@@ -1,5 +1,9 @@
 # Release Notes
 
+## v1.0.1 - 2020-02-05
+* feat: autofocus input on click
+* feat: maintain emoji order on click
+
 ## v1.0.0 - 2020-01-13
 * Add replies, reactions, and up/downvotes to comments plugin
 

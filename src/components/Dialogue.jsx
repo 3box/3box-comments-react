@@ -128,7 +128,7 @@ class Dialogue extends Component {
               onClick={this.handleLoadMore}
             >
               Load more
-          </button>
+            </button>
           )}
         </div>
       </div>
