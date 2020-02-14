@@ -34,8 +34,6 @@ class Example extends React.Component {
     const {
       box,
       myAddress,
-      myProfile,
-      isReady
     } = this.state;
 
     return (
@@ -53,33 +51,16 @@ class Example extends React.Component {
           </div>
 
           <div className="userscontainer">
-            <Comments
-              // required
-              spaceName='3boxtestcomments'
-              threadName='explicitNestLevel6'
-              // threadName='freshcomments3'
-              // threadName='freshcomments'
-              adminEthAddr="0x2a0D29C819609Df18D8eAefb429AEC067269BBb6"
+            {box && (
+              <Comments
+                spaceName='3boxtestcomments'
+                threadName='explicitNestLevel6'
+                adminEthAddr="0x2a0D29C819609Df18D8eAefb429AEC067269BBb6"
 
-              // case A & B
-              // box={box}
-              // currentUserAddr={myAddress}
-
-              // case B
-              loginFunction={this.handleLogin}
-
-            // case C
-            // ethereum={window.ethereum}
-
-            // optional
-            // members={false}
-            // showCommentCount={10}
-            // threadOpts={{}}
-            // spaceOpts={{}}
-            // useHovers={true}
-            // currentUser3BoxProfile={myProfile}
-            // userProfileURL={address => `https://userprofiles.co/user/${address}`}
-            />
+                box={box}
+                currentUserAddr={myAddress}
+              />
+            )}
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 {
   "name": "3box-comments-react",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Comments component for decentralized applications by 3Box",
   "main": "./lib/index.js",
   "author": "3box.io",
@@ -65,7 +65,7 @@
     "babel-core": "7.0.0-bridge.0"
   },
   "dependencies": {
-    "3box": "^1.16.0",
+    "3box": "^1.17.0",
     "3id-resolver": "0.0.6",
     "@babel/runtime": "^7.6.0",
     "babel-core": "^7.0.0-bridge.0",

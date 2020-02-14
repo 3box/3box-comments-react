@@ -1,5 +1,8 @@
 # Release Notes
 
+## v1.0.2 - 2020-02-14
+* chore: update 3box lib to 1.17.0
+
 ## v1.0.1 - 2020-02-05
 * feat: autofocus input on click
 * feat: maintain emoji order on click
