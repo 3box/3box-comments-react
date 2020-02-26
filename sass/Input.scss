@@ -1,0 +1,412 @@
+@import './variables.scss';
+
+.input {
+  position: relative;
+  width: 100%;
+  z-index: 1;
+}
+
+.input_form {
+  font-size: 15px;
+  min-height: calc(#{$commentPictureDimension} + 14px);
+  height: calc(#{$commentPictureDimension} + 14px);
+  box-sizing: border-box;
+  min-width: calc(100% + 16px);
+  width: 100%;
+  border-radius: 37px;
+  border: 1px solid $borderColor;
+  margin-left: -8px;
+  padding: 25px 56px 25px 80px;
+  resize: none;
+  overflow-y: hidden;
+  line-height: 22px;
+
+  &:focus {
+    outline-width: 0;
+  }
+}
+
+::placeholder {
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.input_form.hidePlaceholder::placeholder {
+  color: transparent !important;
+}
+
+.input_user {
+  position: absolute;
+  left: 0;
+  top: 7px;
+  min-width: $commentPictureDimension;
+  min-height: $commentPictureDimension;
+  max-width: $commentPictureDimension;
+  max-height: $commentPictureDimension;
+  border-radius: 50%;
+  // background-color: #1168df;
+  object-fit: cover;
+}
+
+.input_login {
+  position: absolute;
+  left: 72px;
+  bottom: -24px;
+  color: $lighterFont;
+  border: none;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.input_login_loading {
+  min-height: 52px;
+  min-width: 52px;
+  max-height: 52px;
+  max-width: 52px;
+}
+
+.sc-user-input--picker-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sc-user-input--picker-wrapper.inputPicker {
+  position: absolute;
+  right: 0;
+  top: 7px;
+  min-width: $commentPictureDimension;
+  min-height: $commentPictureDimension;
+  max-width: $commentPictureDimension;
+  max-height: $commentPictureDimension;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// nested reply input
+.comment {
+  .sc-user-input--picker-wrapper.inputPicker {
+    top: 5.5px;
+    min-width: 46px;
+    min-height: 46px;
+    max-width: 46px;
+    max-height: 46px;
+  }
+}
+
+.sc-user-input--picker-wrapper.inlinePicker {
+  width: 22px;
+  padding: 0 10px !important;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  top: 0;
+  height: $reactionHeight;
+  cursor: pointer;
+
+  &:hover {
+    background-color: $lightBorderColor;
+  }
+}
+
+.input_emptyUser {
+  position: absolute;
+  left: -1px;
+  top: 6px;
+  min-width: $commentPictureDimension;
+  min-height: $commentPictureDimension;
+  max-width: $commentPictureDimension;
+  max-height: $commentPictureDimension;
+  border-radius: 50%;
+  background-color: transparent;
+  border: 1px solid $borderColor;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.comment {
+  .input_form {
+    margin-top: 6px;
+    border-radius: 4px;
+    padding: 10px 40px 10px 12px;
+    margin-left: $inputMarginLeft;
+    min-height: 46px;
+    height: 46px;
+    width: calc(100% - #{$inputMarginLeft});
+    min-width: calc(100% - #{$inputMarginLeft});
+  }
+
+  .input_emptyUser {
+    display: none;
+  }
+
+  .input_user {
+    display: none;
+  }
+
+  .input_login {
+    display: none;
+  }
+
+  .input_commentAs {
+    display: none;
+  }
+
+  .input_postLoading_spinner {
+    min-width: 42px;
+    min-height: 42px;
+    max-width: 42px;
+    max-height: 42px;
+  }
+
+  .input_postLoading {
+    top: 8px;
+  }
+}
+
+.nestedDialogue.dialogue {
+  .input_form {
+    border-radius: 4px;
+    margin-left: 0 !important;
+    width: calc(100% + 2px) !important;
+    min-width: calc(100% + 2px) !important;
+    border: 1px solid $lightBorderColor;
+    margin-bottom: 10px;
+  }
+}
+
+.input_emptyUser_icon {
+  min-width: 30px;
+  min-height: 30px;
+  max-width: 30px;
+  max-height: 30px;
+  opacity: .6;
+}
+
+.input_send {
+  visibility: hidden;
+  display: none;
+}
+
+.input_postLoading {
+  position: absolute;
+  top: 10px;
+  left: calc(50% - #{$inputMarginLeft});
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.input_postLoading_spinner {
+  min-height: 52px;
+  min-width: 52px;
+  max-height: 52px;
+  max-width: 52px;
+  opacity: .6;
+}
+
+.input_postLoading_text {
+  color: $lighterFont;
+  font-size: 13px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: -4px;
+}
+
+.input_commentAs {
+  position: absolute;
+  left: 72px;
+  top: -34px;
+  color: $lighterFont;
+  font-size: 12px;
+  opacity: 0;
+  transition: .2s ease-in-out all;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.showLoggedInAs {
+  opacity: 1;
+}
+
+.comment_loading {
+  min-width: 30px;
+  min-height: 30px;
+  max-width: 30px;
+  max-height: 30px;
+}
+
+@media only screen and (max-width: 600px) {
+  .comment-mobile {
+    ::placeholder {
+      font-size: 16px;
+    }
+
+    .sc-user-input--picker-wrapper {
+      display: none;
+    }
+
+    .comment {
+      .sc-user-input--picker-wrapper {
+        display: flex;
+      }
+    }
+
+    .input_user {
+      top: 7px;
+      left: -1px;
+      min-width: $commentPictureDimension-mobile;
+      min-height: $commentPictureDimension-mobile;
+      max-width: $commentPictureDimension-mobile;
+      max-height: $commentPictureDimension-mobile;
+    }
+
+    .input_emptyUser {
+      top: 6px;
+      left: -1px;
+      min-width: $commentPictureDimension-mobile;
+      min-height: $commentPictureDimension-mobile;
+      max-width: $commentPictureDimension-mobile;
+      max-height: $commentPictureDimension-mobile;
+    }
+
+    .input_emptyUser_icon {
+      min-width: 30px;
+      min-height: 30px;
+      max-width: 30px;
+      max-height: 30px;
+      opacity: .6;
+    }
+
+    .input_form {
+      font-size: 15px;
+      min-height: 64px;
+      height: 64px;
+      box-sizing: border-box;
+      min-width: calc(100% + 16px);
+      border-radius: 37px;
+      border: 1px solid $borderColor;
+      margin-left: -8px;
+      padding: 20px 52px 20px $inputMarginLeft;
+    }
+
+    .comment {
+      .input_form {
+        font-size: 15px;
+        margin-top: 6px;
+        border-radius: 4px;
+        padding: 10px 12px;
+        margin-left: 58px;
+        min-height: 46px;
+        height: 46px;
+        width: calc(100% - 58px);
+        min-width: calc(100% - 58px);
+      }
+
+      .nestedDialogue.dialogue {
+        .input_form {
+          width: 100% !important;
+          min-width: 100% !important;
+
+          .input_send {
+            bottom: 35px;
+            right: 24px;
+          }
+        }
+      }
+    }
+
+    .input_send {
+      position: absolute;
+      right: 0px;
+      bottom: 9px;
+      border-radius: 50%;
+      background-color: transparent;
+      padding: 0;
+      border: 0;
+      min-width: $commentPictureDimension-mobile;
+      min-height: $commentPictureDimension-mobile;
+      max-width: $commentPictureDimension-mobile;
+      max-height: $commentPictureDimension-mobile;
+      opacity: .6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .comment {
+      .input_send {
+        bottom: 25px;
+        right: 24px;
+        min-width: 20px;
+        min-height: 20px;
+        max-width: 20px;
+        max-height: 20px;
+      }
+    }
+
+    .nestedDialogue {
+      .input_send {
+        bottom: 33px;
+        right: 24px;
+      }
+    }
+
+    .input_send-visible {
+      visibility: visible;
+    }
+
+    .input_send_icon {
+      width: 26px;
+      opacity: .5;
+    }
+
+    .input_commentAs {
+      left: 62px;
+    }
+
+    .input_login {
+      left: 62px;
+      bottom: -20px;
+      background-color: transparent;
+    }
+
+    .input_user-empty {
+      background-color: transparent;
+      left: 12.5px;
+      top: 18px;
+      min-width: 28px;
+      min-height: 28px;
+      max-width: 28px;
+      max-height: 28px;
+      border-radius: 0;
+      opacity: .7;
+    }
+
+    .input_postLoading {
+      position: absolute;
+      top: 6px;
+      left: calc(50% - 58px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .input_postLoading_spinner {
+      min-height: 52px;
+      min-width: 52px;
+      max-height: 52px;
+      max-width: 52px;
+    }
+  }
+
+  .inputPicker {
+    display: none !important;
+  }
+}

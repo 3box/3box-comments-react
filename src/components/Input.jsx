@@ -11,8 +11,8 @@ import EmojiPicker from './Emoji/EmojiPicker';
 import Loading from '../assets/3BoxCommentsSpinner.svg';
 import Logo from '../assets/3BoxLogo.svg';
 import Profile from '../assets/Profile.svg';
-import './styles/Input.scss';
-import './styles/PopupWindow.scss';
+import '../css/Input.css';
+import '../css/PopupWindow.css';
 
 class Input extends Component {
   constructor(props) {

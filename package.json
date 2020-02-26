@@ -1,6 +1,6 @@
 {
   "name": "3box-comments-react",
-  "version": "1.0.2",
+  "version": "1.0.3-beta.2",
   "description": "Comments component for decentralized applications by 3Box",
   "main": "./lib/index.js",
   "author": "3box.io",
@@ -16,13 +16,15 @@
   ],
   "scripts": {
     "build": "webpack --config webpack.config.babel.js",
-    "build:es5": "rm -rf ./lib; ./node_modules/.bin/babel src --out-dir lib --source-maps inline --copy-files --ignore=src/__tests__/,src/__mocks__/",
+    "build:es5": "rm -rf ./lib; npm run scss; ./node_modules/.bin/babel src --out-dir lib --source-maps inline --copy-files --ignore=src/__tests__/,src/__mocks__/,src/sass",
     "build-examples": "webpack --config examples/webpack.config.babel.js --progress",
     "clean": "rm -rf dist coverage",
     "coverage": "jest --coverage",
+    "scss": "node-sass sass -o src/css",
+    "watch": "node-sass --watch scss sass -o src/css",
     "lint": "eslint ./src",
     "prepublish": "npm run clean && npm run test && npm run build",
-    "start": "webpack-dev-server --config examples/webpack.config.live.babel.js",
+    "start": "webpack-dev-server --config examples/webpack.config.live.babel.js; npm run watch",
     "test": "npm run lint && npm run coverage"
   },
   "devDependencies": {

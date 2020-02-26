@@ -9,8 +9,8 @@ import {
 } from '../utils';
 
 import EmojiIcon from './Emoji/EmojiIcon';
-import './styles/PopupWindow.scss';
-import './styles/Reactions.scss';
+import '../css/PopupWindow.css';
+import '../css/Reactions.css';
 
 class Reactions extends Component {
   constructor(props) {

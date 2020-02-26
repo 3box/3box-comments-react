@@ -26,7 +26,7 @@ export default () => ({
         }]
       },
       {
-        test: /\.(scss)$/,
+        test:/\.(s*)css$/,
         loader: 'style-loader!css-loader!sass-loader'
       }, {
         test: /\.svg$/,
@@ -36,7 +36,7 @@ export default () => ({
   },
 
   resolve: {
-    extensions: ['.js', '.jsx', '.scss', '.svg', '.json']
+    extensions: ['.js', '.jsx', '.scss', '.svg', '.json', 'css']
   },
 
   plugins: [

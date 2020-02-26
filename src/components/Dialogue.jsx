@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { filterComments, REPLY_THREAD_SHOW_COMMENT_COUNT } from '../utils';
 
 import Comment from './Comment';
-import './styles/Dialogue.scss';
+import '../css/Dialogue.css';
 
 class Dialogue extends Component {
   constructor(props) {

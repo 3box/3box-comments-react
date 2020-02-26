@@ -1,0 +1,86 @@
+.reactions {
+  position: relative;
+  min-height: 22px;
+  height: fit-content;
+  display: flex;
+  justify-content: flex-start; }
+  .reactions .sc-user-input--picker-wrapper {
+    min-width: 0;
+    min-height: 0;
+    position: relative;
+    top: 0;
+    padding: 7px 10px 5px; }
+    .reactions .sc-user-input--picker-wrapper .sc-user-input--emoji-icon {
+      height: 16px;
+      width: auto;
+      cursor: pointer; }
+  .reactions .hint {
+    display: none;
+    position: absolute;
+    left: 0;
+    bottom: -42px;
+    color: #f1f8ff;
+    background-color: #38383e;
+    font-size: 12px;
+    transition: .2s ease-in-out all;
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 2px 10px;
+    border-radius: 4px;
+    z-index: 10; }
+    .reactions .hint.visible {
+      display: block; }
+
+.emoji-bar {
+  visibility: visible !important;
+  width: fit-content;
+  min-width: fit-content;
+  display: inline-grid;
+  row-gap: 4px;
+  column-gap: 6px;
+  grid-template-columns: repeat(8, 46px [col-start]); }
+  .emoji-bar .emoji-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0366D6;
+    cursor: pointer;
+    min-width: 46px;
+    height: 22px;
+    font-size: 13px;
+    border: 1px solid #dadada;
+    border-radius: 4px; }
+    .emoji-bar .emoji-item.has_reacted {
+      background-color: #f1f8ff; }
+    .emoji-bar .emoji-item:hover {
+      background-color: #ebebeb; }
+
+.nestedDialogue.dialogue .emoji-bar {
+  grid-template-columns: repeat(7, 46px [col-start]); }
+
+.nestedDialogue.dialogue .nestedDialogue.dialogue .emoji-bar {
+  grid-template-columns: repeat(6, 46px [col-start]); }
+
+@media only screen and (max-width: 730px) {
+  .emoji-bar {
+    grid-template-columns: repeat(7, 46px [col-start]); }
+  .nestedDialogue.dialogue .emoji-bar {
+    grid-template-columns: repeat(6, 46px [col-start]); }
+  .nestedDialogue.dialogue .nestedDialogue.dialogue .emoji-bar {
+    grid-template-columns: repeat(5, 46px [col-start]); } }
+
+@media only screen and (max-width: 678px) {
+  .emoji-bar {
+    grid-template-columns: repeat(6, 46px [col-start]); }
+  .nestedDialogue.dialogue .emoji-bar {
+    grid-template-columns: repeat(5, 46px [col-start]); }
+  .nestedDialogue.dialogue .nestedDialogue.dialogue .emoji-bar {
+    grid-template-columns: repeat(4, 46px [col-start]); } }
+
+@media only screen and (max-width: 600px) {
+  .emoji-bar {
+    grid-template-columns: repeat(4, 46px [col-start]); }
+  .nestedDialogue.dialogue .emoji-bar {
+    grid-template-columns: repeat(4, 46px [col-start]); }
+  .nestedDialogue.dialogue .nestedDialogue.dialogue .emoji-bar {
+    grid-template-columns: repeat(3, 46px [col-start]); } }

@@ -1,0 +1,24 @@
+.comments_footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 80px;
+  width: 100%; }
+
+.footer_text {
+  color: #c1c1c1;
+  font-weight: 600;
+  font-size: 13px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: fit-content; }
+  .footer_text a {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center; }
+
+.footer_text_image {
+  height: 18px;
+  margin-left: 8px;
+  opacity: .3; }

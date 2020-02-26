@@ -1,0 +1,51 @@
+.dialogue {
+  width: 100%;
+  margin: 6px 0 6px 0; }
+
+.nestedDialogue.dialogue {
+  margin-left: 68px;
+  width: calc(100% - 68px);
+  margin-top: 14px; }
+  .nestedDialogue.dialogue .dialogue_grid {
+    row-gap: 10px; }
+  .nestedDialogue.dialogue .nestedDialogue.dialogue {
+    margin-left: 54px;
+    width: calc(100% - 54px); }
+
+.dialogue_grid {
+  width: 100%;
+  display: inline-grid;
+  row-gap: 22px;
+  grid-template-columns: repeat(1, 100% [col-start]);
+  margin-bottom: 10px; }
+
+.dialogue_button_container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70px; }
+
+.dialogue_button {
+  height: 36px;
+  width: 120px;
+  background-color: #c1c1c1;
+  border-radius: 20px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: .2s ease-in-out all;
+  font-size: 14px; }
+  .dialogue_button:hover {
+    background-color: #7d7d7d; }
+
+@media only screen and (max-width: 600px) {
+  .nestedDialogue.dialogue {
+    margin-left: 40px;
+    width: calc(100% - 40px);
+    margin-top: 14px; }
+    .nestedDialogue.dialogue .dialogue_grid {
+      row-gap: 10px; }
+    .nestedDialogue.dialogue .nestedDialogue.dialogue {
+      margin-left: 30px;
+      width: calc(100% - 30px); } }

@@ -46,9 +46,11 @@ export const sortChronologically = (threadPosts) => {
 }
 
 const buildCommentsTree = (comments, table) => {
-  if (!comments.length) return;
-  let deletedComments = [];
+  if (!comments.length) return [
+    [], table
+  ];
 
+  let deletedComments = [];
   comments.forEach(c => {
     const msg = c.message;
     if (!msg.parentId) return;
@@ -79,7 +81,7 @@ const buildCommentsTree = (comments, table) => {
 
     if (parentWasDeleted) deletedComments.push(parent)
   });
-
+  // console.log('table', table)
   return [deletedComments, table];
 }
 
@@ -98,7 +100,6 @@ export const reorderComments = (comments) => {
   const [deletedComments, updatedTable] = buildCommentsTree(comments, table);
   // nest deleted posts under parent posts
   const [nestedDeletedComments] = buildCommentsTree(deletedComments, updatedTable);
-
   mergedComments = comments.concat(deletedComments).concat(nestedDeletedComments);
 
   // sort children chronologically

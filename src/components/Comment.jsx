@@ -26,8 +26,8 @@ import Loading from '../assets/3BoxCommentsSpinner.svg';
 import Input from './Input';
 import Vote from './Vote';
 import Reactions from './Reactions';
-import './styles/Comment.scss';
-import './styles/Vote.scss';
+import '../css/Comment.css';
+import '../css/Vote.css';
 
 class Comment extends Component {
   constructor(props) {

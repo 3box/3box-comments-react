@@ -2,7 +2,7 @@ import React from 'react';
 import SVG from 'react-inlinesvg';
 
 import Logo from '../assets/3BoxLogo.svg';
-import './styles/Footer.scss';
+import '../css/Footer.css';
 
 const Footer = () => (
   <div  className="comments_footer">

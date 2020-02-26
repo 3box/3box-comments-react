@@ -1,0 +1,26 @@
+.context {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 68px; }
+
+.context_text {
+  position: relative;
+  color: #c1c1c1;
+  font-size: 14px;
+  font-weight: 600; }
+
+.context_loading {
+  position: absolute;
+  min-width: 40px;
+  min-height: 40px;
+  max-width: 40px;
+  max-height: 40px;
+  left: -44px;
+  top: -11px;
+  opacity: .6; }
+
+@media only screen and (max-width: 600px) {
+  .comment-mobile .context {
+    height: 50px;
+    margin-top: 20px; } }

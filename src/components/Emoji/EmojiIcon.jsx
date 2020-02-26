@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import '../styles/PopupWindow.scss';
-import '../styles/EmojiPicker.scss';
+import '../../css/PopupWindow.css';
+import '../../css/EmojiPicker.css';
 
 const EmojiIcon = ({ tooltip, onClick, isActive, isInlinePicker }) => (
   <div

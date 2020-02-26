@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import ArrowUp from '../assets/ArrowUp.svg';
 import ArrowDown from '../assets/ArrowDown.svg';
-import './styles/Vote.scss';
+import '../css/Vote.css';
 
 class Vote extends Component {
   constructor(props) {

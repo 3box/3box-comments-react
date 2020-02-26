@@ -54,7 +54,7 @@ class Example extends React.Component {
             {box && (
               <Comments
                 spaceName='3boxtestcomments'
-                threadName='explicitNestLevel6'
+                threadName='newTHREAD'
                 adminEthAddr="0x2a0D29C819609Df18D8eAefb429AEC067269BBb6"
 
                 box={box}

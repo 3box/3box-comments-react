@@ -10,7 +10,7 @@ import Input from './components/Input';
 import Context from './components/Context';
 import Dialogue from './components/Dialogue';
 import Footer from './components/Footer';
-import './index.scss';
+import './css/index.css';
 
 class App extends Component {
   constructor(props) {
@@ -307,6 +307,7 @@ class App extends Component {
           noWeb3={noWeb3}
           currentNestLevel={0}
           updateComments={this.updateComments}
+          toggleReplyInput={this.toggleReplyInput}
           openBox={this.openBox}
           login={this.login}
         />

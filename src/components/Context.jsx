@@ -3,7 +3,7 @@ import SVG from 'react-inlinesvg';
 import PropTypes from 'prop-types';
 
 import Loading from '../assets/3BoxCommentsSpinner.svg';
-import './styles/Context.scss';
+import '../css/Context.css';
 
 const Context = ({ dialogueLength, isLoading }) => (
   <div className="context">
