@@ -16,7 +16,7 @@ class Example extends React.Component {
   }
 
   componentDidMount() {
-    // this.handleLogin();
+    this.handleLogin();
   }
 
   handleLogin = async () => {
@@ -34,6 +34,7 @@ class Example extends React.Component {
     const {
       box,
       myAddress,
+      isReady,
     } = this.state;
 
     return (
@@ -46,12 +47,12 @@ class Example extends React.Component {
             <div className="page_content">
               <p>
                 Your super cool dApp
-            </p>
+              </p>
             </div>
           </div>
 
           <div className="userscontainer">
-            {box && (
+            {isReady && (
               <Comments
                 spaceName='3boxtestcomments'
                 threadName='explicitNestLevel6'

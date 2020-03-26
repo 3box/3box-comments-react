@@ -40,7 +40,7 @@ npm i -S 3box-comments-react
 ```
 
 ### 2. Choose your authentication pattern
-Depending on *when and how* your dApp handles authentication for web3 and 3Box, you will need to provide a different set of props to the component. Three acceptable authentication patterns and their respective props are discussed below in A-C:
+Depending on *when and how* your dApp handles authentication for web3 and 3Box, you will need to provide a different set of props to the component.  Regardless of the context, the component must be passed either an ethereum provider or the user's box object before it mounts. Three acceptable authentication patterns and their respective props are discussed below in A-C:
 
 **A) Dapp handles web3 and 3Box logins, and they run *before* component is mounted. (recommended)**
 

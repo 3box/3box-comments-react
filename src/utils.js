@@ -81,7 +81,6 @@ const buildCommentsTree = (comments, table) => {
 
     if (parentWasDeleted) deletedComments.push(parent)
   });
-  // console.log('table', table)
   return [deletedComments, table];
 }
 
@@ -192,3 +191,11 @@ export const orderReactionsChronologically = (reactions) => {
 
 export const REPLIABLE_COMMENT_LEVEL_MAX = 2;
 export const REPLY_THREAD_SHOW_COMMENT_COUNT = 5;
+
+export const hasWeb3 = (ethereum, loginFunction, box) => {
+  const hasEthereum = ethereum && Object.entries(ethereum).length;
+  const hasBox = box && Object.entries(box).length;
+
+  const isHasWeb3 = hasEthereum || loginFunction || hasBox;
+  return isHasWeb3;
+}

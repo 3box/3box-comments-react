@@ -4,7 +4,12 @@ import PropTypes from 'prop-types';
 import resolve from 'did-resolver';
 import registerResolver from '3id-resolver';
 
-import { checkIsMobileDevice, reorderComments, filterComments } from './utils';
+import {
+  checkIsMobileDevice,
+  reorderComments,
+  filterComments,
+  hasWeb3
+} from './utils';
 
 import Input from './components/Input';
 import Context from './components/Context';
@@ -31,6 +36,7 @@ class App extends Component {
       isLoading: false,
       isLoading3Box: false,
       hasAuthed: false,
+      noWeb3: true,
       showReply: '',
       dialogue: [],
       uniqueUsers: [],
@@ -50,8 +56,16 @@ class App extends Component {
   }
 
   async componentDidMount() {
-    const { currentUser3BoxProfile, currentUserAddr } = this.props;
-    this.setState({ isLoading: true });
+    const {
+      currentUser3BoxProfile,
+      currentUserAddr,
+      ethereum,
+      loginFunction,
+      box
+    } = this.props;
+    const ishasWeb3 = hasWeb3(ethereum, loginFunction, box);
+
+    this.setState({ isLoading: true, noWeb3: !ishasWeb3 });
 
     // get ipfs instance for did-resolver
     const IPFS = await Box.getIPFS();
@@ -70,7 +84,11 @@ class App extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { currentUserAddr, currentUser3BoxProfile, box } = this.props;
+    const {
+      currentUserAddr,
+      currentUser3BoxProfile,
+      box,
+    } = this.props;
 
     // if current user's eth addr is updated in parent, fetch profile
     if (currentUserAddr !== prevProps.currentUserAddr) {
@@ -100,6 +118,7 @@ class App extends Component {
       threadName,
       adminEthAddr,
       members,
+      box,
     } = this.props;
 
     if (!spaceName || !threadName) console.error('You must pass both spaceName and threadName props');
@@ -108,11 +127,14 @@ class App extends Component {
     const spaces = await Box.listSpaces(adminEthAddr);
     if (!spaces.includes(spaceName)) return;
 
-    let box;
+    let boxToUse;
     let thread;
     if (ethereum) {
-      box = await Box.create(ethereum);
-      thread = await box.openThread(spaceName, threadName, threadOpts);
+      boxToUse = await Box.create(ethereum);
+      thread = await boxToUse.openThread(spaceName, threadName, threadOpts);
+    } else {
+      boxToUse = box;
+      thread = await boxToUse.openThread(spaceName, threadName, threadOpts);
     }
     // use static api first, as it's much quicker
     const dialogue = await Box.getThread(spaceName, threadName, adminEthAddr, members, threadOpts || {});
@@ -130,10 +152,7 @@ class App extends Component {
       dialogueLength: comments.length,
       showLoadButton,
       box
-    }, () => {
-      if (ethereum) thread.onUpdate(() => this.updateComments())
-    }
-    );
+    }, () => thread.onUpdate(() => this.updateComments()));
   }
 
   fetchMe = async () => {
@@ -184,18 +203,26 @@ class App extends Component {
   }
 
   openBox = async () => {
-    const { ethereum, box } = this.state;
-    const { spaceName } = this.props;
+    const { ethereum, box, loginFunction } = this.state;
+    const { spaceName, currentUserAddr } = this.props;
+    const ishasWeb3 = hasWeb3(ethereum, loginFunction, box);
 
-    if (!ethereum) console.error('You must provide an ethereum object to the comments component.');
+    if (!ishasWeb3) {
+      console.error('You must provide an ethereum object or both the box object and the users current address to openBox.');
+    }
 
     this.setState({ isLoading3Box: true });
 
-    const addresses = await ethereum.enable();
-    const currentUserAddr = addresses[0];
-    this.setState({ currentUserAddr }, async () => await this.fetchMe());
+    let addressToUse = currentUserAddr;
 
-    await box.auth([spaceName], { address: currentUserAddr });
+    if (!currentUserAddr) {
+      const addresses = await ethereum.enable();
+      addressToUse = addresses[0];
+    }
+
+    this.setState({ currentUserAddr: addressToUse }, async () => await this.fetchMe());
+
+    await box.auth([spaceName], { address: addressToUse });
     this.setState({ hasAuthed: true });
 
     await box.syncDone;
@@ -235,13 +262,19 @@ class App extends Component {
   }
 
   login = async () => {
-    const { loginFunction } = this.props;
-    const { box, hasAuthed } = this.state;
+    const { loginFunction, spaceName } = this.props;
+    const { box, currentUserAddr } = this.state;
     const boxToUse = (!box || !Object.keys(box).length) ? this.props.box : box;
     const isBoxEmpty = !boxToUse || !Object.keys(boxToUse).length;
 
-    if (isBoxEmpty && loginFunction) await loginFunction();
-    if (!hasAuthed) await this.openBox();
+    if (isBoxEmpty && loginFunction) {
+      await loginFunction();
+    } else if (isBoxEmpty) {
+      await this.openBox();
+    }
+
+    await boxToUse.auth([spaceName], { address: currentUserAddr });
+    this.setState({ hasAuthed: true });
   }
 
   toggleReplyInput = (postId) => {
@@ -272,6 +305,7 @@ class App extends Component {
       isLoading3Box,
       hasAuthed,
       showReply,
+      noWeb3,
     } = this.state;
 
     const {
@@ -282,8 +316,7 @@ class App extends Component {
       loginFunction,
       members,
     } = this.props;
-
-    const noWeb3 = (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
+    console.log('app')
     return (
       <div
         className={`
@@ -308,7 +341,6 @@ class App extends Component {
           currentNestLevel={0}
           updateComments={this.updateComments}
           toggleReplyInput={this.toggleReplyInput}
-          openBox={this.openBox}
           login={this.login}
         />
 
@@ -334,6 +366,7 @@ class App extends Component {
           hasAuthed={hasAuthed}
           useHovers={useHovers}
           showReply={showReply}
+          noWeb3={noWeb3}
           handleLoadMore={this.handleLoadMore}
           updateComments={this.updateComments}
           openBox={this.openBox}

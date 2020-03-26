@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, memo } from 'react';
 import ProfileHover from 'profile-hover';
 import PropTypes from 'prop-types';
 import Linkify from 'react-linkify';
@@ -32,15 +32,12 @@ import '../css/Vote.css';
 class Comment extends Component {
   constructor(props) {
     super(props);
-    const { ethereum, loginFunction } = this.props;
-    const noWeb3 = (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
 
     this.state = {
       loadingDelete: false,
       showControlsOnMobile: false,
       emojiPickerIsOpen: false,
       emojiFilter: '',
-      noWeb3,
     };
     this.upvote = () => { this.vote(1); }
     this.downvote = () => { this.vote(-1); }
@@ -56,8 +53,9 @@ class Comment extends Component {
       login,
       comment,
       thread,
+      noWeb3
     } = this.props;
-    const { disableVote, noWeb3 } = this.state;
+    const { disableVote } = this.state;
 
     if (noWeb3 || disableVote) return;
 
@@ -167,8 +165,8 @@ class Comment extends Component {
       login,
       updateComments,
       comment,
+      noWeb3
     } = this.props;
-    const { noWeb3 } = this.state;
 
     if (noWeb3) return;
 
@@ -251,6 +249,7 @@ class Comment extends Component {
       isNestedComment,
       showReply,
       toggleReplyInput,
+      noWeb3,
     } = this.props;
 
     const profilePicture = profile.ethAddr &&
@@ -415,11 +414,12 @@ class Comment extends Component {
                 hasAuthed={hasAuthed}
                 updateComments={updateComments}
                 showReply={showReply}
+                noWeb3={noWeb3}
                 toggleReplyInput={toggleReplyInput}
                 currentNestLevel={comment.message.nestLevel + 1}
                 grandParentId={comment.message.parentId}
                 parentId={comment.postId}
-                onSubmit={() => { this.setState({ showReply: false }) }}
+                onSubmit={() => { this.setState({ showReply: '' }) }}
                 isNestedInput
               />
             )}
@@ -494,6 +494,7 @@ Comment.propTypes = {
   ethereum: PropTypes.object,
   isLoading3Box: PropTypes.bool,
   isNestedComment: PropTypes.bool,
+  noWeb3: PropTypes.bool.isRequired,
   updateComments: PropTypes.func.isRequired,
   toggleReplyInput: PropTypes.func.isRequired,
   login: PropTypes.func.isRequired,

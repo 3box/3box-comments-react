@@ -1,5 +1,10 @@
 # Release Notes
 
+## v2.0.0 - 2020-03-26
+* chore: update 3box lib to 1.17.1
+* feat: output CSS instead of SCSS
+* feat: remove autofocus on main input
+
 ## v1.0.2 - 2020-02-14
 * chore: update 3box lib to 1.17.0
 

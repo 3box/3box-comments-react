@@ -34,7 +34,6 @@ class Dialogue extends Component {
       adminEthAddr,
       box,
       loginFunction,
-      openBox,
       currentUser3BoxProfile,
       ethereum,
       isLoading3Box,
@@ -44,6 +43,7 @@ class Dialogue extends Component {
       isNestedComment,
       toggleReplyInput,
       showReply,
+      noWeb3
     } = this.props;
 
     const { showCommentCount } = this.state;
@@ -77,7 +77,6 @@ class Dialogue extends Component {
                   useHovers={useHovers}
                   box={box}
                   loginFunction={loginFunction}
-                  openBox={openBox}
                   login={login}
                   currentUserAddr={currentUserAddr}
                   currentUser3BoxProfile={currentUser3BoxProfile}
@@ -91,6 +90,7 @@ class Dialogue extends Component {
                   isNestedComment={isNestedComment}
                   showReply={showReply}
                   toggleReplyInput={toggleReplyInput}
+                  noWeb3={noWeb3}
                 />
 
                 {(!!children_comments.length) && (
@@ -109,10 +109,10 @@ class Dialogue extends Component {
                     useHovers={useHovers}
                     login={login}
                     updateComments={updateComments}
-                    openBox={openBox}
                     hasAuthed={hasAuthed}
                     showReply={showReply}
                     toggleReplyInput={toggleReplyInput}
+                    noWeb3={noWeb3}
                     isNestedComment
                   />
                 )}
@@ -149,7 +149,6 @@ Dialogue.propTypes = {
   hasAuthed: PropTypes.bool,
   loginFunction: PropTypes.func,
 
-  openBox: PropTypes.func.isRequired,
 
   showCommentCount: PropTypes.number.isRequired,
   adminEthAddr: PropTypes.string.isRequired,
@@ -158,6 +157,7 @@ Dialogue.propTypes = {
   ethereum: PropTypes.object,
   isLoading3Box: PropTypes.bool,
   isNestedComment: PropTypes.bool,
+  noWeb3: PropTypes.bool.isRequired,
   updateComments: PropTypes.func.isRequired,
   login: PropTypes.func.isRequired,
   toggleReplyInput: PropTypes.func.isRequired,

@@ -45,7 +45,7 @@ class Input extends Component {
 
   autoExpand = (field) => {
     var height = field.scrollHeight;
-    field.style.height = height + 'px';
+    field.style.height = (height - 2) + 'px';
   };
 
   componentWillUnmount() {
@@ -54,8 +54,7 @@ class Input extends Component {
   }
 
   handleCommentText = (event) => {
-    const { ethereum, loginFunction } = this.props
-    const noWeb3 = (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
+    const { noWeb3 } = this.props;
     if (!noWeb3) this.setState({ comment: event.target.value });
   }
 
@@ -121,8 +120,7 @@ class Input extends Component {
     const {
       thread,
       updateComments,
-      loginFunction,
-      ethereum,
+      noWeb3,
       parentId,
       grandParentId,
       onSubmit,
@@ -133,16 +131,26 @@ class Input extends Component {
     
     const { comment, disableComment, isMobile } = this.state;
     const updatedComment = comment.replace(/(\r\n|\n|\r)/gm, "");
-    const noWeb3 = (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
-
-    if (noWeb3) return;
-    if (disableComment || !updatedComment) return;
 
     this.inputRef.current.blur();
-    this.inputRef.current.style.height = isNestedInput ? '46px' : isMobile ? '64px' : '74px';
+    this.inputRef.current.style.height = isNestedInput ? '46px' : isMobile ? '64px' : '70px';
+
+    if (!thread || !Object.keys(thread).length){
+      console.log('Thread is empty')
+      return;
+    }
+    
+    if (noWeb3) {
+      console.log('No web3')
+      return;
+    }
+
+    if (disableComment || !updatedComment) {
+      console.log('comment is empty or disabled')
+      return;
+    }
 
     this.setState({ postLoading: true, comment: '' });
-
     await login();
     
     try {
@@ -171,17 +179,15 @@ class Input extends Component {
     const {
       currentUser3BoxProfile,
       currentUserAddr,
-      ethereum,
-      loginFunction,
       login,
       isLoading3Box,
       hasAuthed,
       box,
       showReply,
       toggleReplyInput,
+      noWeb3
     } = this.props;
 
-    const noWeb3 = (!ethereum || !Object.entries(ethereum).length) && !loginFunction;
     const updatedProfilePicture = currentUser3BoxProfile.image ? `https://ipfs.infura.io/ipfs/${currentUser3BoxProfile.image[0].contentUrl['/']}`
       : currentUserAddr && makeBlockie(currentUserAddr);
     const isBoxEmpty = !box || !Object.keys(box).length;
@@ -234,7 +240,7 @@ class Input extends Component {
           onFocus={this.handleLoggedInAs}
           onBlur={this.handleLoggedInAs}
           ref={this.inputRef}
-          autoFocus
+          // autoFocus
         />
 
         <button className={`input_send ${isMobile ? 'input_send-visible' : ''}`} onClick={isBoxEmpty ? () => {} : this.saveComment}>
@@ -295,9 +301,9 @@ Input.propTypes = {
   currentUserAddr: PropTypes.string,
   loginFunction: PropTypes.func,
   isLoading3Box: PropTypes.bool,
-  noWeb3: PropTypes.bool,
+  noWeb3: PropTypes.bool.isRequired,
   isNestedInput: PropTypes.bool,
-  showReply: PropTypes.bool,
+  showReply: PropTypes.string,
   hasAuthed: PropTypes.bool.isRequired,
   currentNestLevel: PropTypes.number,
   grandParentId: PropTypes.string,
@@ -315,6 +321,5 @@ Input.defaultProps = {
   currentUser3BoxProfile: {},
   currentUserAddr: null,
   ethereum: null,
-  noWeb3: false,
   isNestedInput: false,
 };
