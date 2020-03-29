@@ -316,7 +316,6 @@ class App extends Component {
       loginFunction,
       members,
     } = this.props;
-    console.log('app')
     return (
       <div
         className={`
