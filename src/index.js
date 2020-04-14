@@ -147,8 +147,8 @@ class App extends Component {
 
     this.setState({
       thread,
-      dialogue: updatedDialogue,
       uniqueUsers,
+      dialogue: updatedDialogue,
       dialogueLength: comments.length,
       showLoadButton,
       box
@@ -204,7 +204,7 @@ class App extends Component {
 
   openBox = async () => {
     const { ethereum, box, loginFunction } = this.state;
-    const { spaceName, currentUserAddr } = this.props;
+    const { currentUserAddr } = this.props;
     const ishasWeb3 = hasWeb3(ethereum, loginFunction, box);
 
     if (!ishasWeb3) {
@@ -222,20 +222,8 @@ class App extends Component {
 
     this.setState({ currentUserAddr: addressToUse }, async () => await this.fetchMe());
 
-    await box.auth([spaceName], { address: addressToUse });
-    this.setState({ hasAuthed: true });
-
     await box.syncDone;
     this.setState({ box, isLoading3Box: false });
-  }
-
-  updateComments = async () => {
-    const { thread } = this.state;
-    const dialogue = await thread.getPosts();
-    const uniqueUsers = [...new Set(dialogue.map(x => x.author))];
-
-    this.setState({ dialogue, dialogueLength: dialogue.length, uniqueUsers },
-      () => this.fetchCommenters());
   }
 
   handleLoadMore = async () => {
@@ -262,9 +250,9 @@ class App extends Component {
   }
 
   login = async () => {
-    const { loginFunction, spaceName } = this.props;
+    const { loginFunction, spaceName, threadName } = this.props;
     const { box, currentUserAddr } = this.state;
-    const boxToUse = (!box || !Object.keys(box).length) ? this.props.box : box;
+    const boxToUse = (!this.props.box || !Object.keys(this.props.box).length) ? box : this.props.box;
     const isBoxEmpty = !boxToUse || !Object.keys(boxToUse).length;
 
     if (isBoxEmpty && loginFunction) {
@@ -273,8 +261,11 @@ class App extends Component {
       await this.openBox();
     }
 
+    const space = await box.openSpace(spaceName);
+    const thread = await space.joinThread(threadName);
+
     await boxToUse.auth([spaceName], { address: currentUserAddr });
-    this.setState({ hasAuthed: true });
+    this.setState({ hasAuthed: true, thread });
   }
 
   toggleReplyInput = (postId) => {
@@ -316,7 +307,7 @@ class App extends Component {
       loginFunction,
       members,
     } = this.props;
-    console.log('app')
+
     return (
       <div
         className={`
@@ -369,7 +360,6 @@ class App extends Component {
           noWeb3={noWeb3}
           handleLoadMore={this.handleLoadMore}
           updateComments={this.updateComments}
-          openBox={this.openBox}
           login={this.login}
           toggleReplyInput={this.toggleReplyInput}
         />

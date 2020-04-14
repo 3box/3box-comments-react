@@ -165,13 +165,13 @@ class Comment extends Component {
       login,
       updateComments,
       comment,
-      noWeb3
+      noWeb3,
+      thread
     } = this.props;
 
     if (noWeb3) return;
 
     await login();
-
     try {
       console.log("react with emoji", emoji);
       const myReactions = this.getMyReactions();
@@ -182,12 +182,12 @@ class Comment extends Component {
           console.log("ignore because you already reacted with this emoji", emoji);
         } else {
           const message = encodeMessage("reaction", emoji, comment.postId);
-          await this.props.thread.post(message);
+          await thread.post(message);
           this.setState({})
         }
       } else {
         const message = encodeMessage("reaction", emoji, comment.postId);
-        await this.props.thread.post(message);
+        await thread.post(message);
       }
 
       await updateComments();

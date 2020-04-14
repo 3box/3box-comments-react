@@ -1,5 +1,8 @@
 # Release Notes
 
+## v2.0.1 - 2020-04-14
+* fix: must open space and get thread from joinThread from newly opened space
+
 ## v2.0.0 - 2020-03-26
 * chore: update 3box lib to 1.17.1
 * feat: output CSS instead of SCSS
