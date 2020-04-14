@@ -3,12 +3,12 @@ import * as React from "react";
 declare class ThreeBoxComments extends React.Component<ThreeBoxCommentsProps, any> { }
 
 interface ThreeBoxCommentsProps {
-  box?: [any];
-  loginFunction?: [any];
-  ethereum?: [any];
-  threadOpts?: [any];
-  currentUser3BoxProfile?: [any];
-  spaceOpts?: [any];
+  box?: any;
+  loginFunction?: any;
+  ethereum?: any;
+  threadOpts?: any;
+  currentUser3BoxProfile?: any;
+  spaceOpts?: any;
   members?: boolean;
   useHovers?: boolean;
   showCommentCount?: number;
