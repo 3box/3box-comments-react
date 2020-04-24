@@ -251,7 +251,7 @@ class App extends Component {
 
   login = async () => {
     const { loginFunction, spaceName, threadName } = this.props;
-    const { box, currentUserAddr } = this.state;
+    const { box, currentUserAddr, threadOpts } = this.state;
     const boxToUse = (!this.props.box || !Object.keys(this.props.box).length) ? box : this.props.box;
     const isBoxEmpty = !boxToUse || !Object.keys(boxToUse).length;
 
@@ -260,9 +260,9 @@ class App extends Component {
     } else if (isBoxEmpty) {
       await this.openBox();
     }
-
+    
     const space = await box.openSpace(spaceName);
-    const thread = await space.joinThread(threadName);
+    const thread = await space.joinThread(threadName, threadOpts);
 
     await boxToUse.auth([spaceName], { address: currentUserAddr });
     this.setState({ hasAuthed: true, thread });
