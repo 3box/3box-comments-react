@@ -8,7 +8,6 @@ import {
   orderReactionsChronologically,
 } from '../utils';
 
-import EmojiIcon from './Emoji/EmojiIcon';
 import '../css/PopupWindow.css';
 import '../css/Reactions.css';
 
@@ -27,11 +26,14 @@ class Reactions extends Component {
   }
 
   deleteReaction = async (reaction) => {
-    const { login, thread } = this.props;
+    const { login, hasAuthed, handleLoadingState } = this.props;
+
+    handleLoadingState();
 
     try {
-      await login();
-      await thread.deletePost(reaction.postId);
+      if (!hasAuthed) await login();
+      await this.props.thread.deletePost(reaction.postId);
+      handleLoadingState();
     } catch (error) {
       console.error('There was an error deleting one reaction', error);
     }
@@ -131,6 +133,8 @@ Reactions.propTypes = {
   renderEmojiPopup: PropTypes.func.isRequired,
   addReaction: PropTypes.func.isRequired,
   getMyReactions: PropTypes.func.isRequired,
+  handleLoadingState: PropTypes.func.isRequired,
+  hasAuthed: PropTypes.bool.isRequired,
   reactions: PropTypes.array,
   profiles: PropTypes.object,
 };

@@ -24,7 +24,6 @@ class App extends Component {
       showCommentCount,
       currentUserAddr,
       box,
-      ethereum,
       adminEthAddr,
       threadOpts,
       members,
@@ -46,7 +45,6 @@ class App extends Component {
       box,
       currentUserAddr,
       showCommentCount: showCommentCount || 30,
-      ethereum: ethereum || window.ethereum,
       isMobile: checkIsMobileDevice(),
       threadOpts: threadOpts || {
         firstModerator: adminEthAddr,
@@ -112,13 +110,14 @@ class App extends Component {
 
   // get thread from public api only on component mount
   fetchThread = async () => {
-    const { showCommentCount, ethereum, threadOpts } = this.state;
+    const { showCommentCount, threadOpts } = this.state;
     const {
       spaceName,
       threadName,
       adminEthAddr,
       members,
       box,
+      ethereum,
     } = this.props;
 
     if (!spaceName || !threadName) console.error('You must pass both spaceName and threadName props');
@@ -203,8 +202,8 @@ class App extends Component {
   }
 
   openBox = async () => {
-    const { ethereum, box, loginFunction } = this.state;
-    const { currentUserAddr } = this.props;
+    const { box, loginFunction } = this.state;
+    const { currentUserAddr, ethereum } = this.props;
     const ishasWeb3 = hasWeb3(ethereum, loginFunction, box);
 
     if (!ishasWeb3) {
@@ -220,10 +219,16 @@ class App extends Component {
       addressToUse = addresses[0];
     }
 
+    let updatedBox = box;
+    if (!box) {
+      updatedBox = await Box.openBox(addressToUse, window.ethereum, {});
+      this.setState({ box: updatedBox });
+    }
+
     this.setState({ currentUserAddr: addressToUse }, async () => await this.fetchMe());
 
-    await box.syncDone;
-    this.setState({ box, isLoading3Box: false });
+    await updatedBox.syncDone;
+    this.setState({ isLoading3Box: false });
   }
 
   handleLoadMore = async () => {
@@ -251,21 +256,24 @@ class App extends Component {
 
   login = async () => {
     const { loginFunction, spaceName, threadName } = this.props;
-    const { box, currentUserAddr, threadOpts } = this.state;
-    const boxToUse = (!this.props.box || !Object.keys(this.props.box).length) ? box : this.props.box;
-    const isBoxEmpty = !boxToUse || !Object.keys(boxToUse).length;
+    const { currentUserAddr, threadOpts } = this.state;
 
-    if (isBoxEmpty && loginFunction) {
+    if (loginFunction) {
       await loginFunction();
-    } else if (isBoxEmpty) {
+    } else {
       await this.openBox();
     }
-    
-    const space = await box.openSpace(spaceName);
+
+    const propsBox = this.props.box;
+    const boxToUse = (!propsBox || !Object.keys(propsBox).length) ? this.state.box : propsBox;
+    const space = await boxToUse.openSpace(spaceName);
     const thread = await space.joinThread(threadName, threadOpts);
 
     await boxToUse.auth([spaceName], { address: currentUserAddr });
-    this.setState({ hasAuthed: true, thread });
+    this.setState({ hasAuthed: true, thread }, async () => {
+      await this.updateComments();
+      thread.onUpdate(() => this.updateComments());
+    });
   }
 
   toggleReplyInput = (postId) => {
@@ -292,7 +300,6 @@ class App extends Component {
       box,
       currentUserAddr,
       isMobile,
-      ethereum,
       isLoading3Box,
       hasAuthed,
       showReply,
@@ -306,6 +313,7 @@ class App extends Component {
       useHovers,
       loginFunction,
       members,
+      ethereum,
     } = this.props;
 
     return (
@@ -328,6 +336,7 @@ class App extends Component {
           isLoading3Box={isLoading3Box}
           members={members}
           hasAuthed={hasAuthed}
+          isLoading={isLoading}
           noWeb3={noWeb3}
           currentNestLevel={0}
           updateComments={this.updateComments}
@@ -357,6 +366,7 @@ class App extends Component {
           hasAuthed={hasAuthed}
           useHovers={useHovers}
           showReply={showReply}
+          spaceName={spaceName}
           noWeb3={noWeb3}
           handleLoadMore={this.handleLoadMore}
           updateComments={this.updateComments}

@@ -101,7 +101,7 @@ const MyComponent = ({ handleLogin, box, ethereum, myAddress, currentUser3BoxPro
         spaceName="mySpaceName"
         threadName="myThreadName"
         adminEthAddr={adminEthAddr}
-
+        ethereum={ethereum}
 
         // Required props for context A) & B)
         box={box}
@@ -109,9 +109,6 @@ const MyComponent = ({ handleLogin, box, ethereum, myAddress, currentUser3BoxPro
 
         // Required prop for context B)
         loginFunction={handleLogin}
-
-        // Required prop for context C)
-        ethereum={ethereum}
 
         // optional
         members={false}
@@ -135,7 +132,7 @@ const MyComponent = ({ handleLogin, box, ethereum, myAddress, currentUser3BoxPro
 | `box`    | Object         |   | A (and likely B)    | The `box` instance returned from running `await Box.openBox(address, web3)` somewhere in your dApp.|
 | `currentUserAddr`    | String (Ethereum Address)          |    | A & B, optional for C | The current user's Ethereum address. Passing this will help determine whether a user has delete access on each comment.  This prop will also let the component fetch that user's 3Box profile on component mount and render that data (profile picture) in the Comment input UI. |
 | `loginFunction`    | Function       |    | B    | A function from your dApp that handles web3 and 3Box login at the global dApp state. This callback will run when a user attempts to save a comment but a `box` instance doesn't yet exist. Running this function should result in a box instance (from `const box = Box.openBox(address, web3)`) being passed as the `box` prop to this component.  |
-| `ethereum`    | Object        |  window.ethereum  | C    | The `ethereum` object from whichever web3 provider your dApp uses.  The `enable` method on this object will be used to get the current user's Ethereum address and that address will be used to `openBox` within the current Component context.|
+| `ethereum`    | Object        |  window.ethereum  | Always    | The `ethereum` object from whichever web3 provider your dApp uses.  The `enable` method on this object will be used to get the current user's Ethereum address and that address will be used to `openBox` within the current Component context.|
 | `members`    | Boolean       |  False   | Optional    | A boolean - `true` - to make the thread a members-only thread. Passing `false` will allow all users to post to the thread.  **Changing this setting after creating it will result in an entirely different thread** (see [Docs.3box.io](https://Docs.3box.io) for more info). |
 | `showCommentCount`    | Integer       |  30   | Optional    | The number of comments rendered in the UI by default on component mount and the number of additional comments revealed after clicking `Load more` in component. |
 | `spaceOpts`    | Object       | | Optional    | Optional parameters for threads (see [Docs.3box.io](https://Docs.3box.io) for more info)|
