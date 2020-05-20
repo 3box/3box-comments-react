@@ -43,7 +43,7 @@ class Dialogue extends Component {
       isNestedComment,
       toggleReplyInput,
       showReply,
-      noWeb3
+      noWeb3,
     } = this.props;
 
     const { showCommentCount } = this.state;

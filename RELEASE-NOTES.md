@@ -1,5 +1,17 @@
 # Release Notes
 
+## v3.0.1 - 2020-05-01
+* fix: make ethereum prop required - for initial openThread
+* fix: allow empty box when commenting - necessary for passing loginFunction
+* fix: authenticate for actions
+* feat: add loading animation for all interactions that require login step
+
+## v2.0.3 - 2020-04-24
+* fix: openSpace and joinThread before posting to thread
+
+## v2.0.2 - 2020-04-14
+* fix: typescript typings by community members
+
 ## v2.0.1 - 2020-04-14
 * fix: must open space and get thread from joinThread from newly opened space
 

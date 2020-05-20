@@ -1,4 +1,4 @@
-import React, { Component, memo } from 'react';
+import React, { Component } from 'react';
 import ProfileHover from 'profile-hover';
 import PropTypes from 'prop-types';
 import Linkify from 'react-linkify';
@@ -34,7 +34,7 @@ class Comment extends Component {
     super(props);
 
     this.state = {
-      loadingDelete: false,
+      loadingPost: false,
       showControlsOnMobile: false,
       emojiPickerIsOpen: false,
       emojiFilter: '',
@@ -47,39 +47,42 @@ class Comment extends Component {
     this.emojiPickerButton = document.querySelector('#sc-emoji-picker-button');
   }
 
+  handleLoadingState = () => this.setState({ loadingPost: !this.state.loadingPost });
+
   vote = async (direction) => {
     const {
       updateComments,
       login,
       comment,
-      thread,
+      hasAuthed,
       noWeb3
     } = this.props;
     const { disableVote } = this.state;
 
     if (noWeb3 || disableVote) return;
 
-    await login();
+    this.setState({ loadingPost: true });
+    if (!hasAuthed) await login();
 
     try {
       const myVote = this.getMyVote();
       if (myVote) {
         if (myVote.message.data === direction) {
           // undo vote
-          await thread.deletePost(myVote.postId);
+          await this.props.thread.deletePost(myVote.postId);
         } else {
           // re-vote
-          await thread.deletePost(myVote.postId);
+          await this.props.thread.deletePost(myVote.postId);
           const message = encodeMessage("vote", direction, comment.postId);
-          await thread.post(message);
+          await this.props.thread.post(message);
         }
       } else {
         const message = encodeMessage("vote", direction, comment.postId);
-        await thread.post(message);
+        await this.props.thread.post(message);
       }
 
       await updateComments();
-      this.setState({ postLoading: false });
+      this.setState({ loadingPost: false });
     } catch (error) {
       console.error('There was an error saving your vote', error);
     }
@@ -90,17 +93,16 @@ class Comment extends Component {
     const {
       login,
       hasAuthed,
-      thread,
     } = this.props;
 
     if (!hasAuthed) {
-      this.setState({ loadingDelete: true });
+      this.setState({ loadingPost: true });
       await login();
     }
 
     try {
-      this.setState({ loadingDelete: false });
-      await thread.deletePost(commentId);
+      this.setState({ loadingPost: false });
+      await this.props.thread.deletePost(commentId);
     } catch (error) {
       console.error('There was an error deleting your comment', error);
     }
@@ -166,12 +168,15 @@ class Comment extends Component {
       updateComments,
       comment,
       noWeb3,
-      thread
+      hasAuthed,
     } = this.props;
+
+    this.setState({ loadingPost: true });
 
     if (noWeb3) return;
 
-    await login();
+    if (!hasAuthed) await login();
+
     try {
       console.log("react with emoji", emoji);
       const myReactions = this.getMyReactions();
@@ -182,16 +187,16 @@ class Comment extends Component {
           console.log("ignore because you already reacted with this emoji", emoji);
         } else {
           const message = encodeMessage("reaction", emoji, comment.postId);
-          await thread.post(message);
+          await this.props.thread.post(message);
           this.setState({})
         }
       } else {
         const message = encodeMessage("reaction", emoji, comment.postId);
-        await thread.post(message);
+        await this.props.thread.post(message);
       }
 
       await updateComments();
-      this.setState({ postLoading: false });
+      this.setState({ loadingPost: false });
     } catch (error) {
       console.error('There was an error saving your reaction', error);
     }
@@ -220,7 +225,7 @@ class Comment extends Component {
 
   render() {
     const {
-      loadingDelete,
+      loadingPost,
       emojiPickerIsOpen,
       showControlsOnMobile,
     } = this.state;
@@ -322,10 +327,10 @@ class Comment extends Component {
                         )}
                       </div>
 
-                      {loadingDelete && <SVG className="comment_loading" src={Loading} alt="Loading" />}
+                      {loadingPost && <SVG className="comment_loading" src={Loading} alt="Loading" />}
 
                       {/* hasThread */}
-                      {(!loadingDelete && profile.ethAddr) && (
+                      {(!loadingPost && profile.ethAddr) && (
                         <div className="comment_content_context_main_user_delete">
                           <button
                             onClick={(e) => this.deleteComment(comment.postId, e)}
@@ -389,10 +394,12 @@ class Comment extends Component {
                         parentId={comment.postId}
                         reactions={reactions}
                         profiles={profiles}
+                        hasAuthed={hasAuthed}
                         toggleEmojiPicker={this.toggleEmojiPicker}
                         renderEmojiPopup={this.renderEmojiPopup}
                         addReaction={this.addReaction}
                         getMyReactions={this.getMyReactions}
+                        handleLoadingState={this.handleLoadingState}
                       />
                     )}
                   </div>
@@ -400,7 +407,7 @@ class Comment extends Component {
               </div>
             </div>
 
-            {(!loadingDelete && comment.message.nestLevel < REPLIABLE_COMMENT_LEVEL_MAX && showReply === comment.postId) && (
+            {(!loadingPost && comment.message.nestLevel < REPLIABLE_COMMENT_LEVEL_MAX && showReply === comment.postId) && (
               <Input
                 currentUserAddr={currentUserAddr}
                 currentUser3BoxProfile={currentUser3BoxProfile}

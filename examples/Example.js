@@ -54,10 +54,13 @@ class Example extends React.Component {
           <div className="userscontainer">
             {isReady && (
               <Comments
+                // required props
                 spaceName='3boxtestcomments'
                 threadName='explicitNestLevel6'
                 adminEthAddr="0x2a0D29C819609Df18D8eAefb429AEC067269BBb6"
+                ethereum={window.ethereum}
 
+                loginFunction={this.handleLogin}
                 box={box}
                 currentUserAddr={myAddress}
               />

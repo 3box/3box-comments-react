@@ -60,13 +60,12 @@ class Input extends Component {
 
   searchEnter = (event) => {
     const { comment, isMobile } = this.state;
-    const { box } = this.props;
+    const { isLoading } = this.props;
     const updatedComment = comment.replace(/(\r\n|\n|\r)/gm, "");
-    const isBoxEmpty = !box || !Object.keys(box).length;
 
-    if (event.keyCode === 13 && !event.shiftKey && updatedComment && !isMobile && !isBoxEmpty) {
+    if (event.keyCode === 13 && !event.shiftKey && updatedComment && !isMobile && !isLoading) {
       this.saveComment();
-    } else if (event.keyCode === 13 && !event.shiftKey && !isMobile && (isBoxEmpty || !updatedComment)) {
+    } else if (event.keyCode === 13 && !event.shiftKey && !isMobile && !updatedComment) {
       event.preventDefault();
     }
   }
@@ -126,6 +125,7 @@ class Input extends Component {
       login,
       isNestedInput,
       currentNestLevel,
+      hasAuthed
     } = this.props;
 
     const { comment, disableComment, isMobile } = this.state;
@@ -137,7 +137,7 @@ class Input extends Component {
     if (disableComment || !updatedComment) return console.log('comment is empty or disabled')
 
     this.setState({ postLoading: true, comment: '' });
-    await login();
+    if (!hasAuthed) await login();
 
     try {
       const grandParentIdToUse = currentNestLevel === 2 && grandParentId;
@@ -293,6 +293,7 @@ Input.propTypes = {
   isNestedInput: PropTypes.bool,
   showReply: PropTypes.string,
   hasAuthed: PropTypes.bool.isRequired,
+  isLoading: PropTypes.bool.isRequired,
   currentNestLevel: PropTypes.number,
   grandParentId: PropTypes.string,
 
