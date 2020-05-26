@@ -40,7 +40,6 @@
     "chai": "^4.1.2",
     "clean-webpack-plugin": "^0.1.16",
     "css-loader": "^1.0.1",
-    "did-resolver": "0.0.7",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
     "eslint": "^5.8.0",
@@ -67,10 +66,11 @@
     "babel-core": "7.0.0-bridge.0"
   },
   "dependencies": {
-    "3box": "^1.17.1",
-    "3id-resolver": "0.0.6",
+    "3box": "^1.19.0",
+    "3id-resolver": "^1.0.0",
     "@babel/runtime": "^7.6.0",
     "babel-core": "^7.0.0-bridge.0",
+    "did-resolver": "^1.1.0",
     "emoji-js": "^3.4.1",
     "ethereum-blockies-base64": "^1.0.2",
     "multicodec": "^0.5.6",

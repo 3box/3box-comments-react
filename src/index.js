@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import Box from '3box';
 import PropTypes from 'prop-types';
-import resolve from 'did-resolver';
-import registerResolver from '3id-resolver';
+import { Resolver } from 'did-resolver';
+import { getResolver } from '3id-resolver';
 
 import {
   checkIsMobileDevice,
@@ -66,8 +66,8 @@ class App extends Component {
     this.setState({ isLoading: true, noWeb3: !ishasWeb3 });
 
     // get ipfs instance for did-resolver
-    const IPFS = await Box.getIPFS();
-    registerResolver(IPFS);
+    const ipfs = await Box.getIPFS();
+    this.resolver = new Resolver(getResolver(ipfs));
 
     // if we have eth and don't have 3box profile, fetch it
     if (currentUserAddr &&
@@ -186,7 +186,7 @@ class App extends Component {
     const fetchAllProfiles = async () => await Promise.all(cleanedUniqueUsers.map(did => fetchProfile(did)));
     const profilesArray = await fetchAllProfiles();
 
-    const getEthAddr = async (did) => await resolve(did);
+    const getEthAddr = async (did) => await this.resolver.resolve(did);
     const getAllEthAddr = async () => await Promise.all(cleanedUniqueUsers.map(did => getEthAddr(did)));
     const ethAddrArray = await getAllEthAddr();
 
