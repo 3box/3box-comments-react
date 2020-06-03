@@ -1,5 +1,8 @@
 # Release Notes
 
+## v3.0.2 - 2020-06-03
+* chore: update did-resolver libraries
+
 ## v3.0.1 - 2020-05-01
 * fix: make ethereum prop required - for initial openThread
 * fix: allow empty box when commenting - necessary for passing loginFunction
