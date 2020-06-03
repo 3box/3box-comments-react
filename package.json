@@ -1,8 +1,8 @@
 {
   "name": "3box-comments-react",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "Comments component for decentralized applications by 3Box",
-  "main": "./lib/index.js",
+  "main": "lib/index.js",
   "author": "3box.io",
   "license": "MIT",
   "contributors": [
@@ -23,7 +23,7 @@
     "scss": "node-sass sass -o src/css",
     "watch": "node-sass --watch scss sass -o src/css",
     "lint": "eslint ./src",
-    "prepublish": "npm run clean && npm run test && npm run build",
+    "prepublish": "npm run clean && npm run test && npm run build && npm run build:es5",
     "start": "webpack-dev-server --config examples/webpack.config.live.babel.js; npm run watch",
     "test": "npm run lint && npm run coverage"
   },
