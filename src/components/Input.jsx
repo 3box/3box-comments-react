@@ -176,7 +176,7 @@ class Input extends Component {
       noWeb3
     } = this.props;
 
-    const updatedProfilePicture = currentUser3BoxProfile.image ? `https://ipfs.infura.io/ipfs/${currentUser3BoxProfile.image[0].contentUrl['/']}`
+    const updatedProfilePicture = (currentUser3BoxProfile && currentUser3BoxProfile.image) ? `https://ipfs.infura.io/ipfs/${currentUser3BoxProfile.image[0].contentUrl['/']}`
       : currentUserAddr && makeBlockie(currentUserAddr);
     const isBoxEmpty = !box || !Object.keys(box).length;
 
