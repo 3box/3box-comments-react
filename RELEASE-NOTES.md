@@ -1,5 +1,9 @@
 # Release Notes
 
+## v3.0.5 - 2020-07-18
+* fix: crash when user profile is cleared
+* chore: update 3box library
+
 ## v3.0.2 - 2020-06-03
 * chore: update did-resolver libraries
 
