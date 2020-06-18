@@ -215,7 +215,7 @@ class Input extends Component {
 
           <p className={`input_commentAs ${showLoggedInAs ? 'showLoggedInAs' : ''}`}>
             {(!noWeb3 && !currentUserAddr) ? 'You will log in upon commenting' : ''}
-            {currentUserAddr ? `Commenting as ${currentUser3BoxProfile.name || shortenEthAddr(currentUserAddr)}` : ''}
+            {(currentUserAddr && currentUser3BoxProfile) ? `Commenting as ${currentUser3BoxProfile.name || shortenEthAddr(currentUserAddr)}` : ''}
             {noWeb3 ? 'Cannot comment without Web3' : ''}
           </p>
 
